@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TestAPI.Models;
+using WebAPI.Models;
 
-namespace TestAPI.Controllers
+namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
     public class UserController : Controller
     {
-        [HttpGet(Name = "GetWeatherForecast")]
-        public string Get()
+        [HttpPost(Name = "GWF")]
+        public string Getamogus()
         {
             using (ApplicationContext db = new ApplicationContext())
             {

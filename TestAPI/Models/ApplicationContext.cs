@@ -2,21 +2,15 @@
 using Pomelo.EntityFrameworkCore.MySql;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 
-namespace TestAPI.Models
+namespace WebAPI.Models
 {
     public class ApplicationContext : DbContext
     {
         public DbSet<User> Users => Set<User>();
 
-
         public ApplicationContext()
         {
             Database.EnsureCreated();
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.HasDefaultSchema("testdb");
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

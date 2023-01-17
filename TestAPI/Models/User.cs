@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
-namespace TestAPI.Models
+namespace WebAPI.Models
 {
     public class User
     {
