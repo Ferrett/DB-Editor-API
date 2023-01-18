@@ -1,5 +1,6 @@
 ﻿//using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc;
+using WebAPI.Models;
 
 namespace WebAPI.Controllers
 {
@@ -7,24 +8,23 @@ namespace WebAPI.Controllers
     [Route("[controller]")]
     public class UserControllers : Controller
     {
-        [HttpGet("{id}")]
-        public IActionResult Getamogus(int id)
+        [HttpGet("/")]
+        public IActionResult Getamogus()
         {
-            //using (ApplicationContext db = new ApplicationContext())
-            //{
-            //    // создаем два объекта User
-            //    User tom = new User { Name = "Tom", Age = 33 };
-            //    User alice = new User { Name = "Alice", Age = 26 };
+            using (ApplicationContext db = new ApplicationContext())
+            {
+               
 
-            //    // добавляем их в бд
-            //    db.Users.Add(tom);
-            //    db.Users.Add(alice);
-            //    db.SaveChanges();
-            //}
+                // добавляем их в бд
+                db.Developers.Add(
+                    new Developer { Name = "fist",RegistrationDate = DateTime.Now });
+                
+                db.SaveChanges();
+            }
             return NotFound();
         }
 
-        [HttpGet("doblaeb/{id:int}")]
+        [HttpGet("test/{id:int}")]
         public IActionResult GetAllUsers(int id)
         {
             //{

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebAPI.Models
 {
-    public class User
+    public class Developer
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -14,18 +14,10 @@ namespace WebAPI.Models
         public string Name { get; set; }
 
         [Required]
-        public float Money { get; set; }
-
-        [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime CreationDate { get; set; }
+        public DateTime RegistrationDate { get; set; }
 
-        [Required]
-        public ICollection<User> Friends { get; set; }
-
-        [Required]
-        //[ForeignKey("GameStats")]
-        public ICollection<GameStats> GamesStats { get; set; }
-
+        //[ForeignKey("Game")]
+        public ICollection<Game> PublishedGames { get; set; }
     }
 }

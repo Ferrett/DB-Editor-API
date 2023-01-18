@@ -7,6 +7,10 @@ namespace WebAPI.Models
     public class ApplicationContext : DbContext
     {
         public DbSet<User> Users => Set<User>();
+        public DbSet<Review> Reviews => Set<Review>();
+        public DbSet<GameStats> GamesStats => Set<GameStats>();
+        public DbSet<Game> Games => Set<Game>();
+        public DbSet<Developer> Developers => Set<Developer>();
 
         public ApplicationContext()
         {
