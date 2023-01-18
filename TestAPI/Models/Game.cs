@@ -14,16 +14,16 @@ namespace WebAPI.Models
         public string Name { get; set; }
 
         [Required]
+        public string LogoURL { get; set; }
+
+        [Required]
         public float Price { get; set; }
 
         [Required]
-        //[ForeignKey("Developer")]
         public virtual Developer Developer { get; set; }
 
         public uint AchievementsCount { get; set; }
 
-        [Required]
-        //[ForeignKey("Review")]
         public ICollection<Review> Reviews { get; set; }
     }
 }

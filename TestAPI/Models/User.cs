@@ -13,8 +13,10 @@ namespace WebAPI.Models
         [MinLength(4), MaxLength(50)]
         public string Name { get; set; }
 
+        public string AvatarURL { get; set; }
+
         [Required]
-        public float Money { get; set; }
+        public float MoneyOnAccount { get; set; }
 
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
@@ -24,7 +26,6 @@ namespace WebAPI.Models
         public ICollection<User> Friends { get; set; }
 
         [Required]
-        //[ForeignKey("GameStats")]
         public ICollection<GameStats> GamesStats { get; set; }
 
     }

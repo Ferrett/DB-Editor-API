@@ -5,7 +5,7 @@ using WebAPI.Models;
 namespace WebAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    //[Route("[controller]")]
     public class UserControllers : Controller
     {
         [HttpGet("/")]
@@ -17,7 +17,7 @@ namespace WebAPI.Controllers
 
                 // добавляем их в бд
                 db.Developers.Add(
-                    new Developer { Name = "fist",RegistrationDate = DateTime.Now });
+                    new Developer { Name = "fist",RegistrationDate = DateTime.Now, LogoURL= @"https://i.ytimg.com/vi/ZINZLJpU9pw/hq720.jpg?sqp=-oaymwEcCNAFEJQDSFXyq4qpAw4IARUAAIhCGAFwAcABBg==&rs=AOn4CLCVoegkrckRIuMJOhlemHUG10eWUg" });
                 
                 db.SaveChanges();
             }

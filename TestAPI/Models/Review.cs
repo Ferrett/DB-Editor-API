@@ -16,11 +16,9 @@ namespace WebAPI.Models
         public bool IsPositive { get; set; }
 
         [Required]
-        //[ForeignKey("Game")]
         public virtual Game Game { get; set; }
 
         [Required]
-        //[ForeignKey("User")]
         public virtual User Author { get; set; }
     }
 }

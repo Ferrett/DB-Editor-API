@@ -14,10 +14,12 @@ namespace WebAPI.Models
         public string Name { get; set; }
 
         [Required]
+        public string LogoURL { get; set; }
+        
+        [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime RegistrationDate { get; set; }
 
-        //[ForeignKey("Game")]
         public ICollection<Game> PublishedGames { get; set; }
     }
 }
