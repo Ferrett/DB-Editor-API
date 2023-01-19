@@ -22,6 +22,10 @@ namespace WebAPI.Models
         [Required]
         public virtual Developer Developer { get; set; }
 
+        [Required]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime PublishDate { get; set; }
+
         public uint AchievementsCount { get; set; }
 
         public ICollection<Review> Reviews { get; set; }

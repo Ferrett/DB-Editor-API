@@ -14,6 +14,9 @@ namespace WebAPI.Controllers
             {
                 using (ApplicationContext db = new ApplicationContext())
                 {
+                    if (db.Developers.ToArray().Length == 0)
+                        throw new ArgumentNullException("Sequence has no elements");
+
                     return Ok(JsonSerializer.Serialize(db.Developers));
                 }
             }
@@ -23,7 +26,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpGet("GetDeveloperByID")]
+        [HttpGet("GetDeveloperByID/{id:int}")]
         public IActionResult GetDeveloperByID(int id)
         {
             try
@@ -59,14 +62,14 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPost("PostNewDeveloper")]
-        public IActionResult PostNewDeveloper(string name, string logoURL)
+        [HttpPost("PostNewDeveloper/{name}/{logo}")]
+        public IActionResult PostNewDeveloper(string name, string logo)
         {
             try
             {
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    Developer dev = new Developer { Name = name, LogoURL = logoURL, RegistrationDate = DateTime.Now, };
+                    Developer dev = new Developer { Name = name, LogoURL = logo, RegistrationDate = DateTime.Now, };
                     db.Developers.Add(dev);
                     db.SaveChanges();
                     return Ok();
@@ -78,15 +81,15 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutDeveloperName")]
-        public IActionResult PutDeveloperName(int devID, string newName)
+        [HttpPut("PutDeveloperName/{id:int}/{name}")]
+        public IActionResult PutDeveloperName(int id, string name)
         {
             try
             {
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    Developer dev = db.Developers.Where(x => x.ID == devID).First();
-                    dev.Name = newName;
+                    Developer dev = db.Developers.Where(x => x.ID == id).First();
+                    dev.Name = name;
                     db.SaveChanges();
                     return Ok();
 
@@ -98,18 +101,17 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutDeveloperLogo")]
-        public IActionResult PutDeveloperLogo(int devID, string newLogoURL)
+        [HttpPut("PutDeveloperLogo/{id:int}/{logo}")]
+        public IActionResult PutDeveloperLogo(int id, string logo)
         {
             try
             {
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    Developer dev = db.Developers.Where(x => x.ID == devID).First();
-                    dev.Name = newLogoURL;
+                    Developer dev = db.Developers.Where(x => x.ID == id).First();
+                    dev.Name = logo;
                     db.SaveChanges();
                     return Ok();
-
                 }
             }
             catch (Exception ex)

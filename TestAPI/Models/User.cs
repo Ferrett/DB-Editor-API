@@ -23,6 +23,10 @@ namespace WebAPI.Models
         public DateTime CreationDate { get; set; }
 
         [Required]
+        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+        public DateTime LastLogInDate { get; set; }
+
+        [Required]
         public ICollection<User> Friends { get; set; }
 
         [Required]
