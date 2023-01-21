@@ -17,7 +17,7 @@ namespace WebAPI.Controllers
                     if (db.Reviews.ToArray().Length == 0)
                         throw new ArgumentNullException("Sequence has no elements");
 
-                    return Ok(JsonSerializer.Serialize(db.Reviews));
+                    return Ok(db.Reviews.ToList());
                 }
             }
             catch (Exception ex)
@@ -26,8 +26,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpGet("GetReviewByID/{id:int}")]
-        public IActionResult GetReviewByID(int id)
+        [HttpGet("GetReview/{id:int}")]
+        public IActionResult GetReview(int id)
         {
             try
             {
@@ -43,8 +43,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpDelete("DeleteReviewByID/{id:int}")]
-        public IActionResult DeleteReviewByID(int id)
+        [HttpDelete("DeleteReview/{id:int}")]
+        public IActionResult DeleteReview(int id)
         {
             try
             {
@@ -62,8 +62,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPost("PostNewReview/{isPostive:bool}/{text}/{gameID:int}/{authorID:int}")]
-        public IActionResult PostNewReview(bool isPostive, string text, int gameID, int authorID)
+        [HttpPost("PostReview/{isPostive:bool}/{gameID:int}/{authorID:int}")]
+        public IActionResult PostReview(bool isPostive, int gameID, int authorID, string text)
         {
             try
             {

@@ -17,7 +17,7 @@ namespace WebAPI.Controllers
                     if (db.Developers.ToArray().Length == 0)
                         throw new ArgumentNullException("Sequence has no elements");
 
-                    return Ok(JsonSerializer.Serialize(db.Developers));
+                    return Ok(db.Developers.ToList());
                 }
             }
             catch (Exception ex)
@@ -26,8 +26,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpGet("GetDeveloperByID/{id:int}")]
-        public IActionResult GetDeveloperByID(int id)
+        [HttpGet("GetDeveloper/{id:int}")]
+        public IActionResult GetDeveloper(int id)
         {
             try
             {
@@ -39,12 +39,12 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(ex);
             }
         }
 
-        [HttpDelete("DeleteDeveloperByID/{id:int}")]
-        public IActionResult DeleteDeveloperByID(int id)
+        [HttpDelete("DeleteDeveloper/{id:int}")]
+        public IActionResult DeleteDeveloper(int id)
         {
             try
             {
@@ -62,14 +62,16 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPost("PostNewDeveloper/{name}/{logo}")]
-        public IActionResult PostNewDeveloper(string name, string logo)
+        [HttpPost("PostDeveloper/{name}/{logo}")]
+        public IActionResult PostDeveloper(string name, IFormFile logo)
         {
+            
             try
             {
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    Developer dev = new Developer { Name = name, LogoURL = logo, RegistrationDate = DateTime.Now, };
+                    
+                    Developer dev = new Developer { Name = name, LogoURL = logo.FileName, RegistrationDate = DateTime.Now, };
                     db.Developers.Add(dev);
                     db.SaveChanges();
                     return Ok();
@@ -102,14 +104,14 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("PutDeveloperLogo/{id:int}/{logo}")]
-        public IActionResult PutDeveloperLogo(int id, string logo)
+        public IActionResult PutDeveloperLogo(int id, IFormFile logo)
         {
             try
             {
                 using (ApplicationContext db = new ApplicationContext())
                 {
                     Developer dev = db.Developers.Where(x => x.ID == id).First();
-                    dev.Name = logo;
+                    dev.Name = logo.FileName;
                     db.SaveChanges();
                     return Ok();
                 }

@@ -26,7 +26,7 @@ namespace WebAPI.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime PublishDate { get; set; }
 
-        public uint AchievementsCount { get; set; }
+        public int AchievementsCount { get; set; }
 
         public ICollection<Review> Reviews { get; set; }
     }
