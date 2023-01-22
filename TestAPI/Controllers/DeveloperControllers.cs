@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using WebAPI.Logic;
 using WebAPI.Models;
 
 namespace WebAPI.Controllers
@@ -22,7 +23,7 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
 
@@ -39,7 +40,7 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex);
+                return BadRequest(ex);
             }
         }
 
@@ -58,20 +59,25 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
 
-        [HttpPost("PostDeveloper/{name}/{logo}")]
+        [HttpPost("PostDeveloper/{name}")]
         public IActionResult PostDeveloper(string name, IFormFile logo)
         {
-            
             try
             {
+                Guid guid = Guid.NewGuid();
+                S3Publish.WritingAnObjectAsync(logo,@"webapilogos/developer",guid).Wait();
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    
-                    Developer dev = new Developer { Name = name, LogoURL = logo.FileName, RegistrationDate = DateTime.Now, };
+                    Developer dev = new Developer { 
+                        Name = name, 
+                        LogoURL = @$"https://webapilogos.s3.eu-north-1.amazonaws.com/{guid}", 
+                        RegistrationDate = DateTime.Now, 
+                    };
+
                     db.Developers.Add(dev);
                     db.SaveChanges();
                     return Ok();
@@ -79,7 +85,7 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
 
@@ -95,11 +101,11 @@ namespace WebAPI.Controllers
                     db.SaveChanges();
                     return Ok();
 
-                } 
+                }
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
 
@@ -118,7 +124,7 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
     }

@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Pomelo.EntityFrameworkCore.MySql;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+using WebAPI.Models;
 
-namespace WebAPI.Models
+namespace WebAPI.Logic
 {
     public class ApplicationContext : DbContext
     {
@@ -14,7 +15,7 @@ namespace WebAPI.Models
 
         public ApplicationContext()
         {
-         //   Database.EnsureCreated();
+            //   Database.EnsureCreated();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -25,7 +26,7 @@ namespace WebAPI.Models
             .Build();
 
 
-            optionsBuilder.UseMySql(configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(new Version(10, 6, 10)), 
+            optionsBuilder.UseMySql(configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(new Version(10, 6, 10)),
                 b => b.SchemaBehavior(MySqlSchemaBehavior.Translate, (schema, entity) => $"{entity}"));
         }
     }

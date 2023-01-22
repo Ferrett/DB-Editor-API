@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
+using WebAPI.Logic;
 using WebAPI.Models;
 
 namespace WebAPI.Controllers
@@ -22,7 +23,7 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
 
@@ -39,7 +40,7 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
 
@@ -58,15 +59,16 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
 
         [HttpPost("PostReview/{isPostive:bool}/{gameID:int}/{authorID:int}")]
-        public IActionResult PostReview(bool isPostive, int gameID, int authorID, string text)
+        public IActionResult PostReview(bool isPostive, int gameID, int authorID, string? text = null)
         {
             try
             {
+                Validation.Test();
                 using (ApplicationContext db = new ApplicationContext())
                 {
                     Review rev = new Review
@@ -85,7 +87,7 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
 
@@ -105,7 +107,7 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
 
@@ -125,7 +127,7 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
     }

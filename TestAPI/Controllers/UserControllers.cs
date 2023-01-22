@@ -1,5 +1,6 @@
 ﻿//using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc;
+using WebAPI.Logic;
 using WebAPI.Models;
 
 namespace WebAPI.Controllers

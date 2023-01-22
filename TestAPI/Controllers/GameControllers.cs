@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using System.Web.Http.Results;
+using WebAPI.Logic;
 using WebAPI.Models;
 
 namespace WebAPI.Controllers
@@ -23,11 +24,10 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
 
-        //GetGame ??
         [HttpGet("GetGame/{id:int}")]
         public IActionResult GetGame(int id)
         {
@@ -36,14 +36,12 @@ namespace WebAPI.Controllers
                 using (ApplicationContext db = new ApplicationContext())
                 {
                     Game game = db.Games.Where(x => x.ID == id).First();
-                    //JsonSerializer???
                     return Ok(game);
                 }
             }
             catch (Exception ex)
             {
-                //JsonSerializer???
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
 
@@ -62,11 +60,11 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
 
-        [HttpPost("PostGame/{name}/{logo}/{price:float}/{devID:int}")]
+        [HttpPost("PostGame/{name}/{price:float}/{devID:int}")]
         public IActionResult PostGame(string name, IFormFile logo, float price, int devID, int achCount=0)
         {
             try
@@ -90,7 +88,7 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
 
@@ -109,7 +107,7 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
 
@@ -128,7 +126,7 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
 
@@ -147,7 +145,7 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
 
@@ -166,7 +164,7 @@ namespace WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound(ex.Message);
+                return BadRequest(ex.Message);
             }
         }
     }
