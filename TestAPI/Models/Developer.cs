@@ -10,10 +10,9 @@ namespace WebAPI.Models
         public int ID { get; set; }
 
         [Required]
-        [MinLength(4), MaxLength(50)]
+        [MaxLength(50), MinLength(4)]
         public string Name { get; set; }
 
-        [Required]
         public string LogoURL { get; set; }
         
         [Required]

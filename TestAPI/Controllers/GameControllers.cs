@@ -16,8 +16,7 @@ namespace WebAPI.Controllers
             {
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    if (db.Games.ToArray().Length == 0)
-                        throw new ArgumentNullException("Sequence has no elements");
+                    Validation.ValidateList(db.Games);
 
                     return Ok(db.Games.ToList());
                 }
@@ -35,6 +34,7 @@ namespace WebAPI.Controllers
             {
                 using (ApplicationContext db = new ApplicationContext())
                 {
+                    Validation.ValidateGameID(db.Games, id);
                     Game game = db.Games.Where(x => x.ID == id).First();
                     return Ok(game);
                 }

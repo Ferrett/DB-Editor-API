@@ -68,7 +68,6 @@ namespace WebAPI.Controllers
         {
             try
             {
-                Validation.Test();
                 using (ApplicationContext db = new ApplicationContext())
                 {
                     Review rev = new Review

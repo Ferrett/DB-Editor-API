@@ -1,6 +1,8 @@
+using Amazon.S3.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using System.ComponentModel.DataAnnotations;
 using WebAPI.Logic;
 using WebAPI.Models;
 
@@ -30,7 +32,9 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+
 app.MapControllers();
+
 
 app.Run();
 

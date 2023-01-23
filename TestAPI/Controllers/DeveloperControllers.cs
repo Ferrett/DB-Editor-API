@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Data;
 using System.Text.Json;
 using WebAPI.Logic;
 using WebAPI.Models;
@@ -64,18 +66,20 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("PostDeveloper/{name}")]
-        public IActionResult PostDeveloper(string name, IFormFile logo)
+        public IActionResult PostDeveloper(string name)
         {
             try
             {
-                Guid guid = Guid.NewGuid();
-                S3Publish.WritingAnObjectAsync(logo,@"webapilogos/developer",guid).Wait();
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    Developer dev = new Developer { 
-                        Name = name, 
-                        LogoURL = @$"https://webapilogos.s3.eu-north-1.amazonaws.com/{guid}", 
-                        RegistrationDate = DateTime.Now, 
+                    Validation.ValidateName(name);
+
+                    Developer dev = new Developer
+                    {
+                        Name = name,
+                        LogoURL = $@"https://webapilogos.s3.eu-north-1.amazonaws.com/developer/dummy.png",
+
+                        RegistrationDate = DateTime.Now,
                     };
 
                     db.Developers.Add(dev);
@@ -96,11 +100,12 @@ namespace WebAPI.Controllers
             {
                 using (ApplicationContext db = new ApplicationContext())
                 {
+                    Validation.ValidateName(name);
+
                     Developer dev = db.Developers.Where(x => x.ID == id).First();
                     dev.Name = name;
                     db.SaveChanges();
                     return Ok();
-
                 }
             }
             catch (Exception ex)
@@ -109,15 +114,22 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutDeveloperLogo/{id:int}/{logo}")]
+        [HttpPut("PutDeveloperLogo/{id:int}")]
         public IActionResult PutDeveloperLogo(int id, IFormFile logo)
         {
             try
             {
                 using (ApplicationContext db = new ApplicationContext())
                 {
+                    Validation.ValidateDeveloperID(db.Developers, id);
+
+                    Guid guid = Guid.NewGuid();
+
+                    S3Bucket.AddObject(logo, @"webapilogos/developer", guid).Wait();
+                    S3Bucket.DeleteObject(db.Developers.Where(x => x.ID == id).First().LogoURL, @"webapilogos/developer").Wait();
+
                     Developer dev = db.Developers.Where(x => x.ID == id).First();
-                    dev.Name = logo.FileName;
+                    dev.LogoURL = $@"https://webapilogos.s3.eu-north-1.amazonaws.com/developer/{guid}";
                     db.SaveChanges();
                     return Ok();
                 }
