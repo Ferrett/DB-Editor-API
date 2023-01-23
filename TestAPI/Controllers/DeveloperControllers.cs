@@ -15,11 +15,10 @@ namespace WebAPI.Controllers
         {
             try
             {
+                Validation.ValidateList(new ApplicationContext().Developers);
+
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    if (db.Developers.ToArray().Length == 0)
-                        throw new ArgumentNullException("Sequence has no elements");
-
                     return Ok(db.Developers.ToList());
                 }
             }
@@ -34,6 +33,8 @@ namespace WebAPI.Controllers
         {
             try
             {
+                Validation.ValidateDeveloperID(id);
+
                 using (ApplicationContext db = new ApplicationContext())
                 {
                     Developer dev = db.Developers.Where(x => x.ID == id).First();
@@ -51,6 +52,8 @@ namespace WebAPI.Controllers
         {
             try
             {
+                Validation.ValidateDeveloperID(id);
+
                 using (ApplicationContext db = new ApplicationContext())
                 {
                     Developer dev = db.Developers.Where(x => x.ID == id).First();
@@ -70,15 +73,14 @@ namespace WebAPI.Controllers
         {
             try
             {
+                Validation.ValidateDeveloperName(name);
+
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    Validation.ValidateName(name);
-
                     Developer dev = new Developer
                     {
                         Name = name,
-                        LogoURL = $@"https://webapilogos.s3.eu-north-1.amazonaws.com/developer/dummy.png",
-
+                        LogoURL = $"{S3Bucket.DeveloperBucketUrl}{S3Bucket.DefaultLogoName}",
                         RegistrationDate = DateTime.Now,
                     };
 
@@ -98,9 +100,11 @@ namespace WebAPI.Controllers
         {
             try
             {
+                Validation.ValidateDeveloperName(name);
+                Validation.ValidateDeveloperID(id);
+
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    Validation.ValidateName(name);
 
                     Developer dev = db.Developers.Where(x => x.ID == id).First();
                     dev.Name = name;
@@ -119,17 +123,17 @@ namespace WebAPI.Controllers
         {
             try
             {
+                Validation.ValidateDeveloperID(id);
+
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    Validation.ValidateDeveloperID(db.Developers, id);
-
                     Guid guid = Guid.NewGuid();
 
-                    S3Bucket.AddObject(logo, @"webapilogos/developer", guid).Wait();
-                    S3Bucket.DeleteObject(db.Developers.Where(x => x.ID == id).First().LogoURL, @"webapilogos/developer").Wait();
+                    S3Bucket.AddObject(logo, S3Bucket.DeveloperBucketPath, guid).Wait();
+                    S3Bucket.DeleteObject(db.Developers.Where(x => x.ID == id).First().LogoURL, S3Bucket.DeveloperBucketPath).Wait();
 
                     Developer dev = db.Developers.Where(x => x.ID == id).First();
-                    dev.LogoURL = $@"https://webapilogos.s3.eu-north-1.amazonaws.com/developer/{guid}";
+                    dev.LogoURL = $"{S3Bucket.DeveloperBucketUrl}{guid}";
                     db.SaveChanges();
                     return Ok();
                 }

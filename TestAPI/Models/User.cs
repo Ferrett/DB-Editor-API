@@ -10,7 +10,15 @@ namespace WebAPI.Models
         public int ID { get; set; }
 
         [Required]
-        [MaxLength(50), MinLength(4)]
+        public string Login { get; set; }
+
+        [Required]
+        public string PasswordHash { get; set; }
+
+        public string Email { get; set; }
+
+        [Required]
+        [MaxLength(25), MinLength(4)]
         public string Name { get; set; }
 
         public string AvatarURL { get; set; }

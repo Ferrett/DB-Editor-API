@@ -14,9 +14,10 @@ namespace WebAPI.Controllers
         {
             try
             {
+                Validation.ValidateList(new ApplicationContext().Games);
+
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    Validation.ValidateList(db.Games);
 
                     return Ok(db.Games.ToList());
                 }
@@ -32,9 +33,10 @@ namespace WebAPI.Controllers
         {
             try
             {
+                Validation.ValidateGameID(id);
+
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    Validation.ValidateGameID(db.Games, id);
                     Game game = db.Games.Where(x => x.ID == id).First();
                     return Ok(game);
                 }
@@ -50,6 +52,8 @@ namespace WebAPI.Controllers
         {
             try
             {
+                Validation.ValidateGameID(id);
+
                 using (ApplicationContext db = new ApplicationContext())
                 {
                     Game game = db.Games.Where(x => x.ID == id).First();
@@ -65,20 +69,25 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("PostGame/{name}/{price:float}/{devID:int}")]
-        public IActionResult PostGame(string name, IFormFile logo, float price, int devID, int achCount=0)
+        public IActionResult PostGame(string name, float price, int devID, int achCount = 0)
         {
             try
             {
+                Validation.ValidateGameName(name);
+                Validation.ValidateGamePrice(price);
+                Validation.ValidateDeveloperID(devID);
+                Validation.ValidateAchievementsCount(achCount);
+
                 using (ApplicationContext db = new ApplicationContext())
                 {
                     Game game = new Game
                     {
                         Name = name,
-                        LogoURL= logo.FileName,
+                        LogoURL = $"{S3Bucket.GameBucketUrl}{S3Bucket.DefaultLogoName}",
                         Price = price,
                         Developer = db.Developers.Where(x => x.ID == devID).First(),
                         AchievementsCount = achCount,
-                        PublishDate= DateTime.Now
+                        PublishDate = DateTime.Now
                     };
 
                     db.Games.Add(game);
@@ -97,6 +106,9 @@ namespace WebAPI.Controllers
         {
             try
             {
+                Validation.ValidateGameID(id);
+                Validation.ValidateAchievementsCount(achCount);
+
                 using (ApplicationContext db = new ApplicationContext())
                 {
                     Game game = db.Games.Where(x => x.ID == id).First();
@@ -116,6 +128,9 @@ namespace WebAPI.Controllers
         {
             try
             {
+                Validation.ValidateGameID(id);
+                Validation.ValidateGamePrice(price);
+
                 using (ApplicationContext db = new ApplicationContext())
                 {
                     Game game = db.Games.Where(x => x.ID == id).First();
@@ -135,8 +150,13 @@ namespace WebAPI.Controllers
         {
             try
             {
+                Validation.ValidateGameID(id);
+                Validation.ValidateGameName(name);
+
                 using (ApplicationContext db = new ApplicationContext())
                 {
+                    Validation.ValidateGameID(id);
+
                     Game game = db.Games.Where(x => x.ID == id).First();
                     game.Name = name;
                     db.SaveChanges();
@@ -154,10 +174,17 @@ namespace WebAPI.Controllers
         {
             try
             {
+                Validation.ValidateGameID(id);
+
                 using (ApplicationContext db = new ApplicationContext())
                 {
+                    Guid guid = Guid.NewGuid();
+
+                    S3Bucket.AddObject(logo, S3Bucket.GameBucketPath, guid).Wait();
+                    S3Bucket.DeleteObject(db.Developers.Where(x => x.ID == id).First().LogoURL, S3Bucket.GameBucketPath).Wait();
+
                     Game game = db.Games.Where(x => x.ID == id).First();
-                    game.Name = logo.FileName;
+                    game.LogoURL = $"{S3Bucket.GameBucketUrl}{guid}";
                     db.SaveChanges();
                     return Ok();
                 }

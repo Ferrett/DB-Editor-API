@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
-using WebAPI.Models;
 
 namespace WebAPI.Logic
 {
@@ -8,10 +6,8 @@ namespace WebAPI.Logic
     {
         private static int MinNameLength = 5;
         private static int MaxNameLength = 25;
-        public static void Test()
-        {
-            throw new Exception("aboba");
-        }
+        private static float MaxGamePrice = 999;
+        private static float MaxAchCount = 9999;
 
         public static void ValidateList<T>(DbSet<T> list) where T : class
         {
@@ -19,32 +15,65 @@ namespace WebAPI.Logic
                 throw new Exception("Table contains no elements");
         }
 
-        public static void ValidateGameID(DbSet<Game> list, int id)
+        public static void ValidateGameID(int id)
         {
-            ValidateList(list);
+            ValidateList(new ApplicationContext().Games);
 
-            if (list.Where(x => x.ID == id).FirstOrDefault() == null)
+            if (new ApplicationContext().Games.Where(x => x.ID == id).FirstOrDefault() == null)
                 throw new Exception($"Game with ID {id} do not exist");
         }
 
-        public static void ValidateDeveloperID(DbSet<Developer> list, int id)
+        public static void ValidateDeveloperID(int id)
         {
-            ValidateList(list);
+            ValidateList(new ApplicationContext().Developers);
 
-            if (list.Where(x => x.ID == id).FirstOrDefault() == null)
+            if (new ApplicationContext().Developers.Where(x => x.ID == id).FirstOrDefault() == null)
                 throw new Exception($"Developer with ID {id} do not exist");
         }
 
-        public static void ValidateName(string name)
+        public static void ValidateDeveloperName(string name)
         {
-            if(name.Length < MinNameLength)
-                throw new Exception($"Name should be longer than {MinNameLength} symbols");
+            ValidateNameLength(name);
+
+            if (new ApplicationContext().Developers.Where(x => x.Name.ToLower() == name.ToLower()).Any())
+                throw new Exception($"Developer with name {name} already exists");
+        }
+
+        public static void ValidateGameName(string name)
+        {
+            ValidateNameLength(name);
+
+            if (new ApplicationContext().Games.Where(x => x.Name.ToLower() == name.ToLower()).Any())
+                throw new Exception($"Game with name {name} already exists");
+        }
+
+        public static void ValidateNameLength(string name)
+        {
+            if (name.Length < MinNameLength)
+                throw new Exception($"Name should be at least {MinNameLength} symbols long");
 
             if (name.Length > MaxNameLength)
                 throw new Exception($"Name should be shorter than {MaxNameLength} symbols");
         }
 
+        public static void ValidateGamePrice(float price)
+        {
+            if (price < 0)
+                throw new Exception($"Game price can't be negative");
 
+            if (price > MaxGamePrice)
+                throw new Exception($"Game price can't be more than {MaxGamePrice}");
+        }
+
+        public static void ValidateAchievementsCount(int achCount)
+        {
+            if (achCount < 0)
+                throw new Exception($"Achievements count can't be negative");
+
+            if (achCount > MaxAchCount)
+                throw new Exception($"Achievements count can't be more than {MaxAchCount}");
+
+        }
 
     }
 }
