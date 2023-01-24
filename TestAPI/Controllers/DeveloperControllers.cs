@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Data;
-using System.Text.Json;
 using WebAPI.Logic;
 using WebAPI.Models;
 
@@ -17,10 +15,7 @@ namespace WebAPI.Controllers
             {
                 Validation.ValidateList(new ApplicationContext().Developers);
 
-                using (ApplicationContext db = new ApplicationContext())
-                {
-                    return Ok(db.Developers.ToList());
-                }
+                return Ok(new ApplicationContext().Developers.ToList());
             }
             catch (Exception ex)
             {

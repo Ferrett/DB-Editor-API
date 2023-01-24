@@ -1,12 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Amazon.Auth.AccessControlPolicy;
+using Microsoft.EntityFrameworkCore;
+using System.Xml.Linq;
 using WebAPI.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebAPI.Logic
 {
     public static class Validation
     {
-        private static int MinNameLength = 5;
+        private static int MinNameLength = 3;
         private static int MaxNameLength = 25;
+
+        private static int MinLoginLength = 8;
+        private static int MaxLoginength = 25;
+
+        private static int MinPasswordLength = 10;
+        private static int MaxPasswordLength = 50;
+
         private static int MaxReviewLength = 9999;
         private static float MaxGamePrice = 999;
         private static float MaxAchCount = 9999;
@@ -139,6 +149,42 @@ namespace WebAPI.Logic
         {
             if (isPositive == new ApplicationContext().Reviews.Where(x => x.ID == id).First().IsPositive)
                 throw new Exception($"Review is already {(isPositive==true?"Positive":"Negative")}");
+        }
+
+        internal static void ValidateLogin(string login)
+        {
+            if (login.Length < MinLoginLength)
+                throw new Exception($"Login should be at least {MinLoginLength} symbols long");
+
+            if (login.Length > MaxLoginength)
+                throw new Exception($"Login should be shorter than {MaxLoginength} symbols");
+
+            if (new ApplicationContext().Users.Where(x => x.Login.ToLower() == login.ToLower()).Any())
+                throw new Exception($"User with login {login} already exists");
+        }
+
+        internal static void ValidatePassword(string password)
+        {
+            if (password.Length < MinPasswordLength)
+                throw new Exception($"Password should be at least {MinPasswordLength} symbols long");
+
+            if (password.Length > MaxPasswordLength)
+                throw new Exception($"Password should be shorter than {MaxPasswordLength} symbols");
+        }
+
+        internal static void ValidateMoneyOnAccount(float money)
+        {
+            if (money < 0)
+                throw new Exception($"Balance can't be negative");
+        }
+
+        internal static void ValidateEmail(string? email)
+        {
+            if (email == null)
+                return;
+
+            if(new EmailAddressAttribute().IsValid(email)!)
+                throw new Exception($"Email {email} is not valid");
         }
     }
 }

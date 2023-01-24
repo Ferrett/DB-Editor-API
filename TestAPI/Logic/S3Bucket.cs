@@ -1,9 +1,6 @@
 ﻿using Amazon;
 using Amazon.S3;
 using Amazon.S3.Model;
-using System;
-using System.Threading.Tasks;
-
 
 namespace WebAPI.Logic
 {
@@ -15,8 +12,11 @@ namespace WebAPI.Logic
 
         public static string DeveloperBucketUrl = @"https://webapilogos.s3.eu-north-1.amazonaws.com/developer/";
         public static string GameBucketUrl = @"https://webapilogos.s3.eu-north-1.amazonaws.com/game/";
+        public static string UserBucketUrl = @"https://webapilogos.s3.eu-north-1.amazonaws.com/user/";
+
         public static string DeveloperBucketPath = @"webapilogos/developer";
         public static string GameBucketPath = @"webapilogos/game";
+        public static string UserBucketPath = @"webapilogos/user";
 
         public static string DefaultLogoName = "dummy.png";
 

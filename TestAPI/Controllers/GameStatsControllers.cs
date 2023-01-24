@@ -14,10 +14,7 @@ namespace WebAPI.Controllers
             {
                 Validation.ValidateList(new ApplicationContext().GamesStats);
 
-                using (ApplicationContext db = new ApplicationContext())
-                {
-                    return Ok(db.GamesStats.ToList());
-                }
+                return Ok(new ApplicationContext().GamesStats.ToList());
             }
             catch (Exception ex)
             {

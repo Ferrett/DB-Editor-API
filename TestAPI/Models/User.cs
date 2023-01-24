@@ -15,13 +15,13 @@ namespace WebAPI.Models
         [Required]
         public string PasswordHash { get; set; }
 
-        public string Email { get; set; }
-
         [Required]
         [MaxLength(25), MinLength(4)]
-        public string Name { get; set; }
+        public string Nickame { get; set; }
 
         public string AvatarURL { get; set; }
+
+        public string Email { get; set; }
 
         [Required]
         public float MoneyOnAccount { get; set; }

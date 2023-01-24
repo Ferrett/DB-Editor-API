@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 using WebAPI.Logic;
 using WebAPI.Models;
 
@@ -15,13 +14,7 @@ namespace WebAPI.Controllers
             {
                 Validation.ValidateList(new ApplicationContext().Reviews);
 
-                using (ApplicationContext db = new ApplicationContext())
-                {
-                    if (db.Reviews.ToArray().Length == 0)
-                        throw new ArgumentNullException("Sequence has no elements");
-
-                    return Ok(db.Reviews.ToList());
-                }
+                return Ok(new ApplicationContext().Reviews.ToList());
             }
             catch (Exception ex)
             {
