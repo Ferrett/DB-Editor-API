@@ -7,6 +7,7 @@ namespace WebAPI.Logic
     {
         private static int MinNameLength = 5;
         private static int MaxNameLength = 25;
+        private static int MaxReviewLength = 9999;
         private static float MaxGamePrice = 999;
         private static float MaxAchCount = 9999;
 
@@ -92,6 +93,14 @@ namespace WebAPI.Logic
                 throw new Exception($"User with ID {id} do not exist");
         }
 
+        public static void ValidateReviewID(int id)
+        {
+            ValidateList(new ApplicationContext().Reviews);
+
+            if (new ApplicationContext().Reviews.Where(x => x.ID == id).FirstOrDefault() == null)
+                throw new Exception($"Review with ID {id} do not exist");
+        }
+
         public static void ValidateAchievementsGot(int id, int achCount)
         {
             GameStats gameStats = new ApplicationContext().GamesStats.Where(x => x.ID == id).First();
@@ -115,6 +124,21 @@ namespace WebAPI.Logic
 
             if (hoursPlayed <= gameStats.HoursPlayed)
                 throw new Exception($"Hours played number should be bigger than previous ({gameStats.HoursPlayed})");
+        }
+
+        internal static void ValidateReviewText(string? text)
+        {
+            if (text == null)
+                return;
+
+            if(text.Length > MaxReviewLength)
+                throw new Exception($"Review can't be longer than {MaxReviewLength} symbols long");
+        }
+
+        internal static void ValidateReviewApproval(int id, bool isPositive)
+        {
+            if (isPositive == new ApplicationContext().Reviews.Where(x => x.ID == id).First().IsPositive)
+                throw new Exception($"Review is already {(isPositive==true?"Positive":"Negative")}");
         }
     }
 }

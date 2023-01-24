@@ -13,6 +13,8 @@ namespace WebAPI.Controllers
         {
             try
             {
+                Validation.ValidateList(new ApplicationContext().Reviews);
+
                 using (ApplicationContext db = new ApplicationContext())
                 {
                     if (db.Reviews.ToArray().Length == 0)
@@ -32,6 +34,8 @@ namespace WebAPI.Controllers
         {
             try
             {
+                Validation.ValidateReviewID(id);
+
                 using (ApplicationContext db = new ApplicationContext())
                 {
                     Review rev = db.Reviews.Where(x => x.ID == id).First();
@@ -49,6 +53,8 @@ namespace WebAPI.Controllers
         {
             try
             {
+                Validation.ValidateReviewID(id);
+
                 using (ApplicationContext db = new ApplicationContext())
                 {
                     Review rev = db.Reviews.Where(x => x.ID == id).First();
@@ -64,19 +70,24 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("PostReview/{isPostive:bool}/{gameID:int}/{authorID:int}")]
-        public IActionResult PostReview(bool isPostive, int gameID, int authorID, string? text = null)
+        public IActionResult PostReview(bool isPostive, int authorID, int gameID, string? text = null)
         {
             try
             {
+                Validation.ValidateUserID(authorID);
+                Validation.ValidateGameID(authorID);
+                Validation.ValidateReviewText(text);
+
                 using (ApplicationContext db = new ApplicationContext())
                 {
                     Review rev = new Review
                     {
-                        Text = text,
+                        Text = text == null? DBNull.Value.ToString():text,
                         IsPositive = isPostive,
                         Game = db.Games.Where(x => x.ID == gameID).First(),
                         Author = db.Users.Where(x => x.ID == authorID).First(),
-                        CreationDate = DateTime.UtcNow
+                        CreationDate = DateTime.UtcNow,
+                        LastEditDate= DateTime.UtcNow,
                     };
 
                     db.Reviews.Add(rev);
@@ -90,16 +101,19 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPost("PutReviewText/{id:int}/{text}")]
-        public IActionResult PutReviewText(int id, string text)
+        [HttpPost("PutReviewText/{id:int}")]
+        public IActionResult PutReviewText(int id, string? text=null)
         {
             try
             {
+                Validation.ValidateReviewID(id);
+                Validation.ValidateReviewText(text);
+
                 using (ApplicationContext db = new ApplicationContext())
                 {
                     Review rev = db.Reviews.Where(x => x.ID == id).First();
-                    rev.Text = text;
-                    rev.LastEditDate =DateTime.UtcNow;
+                    rev.Text = text == null ? DBNull.Value.ToString() : text;
+                    rev.LastEditDate = DateTime.UtcNow;
                     db.SaveChanges();
                     return Ok();
                 }
@@ -115,12 +129,16 @@ namespace WebAPI.Controllers
         {
             try
             {
+                Validation.ValidateReviewID(id);
+                Validation.ValidateReviewApproval(id, isPositive);
+
                 using (ApplicationContext db = new ApplicationContext())
                 {
                     Review rev = db.Reviews.Where(x => x.ID == id).First();
                     rev.IsPositive = isPositive;
                     rev.LastEditDate = DateTime.UtcNow;
                     db.SaveChanges();
+
                     return Ok();
                 }
             }

@@ -9,7 +9,7 @@ namespace WebAPI.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
 
-        [MaxLength(1000)]
+        [MaxLength(9999)]
         public string? Text { get; set; }
 
         [Required]
