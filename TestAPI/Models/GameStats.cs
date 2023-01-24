@@ -18,7 +18,7 @@ namespace WebAPI.Models
         [Required]
         public float HoursPlayed { get; set; }
 
-        public uint AchievementsGot { get; set; }
+        public int AchievementsGot { get; set; }
 
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]

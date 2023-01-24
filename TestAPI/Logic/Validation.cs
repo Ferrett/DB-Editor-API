@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using WebAPI.Models;
 
 namespace WebAPI.Logic
 {
@@ -75,5 +76,45 @@ namespace WebAPI.Logic
 
         }
 
+        public static void ValidateGameStatsID(int id)
+        {
+            ValidateList(new ApplicationContext().GamesStats);
+
+            if (new ApplicationContext().GamesStats.Where(x => x.ID == id).FirstOrDefault() == null)
+                throw new Exception($"Game stats with ID {id} do not exist");
+        }
+
+        public static void ValidateUserID(int id)
+        {
+            ValidateList(new ApplicationContext().Users);
+
+            if (new ApplicationContext().Users.Where(x => x.ID == id).FirstOrDefault() == null)
+                throw new Exception($"User with ID {id} do not exist");
+        }
+
+        public static void ValidateAchievementsGot(int id, int achCount)
+        {
+            GameStats gameStats = new ApplicationContext().GamesStats.Where(x => x.ID == id).First();
+
+            if (achCount < 0)
+                throw new Exception($"Achievements count can't be negative");
+
+            if (achCount <= gameStats.AchievementsGot)
+                throw new Exception($"New achievements count should be bigger than previous ({gameStats.AchievementsGot})");
+
+            if (achCount > gameStats.Game.AchievementsCount)
+                throw new Exception($"Achievements count can't be greater than achievements count of the game ({gameStats.Game.AchievementsCount})");
+        }
+
+        public static void ValidateHoursPlayed(int id, float hoursPlayed)
+        {
+            GameStats gameStats = new ApplicationContext().GamesStats.Where(x => x.ID == id).First();
+
+            if (hoursPlayed < 0)
+                throw new Exception($"Hours played can't be negative");
+
+            if (hoursPlayed <= gameStats.HoursPlayed)
+                throw new Exception($"Hours played number should be bigger than previous ({gameStats.HoursPlayed})");
+        }
     }
 }

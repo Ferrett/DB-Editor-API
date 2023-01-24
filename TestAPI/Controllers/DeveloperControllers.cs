@@ -81,7 +81,7 @@ namespace WebAPI.Controllers
                     {
                         Name = name,
                         LogoURL = $"{S3Bucket.DeveloperBucketUrl}{S3Bucket.DefaultLogoName}",
-                        RegistrationDate = DateTime.Now,
+                        RegistrationDate = DateTime.UtcNow,
                     };
 
                     db.Developers.Add(dev);

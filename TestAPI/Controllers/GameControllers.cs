@@ -87,7 +87,7 @@ namespace WebAPI.Controllers
                         Price = price,
                         Developer = db.Developers.Where(x => x.ID == devID).First(),
                         AchievementsCount = achCount,
-                        PublishDate = DateTime.Now
+                        PublishDate = DateTime.UtcNow
                     };
 
                     db.Games.Add(game);

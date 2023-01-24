@@ -76,7 +76,7 @@ namespace WebAPI.Controllers
                         IsPositive = isPostive,
                         Game = db.Games.Where(x => x.ID == gameID).First(),
                         Author = db.Users.Where(x => x.ID == authorID).First(),
-                        CreationDate = DateTime.Now
+                        CreationDate = DateTime.UtcNow
                     };
 
                     db.Reviews.Add(rev);
@@ -99,7 +99,7 @@ namespace WebAPI.Controllers
                 {
                     Review rev = db.Reviews.Where(x => x.ID == id).First();
                     rev.Text = text;
-                    rev.LastEditDate =DateTime.Now;
+                    rev.LastEditDate =DateTime.UtcNow;
                     db.SaveChanges();
                     return Ok();
                 }
@@ -119,7 +119,7 @@ namespace WebAPI.Controllers
                 {
                     Review rev = db.Reviews.Where(x => x.ID == id).First();
                     rev.IsPositive = isPositive;
-                    rev.LastEditDate = DateTime.Now;
+                    rev.LastEditDate = DateTime.UtcNow;
                     db.SaveChanges();
                     return Ok();
                 }
