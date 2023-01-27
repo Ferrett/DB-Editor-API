@@ -10,10 +10,10 @@ namespace WebAPI.Models
         public int ID { get; set; }
 
         [Required]
-        public virtual User Owner { get; set; }
+        public  User Owner { get; set; } = null!;
 
         [Required]
-        public virtual Game Game { get; set; }
+        public  Game Game { get; set; } = null!;
 
         [Required]
         public float HoursPlayed { get; set; }
@@ -27,6 +27,6 @@ namespace WebAPI.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime LastLaunchDate { get; set; }
 
-        public virtual Review Review { get; set; }
+        public Review? Review { get; set; }
     }
 }

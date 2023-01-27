@@ -23,9 +23,9 @@ namespace WebAPI.Models
         public DateTime LastEditDate { get; set; }
 
         [Required]
-        public virtual Game Game { get; set; }
+        public Game? Game { get; set; }
 
         [Required]
-        public virtual User Author { get; set; }
+        public User? Author { get; set; }
     }
 }

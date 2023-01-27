@@ -11,14 +11,15 @@ namespace WebAPI.Models
 
         [Required]
         [MaxLength(50), MinLength(4)]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
-        public string LogoURL { get; set; }
-        
+        [Required]
+        public string LogoURL { get; set; } = null!;
+
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime RegistrationDate { get; set; }
 
-        public ICollection<Game> PublishedGames { get; set; }
+        public ICollection<Game>? PublishedGames { get; set; }
     }
 }

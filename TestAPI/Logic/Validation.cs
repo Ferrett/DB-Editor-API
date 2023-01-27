@@ -14,7 +14,7 @@ namespace WebAPI.Logic
         private static int MinLoginLength = 8;
         private static int MaxLoginength = 25;
 
-        private static int MinPasswordLength = 10;
+        private static int MinPasswordLength = 8;
         private static int MaxPasswordLength = 50;
 
         private static int MaxReviewLength = 9999;
@@ -136,7 +136,7 @@ namespace WebAPI.Logic
                 throw new Exception($"Hours played number should be bigger than previous ({gameStats.HoursPlayed})");
         }
 
-        internal static void ValidateReviewText(string? text)
+        public static void ValidateReviewText(string? text)
         {
             if (text == null)
                 return;
@@ -145,14 +145,28 @@ namespace WebAPI.Logic
                 throw new Exception($"Review can't be longer than {MaxReviewLength} symbols long");
         }
 
-        internal static void ValidateReviewApproval(int id, bool isPositive)
+        public static void ValidateReviewApproval(int id, bool isPositive)
         {
             if (isPositive == new ApplicationContext().Reviews.Where(x => x.ID == id).First().IsPositive)
                 throw new Exception($"Review is already {(isPositive==true?"Positive":"Negative")}");
         }
 
-        internal static void ValidateLogin(string login)
+        public static bool IsAllLettersOrDigits(string s)
         {
+            foreach (char c in s)
+            {
+                if (((c >= 'a' && c <= 'z') ==false) && ((c >= 'A' && c <= 'Z') == false) && ((c >= '0' && c <= '9') == false))
+                    return false;
+              
+            }
+            return true;
+        }
+
+        public static void ValidateLogin(string login)
+        {
+            if(IsAllLettersOrDigits(login)==false)
+                throw new Exception($"Login can contain only latin letters or digits");
+
             if (login.Length < MinLoginLength)
                 throw new Exception($"Login should be at least {MinLoginLength} symbols long");
 
@@ -163,8 +177,11 @@ namespace WebAPI.Logic
                 throw new Exception($"User with login {login} already exists");
         }
 
-        internal static void ValidatePassword(string password)
+        public static void ValidatePassword(string password)
         {
+            if (IsAllLettersOrDigits(password) == false)
+                throw new Exception($"Password can contain only latin letters or digits");
+
             if (password.Length < MinPasswordLength)
                 throw new Exception($"Password should be at least {MinPasswordLength} symbols long");
 
@@ -172,18 +189,18 @@ namespace WebAPI.Logic
                 throw new Exception($"Password should be shorter than {MaxPasswordLength} symbols");
         }
 
-        internal static void ValidateMoneyOnAccount(float money)
+        public static void ValidateMoneyOnAccount(float money)
         {
             if (money < 0)
                 throw new Exception($"Balance can't be negative");
         }
 
-        internal static void ValidateEmail(string? email)
+        public static void ValidateEmail(string? email)
         {
             if (email == null)
                 return;
 
-            if(new EmailAddressAttribute().IsValid(email)!)
+            if(new EmailAddressAttribute().IsValid(email)==false)
                 throw new Exception($"Email {email} is not valid");
         }
     }

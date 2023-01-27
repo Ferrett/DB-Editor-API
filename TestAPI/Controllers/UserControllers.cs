@@ -68,9 +68,9 @@ namespace WebAPI.Controllers
         {
             try
             {
-                Validation.ValidateNameLength(nickname);
                 Validation.ValidateLogin(login);
                 Validation.ValidatePassword(password);
+                Validation.ValidateNameLength(nickname);
                 Validation.ValidateEmail(email);
 
                 using (ApplicationContext db = new ApplicationContext())
@@ -80,7 +80,7 @@ namespace WebAPI.Controllers
                         Login= login,
                         PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
                         Nickame=nickname,
-                        Email = email==null? DBNull.Value.ToString() :email,
+                        Email = email==null? null :email,
                         AvatarURL = $"{S3Bucket.UserBucketUrl}{S3Bucket.DefaultLogoName}",
                         MoneyOnAccount =0,
                         CreationDate = DateTime.UtcNow,

@@ -11,15 +11,16 @@ namespace WebAPI.Models
 
         [Required]
         [MaxLength(25),MinLength(4)]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
-        public string LogoURL { get; set; }
+        [Required]
+        public string LogoURL { get; set; } = null!;
 
         [Required]
         public float Price { get; set; }
 
         [Required]
-        public virtual Developer Developer { get; set; }
+        public  Developer Developer { get; set; } = null!;
 
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
@@ -27,6 +28,6 @@ namespace WebAPI.Models
 
         public int AchievementsCount { get; set; }
 
-        public ICollection<Review> Reviews { get; set; }
+        public ICollection<Review>? Reviews { get; set; }
     }
 }
