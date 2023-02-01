@@ -75,7 +75,7 @@ namespace WebAPI.Controllers
                 {
                     Review rev = new Review
                     {
-                        Text = text == null? DBNull.Value.ToString():text,
+                        Text = text == null? null:text,
                         IsPositive = isPostive,
                         Game = db.Games.Where(x => x.ID == gameID).First(),
                         Author = db.Users.Where(x => x.ID == authorID).First(),

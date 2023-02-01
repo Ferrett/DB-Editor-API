@@ -6,7 +6,6 @@ namespace WebAPI.Models
     public class Developer
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
 
         [Required]
@@ -17,9 +16,9 @@ namespace WebAPI.Models
         public string LogoURL { get; set; } = null!;
 
         [Required]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
+
         public DateTime RegistrationDate { get; set; }
 
-        public ICollection<Game>? PublishedGames { get; set; }
+        public ICollection<Game>? PublishedGames { get; set; } = new List<Game>();
     }
 }

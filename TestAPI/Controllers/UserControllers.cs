@@ -190,32 +190,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutUserFriend/{id:int}/{friendID}")]
-        public IActionResult PutUserFriend(int id, int friendID)
-        {
-            try
-            {
-                Validation.ValidateUserID(id);
-                Validation.ValidateUserID(friendID);
-
-                using (ApplicationContext db = new ApplicationContext())
-                {
-                    User user = db.Users.Where(x => x.ID == id).First();
-                    User user2 = db.Users.Where(x => x.ID == friendID).First();
-
-                    user.Friends.Add(user2);
-                    user2.Friends.Add(user);
-
-                    db.SaveChanges();
-                    return Ok();
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
+       
         [HttpPut("PutGameStats/{id:int}/{gameStatsID:int}")]
         public IActionResult PutGameStat(int id, int gameStatsID)
         {

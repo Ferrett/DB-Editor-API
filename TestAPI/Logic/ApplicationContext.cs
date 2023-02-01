@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
+//using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using WebAPI.Models;
 
 namespace WebAPI.Logic
@@ -25,8 +25,7 @@ namespace WebAPI.Logic
             .Build();
 
 
-            optionsBuilder.UseMySql(configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(new Version(10, 6, 10)),
-                b => b.SchemaBehavior(MySqlSchemaBehavior.Translate, (schema, entity) => $"{entity}"));
+            optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
         }
     }
 }

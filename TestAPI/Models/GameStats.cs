@@ -6,7 +6,6 @@ namespace WebAPI.Models
     public class GameStats
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
 
         [Required]
@@ -21,10 +20,8 @@ namespace WebAPI.Models
         public int AchievementsGot { get; set; }
 
         [Required]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime PurchasehDate { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime LastLaunchDate { get; set; }
 
         public Review? Review { get; set; }

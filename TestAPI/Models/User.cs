@@ -6,7 +6,6 @@ namespace WebAPI.Models
     public class User
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
 
         [Required]
@@ -28,18 +27,12 @@ namespace WebAPI.Models
         public float MoneyOnAccount { get; set; }
 
         [Required]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreationDate { get; set; }
 
         [Required]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime LastLogInDate { get; set; }
 
         [Required]
-        public ICollection<User>? Friends { get; set; }
-
-        [Required]
-        public ICollection<GameStats>? GamesStats { get; set; }
-
+        public ICollection<GameStats>? GamesStats { get; set; } = new List<GameStats>();
     }
 }

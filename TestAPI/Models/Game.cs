@@ -6,7 +6,6 @@ namespace WebAPI.Models
     public class Game
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
 
         [Required]
@@ -23,11 +22,10 @@ namespace WebAPI.Models
         public  Developer Developer { get; set; } = null!;
 
         [Required]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime PublishDate { get; set; }
 
         public int AchievementsCount { get; set; }
 
-        public ICollection<Review>? Reviews { get; set; }
+        public ICollection<Review>? Reviews { get; set; } = new List<Review>();
     }
 }

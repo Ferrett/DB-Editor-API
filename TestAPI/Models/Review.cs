@@ -6,7 +6,6 @@ namespace WebAPI.Models
     public class Review
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int ID { get; set; }
 
         [MaxLength(9999)]
@@ -16,10 +15,8 @@ namespace WebAPI.Models
         public bool IsPositive { get; set; }
 
         [Required]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreationDate { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime LastEditDate { get; set; }
 
         [Required]
