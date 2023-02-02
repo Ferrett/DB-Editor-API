@@ -67,6 +67,7 @@ namespace WebAPI.Controllers
         {
             try
             {
+                Validation.GameSatsExists(userID, gameID);
                 Validation.ValidateUserID(userID);
                 Validation.ValidateGameID(gameID);
 

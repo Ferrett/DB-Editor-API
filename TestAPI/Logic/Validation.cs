@@ -203,5 +203,17 @@ namespace WebAPI.Logic
             if(new EmailAddressAttribute().IsValid(email)==false)
                 throw new Exception($"Email {email} is not valid");
         }
+
+        internal static void IsReviewExists(int userID, int gameID)
+        {
+            if(new ApplicationContext().Reviews.Where(x=> x.UserID == userID && x.GameID == gameID).Any())
+                throw new Exception($"Review already exists");
+        }
+
+        internal static void GameSatsExists(int userID, int gameID)
+        {
+            if (new ApplicationContext().GamesStats.Where(x => x.UserID == userID && x.GameID == gameID).Any())
+                throw new Exception($"Games stats already exists");
+        }
     }
 }

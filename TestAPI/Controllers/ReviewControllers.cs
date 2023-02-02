@@ -67,6 +67,7 @@ namespace WebAPI.Controllers
         {
             try
             {
+                Validation.IsReviewExists(userID, gameID);
                 Validation.ValidateUserID(userID);
                 Validation.ValidateGameID(gameID);
                 Validation.ValidateReviewText(text);
