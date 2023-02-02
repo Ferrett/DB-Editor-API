@@ -35,17 +35,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-using (ApplicationContext db = new ApplicationContext())
-{
-    //Developer dev = new Developer { Name = "sdadasd", RegistrationDate = DateTime.UtcNow, LogoURL = "d" };
-    //db.Developers.AddRange(dev);
-    //db.Database.ExecuteSqlRaw("DROP TABLE Developers");
-    //db.Database.ExecuteSqlRaw("DROP TABLE Games");
-    //db.Database.ExecuteSqlRaw("DROP TABLE [Users]");
-    //db.Database.ExecuteSqlRaw("DROP TABLE [GamesStats]");
-    //db.Database.ExecuteSqlRaw("DROP TABLE [Reviews]");
-    db.SaveChanges();
-}
 
 app.Run();
 

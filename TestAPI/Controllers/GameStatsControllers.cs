@@ -23,7 +23,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpGet("GetGameStats/{id:int}")]
-        public IActionResult GetGame(int id)
+        public IActionResult GetGameStats(int id)
         {
             try
             {
@@ -42,7 +42,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpDelete("DeleteGameStats/{id:int}")]
-        public IActionResult DeleteGame(int id)
+        public IActionResult DeleteGameStats(int id)
         {
             try
             {
@@ -62,22 +62,22 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPost("PostGameStats/{ownerID:int}/{gameID:int}")]
-        public IActionResult PostGameStats(int ownerID, int gameID, int achGot = 0, float hoursPlayed =0)
+        [HttpPost("PostGameStats/{userID:int}/{gameID:int}")]
+        public IActionResult PostGameStats(int userID, int gameID)
         {
             try
             {
-                Validation.ValidateUserID(ownerID);
+                Validation.ValidateUserID(userID);
                 Validation.ValidateGameID(gameID);
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
                     GameStats gameStats = new GameStats
                     {
-                        Owner = db.Users.Where(x => x.ID == ownerID).First(),
-                        Game = db.Games.Where(x => x.ID == ownerID).First(),
-                        HoursPlayed= hoursPlayed,
-                        AchievementsGot = achGot,
+                        UserID = userID,
+                        GameID = gameID,
+                        HoursPlayed= 0,
+                        AchievementsGot = 0,
                         PurchasehDate = DateTime.UtcNow,
                     };
 
@@ -92,13 +92,13 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutAchievementsCount/{id:int}/{achGot:int}")]
-        public IActionResult PutAchievementsGot(int id, int achGot)
+        [HttpPut("PutGottenAchievements/{id:int}/{achGot:int}")]
+        public IActionResult PutGottenAchievements(int id, int achGot)
         {
             try
             {
                 Validation.ValidateGameStatsID(id);
-                Validation.ValidateAchievementsGot(id, achGot);
+                Validation.ValidateGottenAchievements(id, achGot);
 
                 using (ApplicationContext db = new ApplicationContext())
                 {

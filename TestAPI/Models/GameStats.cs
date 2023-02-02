@@ -9,10 +9,10 @@ namespace WebAPI.Models
         public int ID { get; set; }
 
         [Required]
-        public  User Owner { get; set; } = null!;
+        public int UserID { get; set; }
 
         [Required]
-        public  Game Game { get; set; } = null!;
+        public int GameID { get; set; } 
 
         [Required]
         public float HoursPlayed { get; set; }
@@ -24,6 +24,6 @@ namespace WebAPI.Models
 
         public DateTime LastLaunchDate { get; set; }
 
-        public Review? Review { get; set; }
+        public int ReviewID { get; set; }
     }
 }

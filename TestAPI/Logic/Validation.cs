@@ -111,7 +111,7 @@ namespace WebAPI.Logic
                 throw new Exception($"Review with ID {id} do not exist");
         }
 
-        public static void ValidateAchievementsGot(int id, int achCount)
+        public static void ValidateGottenAchievements(int id, int achCount)
         {
             GameStats gameStats = new ApplicationContext().GamesStats.Where(x => x.ID == id).First();
 
@@ -121,8 +121,8 @@ namespace WebAPI.Logic
             if (achCount <= gameStats.AchievementsGot)
                 throw new Exception($"New achievements count should be bigger than previous ({gameStats.AchievementsGot})");
 
-            if (achCount > gameStats.Game.AchievementsCount)
-                throw new Exception($"Achievements count can't be greater than achievements count of the game ({gameStats.Game.AchievementsCount})");
+            if (achCount > new ApplicationContext().Games.Where(x=>x.ID == gameStats.GameID).First().AchievementsCount)
+                throw new Exception($"Achievements count can't be greater than achievements count of the game ({new ApplicationContext().Games.Where(x => x.ID == gameStats.GameID).First().AchievementsCount})");
         }
 
         public static void ValidateHoursPlayed(int id, float hoursPlayed)

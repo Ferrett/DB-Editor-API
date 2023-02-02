@@ -20,9 +20,9 @@ namespace WebAPI.Models
         public DateTime LastEditDate { get; set; }
 
         [Required]
-        public Game? Game { get; set; }
+        public int GameID { get; set; }
 
         [Required]
-        public User? Author { get; set; }
+        public int UserID { get; set; }
     }
 }

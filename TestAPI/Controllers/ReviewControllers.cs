@@ -62,13 +62,13 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPost("PostReview/{isPostive:bool}/{gameID:int}/{authorID:int}")]
-        public IActionResult PostReview(bool isPostive, int authorID, int gameID, string? text = null)
+        [HttpPost("PostReview/{isPostive:bool}/{gameID:int}/{userID:int}")]
+        public IActionResult PostReview(bool isPostive, int userID, int gameID, string? text = null)
         {
             try
             {
-                Validation.ValidateUserID(authorID);
-                Validation.ValidateGameID(authorID);
+                Validation.ValidateUserID(userID);
+                Validation.ValidateGameID(gameID);
                 Validation.ValidateReviewText(text);
 
                 using (ApplicationContext db = new ApplicationContext())
@@ -77,8 +77,8 @@ namespace WebAPI.Controllers
                     {
                         Text = text == null? null:text,
                         IsPositive = isPostive,
-                        Game = db.Games.Where(x => x.ID == gameID).First(),
-                        Author = db.Users.Where(x => x.ID == authorID).First(),
+                        GameID = gameID,
+                        UserID = userID,
                         CreationDate = DateTime.UtcNow,
                         LastEditDate= DateTime.UtcNow,
                     };
@@ -94,7 +94,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPost("PutReviewText/{id:int}")]
+        [HttpPut("PutReviewText/{id:int}")]
         public IActionResult PutReviewText(int id, string? text=null)
         {
             try
@@ -117,7 +117,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPost("PutReviewApproval/{id:int}/{isPositive:bool}")]
+        [HttpPut("PutReviewApproval/{id:int}/{isPositive:bool}")]
         public IActionResult PutReviewApproval(int id, bool isPositive)
         {
             try

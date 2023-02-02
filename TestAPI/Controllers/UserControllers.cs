@@ -204,8 +204,8 @@ namespace WebAPI.Controllers
                     User user = db.Users.Where(x => x.ID == id).First();
                     GameStats gameStats = db.GamesStats.Where(x => x.ID == gameStatsID).First();
 
-                    user.GamesStats.Add(gameStats);
-                    gameStats.Owner= user;
+                    user.GamesStats!.Add(gameStats);
+                    gameStats.UserID= user.ID;
 
                     db.SaveChanges();
                     return Ok();

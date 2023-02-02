@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-//using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using WebAPI.Models;
 
 namespace WebAPI.Logic
