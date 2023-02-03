@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace WebAPI.Models
 {
@@ -33,6 +34,7 @@ namespace WebAPI.Models
         public DateTime LastLogInDate { get; set; }
 
         [Required]
-        public ICollection<GameStats>? GamesStats { get; set; } = new List<GameStats>();
+        [JsonIgnore]
+        public virtual List<GameStats>? GamesStats { get; set; } = new List<GameStats>();
     }
 }

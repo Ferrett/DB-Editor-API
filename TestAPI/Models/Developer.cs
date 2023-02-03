@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace WebAPI.Models
 {
@@ -16,9 +17,9 @@ namespace WebAPI.Models
         public string LogoURL { get; set; } = null!;
 
         [Required]
-
         public DateTime RegistrationDate { get; set; }
 
-        public ICollection<Game>? PublishedGames { get; set; } = new List<Game>();
+        [JsonIgnore]
+        public virtual List<Game> PublishedGames { get; set; } = new List<Game>();
     }
 }

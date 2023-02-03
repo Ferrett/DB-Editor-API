@@ -79,7 +79,7 @@ namespace WebAPI.Controllers
                         Name = name,
                         LogoURL = $"{S3Bucket.GameBucketUrl}{S3Bucket.DefaultLogoName}",
                         Price = price,
-                        Developer = db.Developers.Where(x => x.ID == devID).First(),
+                        DeveloperID = devID,
                         AchievementsCount = achCount,
                         PublishDate = DateTime.UtcNow
                     };

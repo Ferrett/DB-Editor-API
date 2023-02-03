@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace WebAPI.Models
 {
@@ -19,13 +20,14 @@ namespace WebAPI.Models
         public float Price { get; set; }
 
         [Required]
-        public  Developer Developer { get; set; } = null!;
+        public int DeveloperID { get; set; }
 
         [Required]
         public DateTime PublishDate { get; set; }
 
         public int AchievementsCount { get; set; }
 
-        public ICollection<Review>? Reviews { get; set; } = new List<Review>();
+        [JsonIgnore]
+        public virtual List<Review>? Reviews { get; set; } = new List<Review>();
     }
 }
