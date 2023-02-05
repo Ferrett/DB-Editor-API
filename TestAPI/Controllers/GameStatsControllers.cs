@@ -5,10 +5,11 @@ using WebAPI.Models;
 namespace WebAPI.Controllers
 {
     [ApiController]
+    [Route("/GameStats")]
     public class GameStatsControllers : Controller
     {
-        [HttpGet("GetAllGameStats")]
-        public IActionResult GetAllGameStats()
+        [HttpGet("GetAll")]
+        public IActionResult GetAll()
         {
             try
             {
@@ -22,8 +23,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpGet("GetGameStats/{id:int}")]
-        public IActionResult GetGameStats(int id)
+        [HttpGet("Get/{id:int}")]
+        public IActionResult Get(int id)
         {
             try
             {
@@ -41,8 +42,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpDelete("DeleteGameStats/{id:int}")]
-        public IActionResult DeleteGameStats(int id)
+        [HttpDelete("Delete/{id:int}")]
+        public IActionResult Delete(int id)
         {
             try
             {
@@ -62,8 +63,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPost("PostGameStats/{userID:int}/{gameID:int}")]
-        public IActionResult PostGameStats(int userID, int gameID)
+        [HttpPost("Post/{userID:int}/{gameID:int}")]
+        public IActionResult Post(int userID, int gameID)
         {
             try
             {

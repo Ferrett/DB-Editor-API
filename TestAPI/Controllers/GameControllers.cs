@@ -5,10 +5,11 @@ using WebAPI.Models;
 namespace WebAPI.Controllers
 {
     [ApiController]
+    [Route("/Game")]
     public class GameControllers : Controller
     {
-        [HttpGet("GetAllGames")]
-        public IActionResult GetAllGames()
+        [HttpGet("GetAll")]
+        public IActionResult GetAll()
         {
             try
             {
@@ -22,8 +23,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpGet("GetGame/{id:int}")]
-        public IActionResult GetGame(int id)
+        [HttpGet("Get/{id:int}")]
+        public IActionResult Get(int id)
         {
             try
             {
@@ -41,8 +42,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpDelete("DeleteGame/{id:int}")]
-        public IActionResult DeleteGame(int id)
+        [HttpDelete("Delete/{id:int}")]
+        public IActionResult Delete(int id)
         {
             try
             {
@@ -62,8 +63,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPost("PostGame/{name}/{price:float}/{devID:int}")]
-        public IActionResult PostGame(string name, float price, int devID, int achCount = 0)
+        [HttpPost("Post/{name}/{price:float}/{devID:int}")]
+        public IActionResult Post(string name, float price, int devID, int achCount = 0)
         {
             try
             {
@@ -117,8 +118,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutGamePrice/{id:int}/{price:float}")]
-        public IActionResult PutGamePrice(int id, float price)
+        [HttpPut("PutPrice/{id:int}/{price:float}")]
+        public IActionResult PutPrice(int id, float price)
         {
             try
             {
@@ -139,8 +140,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutGameName/{id:int}/{name}")]
-        public IActionResult PutGameName(int id, string name)
+        [HttpPut("PutName/{id:int}/{name}")]
+        public IActionResult PutName(int id, string name)
         {
             try
             {
@@ -163,8 +164,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutGameLogo/{id:int}/{logo}")]
-        public IActionResult PutGameLogo(int id, IFormFile logo)
+        [HttpPut("PutLogo/{id:int}/{logo}")]
+        public IActionResult PutLogo(int id, IFormFile logo)
         {
             try
             {

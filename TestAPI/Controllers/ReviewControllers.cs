@@ -5,10 +5,11 @@ using WebAPI.Models;
 namespace WebAPI.Controllers
 {
     [ApiController]
+    [Route("/Review")]
     public class ReviewControllers : Controller
     {
-        [HttpGet("GetAllReviews")]
-        public IActionResult GetAllReviews()
+        [HttpGet("GetAll")]
+        public IActionResult GetAll()
         {
             try
             {
@@ -22,8 +23,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpGet("GetReview/{id:int}")]
-        public IActionResult GetReview(int id)
+        [HttpGet("Get/{id:int}")]
+        public IActionResult Get(int id)
         {
             try
             {
@@ -41,8 +42,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpDelete("DeleteReview/{id:int}")]
-        public IActionResult DeleteReview(int id)
+        [HttpDelete("Delete/{id:int}")]
+        public IActionResult Delete(int id)
         {
             try
             {
@@ -62,8 +63,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPost("PostReview/{isPostive:bool}/{gameID:int}/{userID:int}")]
-        public IActionResult PostReview(bool isPostive, int userID, int gameID, string? text = null)
+        [HttpPost("Post/{isPostive:bool}/{gameID:int}/{userID:int}")]
+        public IActionResult Post(bool isPostive, int userID, int gameID, string? text = null)
         {
             try
             {
@@ -95,8 +96,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutReviewText/{id:int}")]
-        public IActionResult PutReviewText(int id, string? text=null)
+        [HttpPut("PutText/{id:int}")]
+        public IActionResult PutText(int id, string? text=null)
         {
             try
             {
@@ -118,8 +119,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutReviewApproval/{id:int}/{isPositive:bool}")]
-        public IActionResult PutReviewApproval(int id, bool isPositive)
+        [HttpPut("PutApproval/{id:int}/{isPositive:bool}")]
+        public IActionResult PutApproval(int id, bool isPositive)
         {
             try
             {

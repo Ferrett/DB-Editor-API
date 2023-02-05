@@ -6,10 +6,11 @@ using WebAPI.Models;
 namespace WebAPI.Controllers
 {
     [ApiController]
+    [Route("/Developer")]
     public class DeveloperControllers : Controller
     {
-        [HttpGet("GetAllDevelopers")]
-        public IActionResult GetAllDevelopers()
+        [HttpGet("GetAll")]
+        public IActionResult GetAll()
         {
             try
             {
@@ -23,8 +24,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpGet("GetDeveloper/{id:int}")]
-        public IActionResult GetDeveloper(int id)
+        [HttpGet("Get/{id:int}")]
+        public IActionResult Get(int id)
         {
             try
             {
@@ -42,8 +43,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpDelete("DeleteDeveloper/{id:int}")]
-        public IActionResult DeleteDeveloper(int id)
+        [HttpDelete("Delete/{id:int}")]
+        public IActionResult Delete(int id)
         {
             try
             {
@@ -63,8 +64,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPost("PostDeveloper/{name}")]
-        public IActionResult PostDeveloper(string name)
+        [HttpPost("Post/{name}")]
+        public IActionResult Post(string name)
         {
             try
             {
@@ -90,8 +91,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutDeveloperName/{id:int}/{name}")]
-        public IActionResult PutDeveloperName(int id, string name)
+        [HttpPut("PutName/{id:int}/{name}")]
+        public IActionResult PutName(int id, string name)
         {
             try
             {
@@ -113,8 +114,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutDeveloperLogo/{id:int}")]
-        public IActionResult PutDeveloperLogo(int id, IFormFile logo)
+        [HttpPut("PutLogo/{id:int}")]
+        public IActionResult PutLogo(int id, IFormFile logo)
         {
             try
             {

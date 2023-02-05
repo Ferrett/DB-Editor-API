@@ -6,10 +6,11 @@ using static System.Net.Mime.MediaTypeNames;
 namespace WebAPI.Controllers
 {
     [ApiController]
+    [Route("/User")]
     public class UserControllers : Controller
     {
-        [HttpGet("GetAllUsers")]
-        public IActionResult GetAllUsers()
+        [HttpGet("GetAll")]
+        public IActionResult GetAll()
         {
             try
             {
@@ -23,8 +24,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpGet("GetUser/{id:int}")]
-        public IActionResult GetReview(int id)
+        [HttpGet("Get/{id:int}")]
+        public IActionResult Get(int id)
         {
             try
             {
@@ -42,8 +43,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpDelete("DeleteUser/{id:int}")]
-        public IActionResult DeleteReview(int id)
+        [HttpDelete("Delete/{id:int}")]
+        public IActionResult Delete(int id)
         {
             try
             {
@@ -63,8 +64,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPost("PostUser/{login}/{password}/{nickname}")]
-        public IActionResult PostReview(string login, string password, string nickname, string? email = null)
+        [HttpPost("Post/{login}/{password}/{nickname}")]
+        public IActionResult Post(string login, string password, string nickname, string? email = null)
         {
             try
             {
@@ -98,8 +99,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutUserLogin/{id:int}/{login}")]
-        public IActionResult PutUserLogin(int id, string login)
+        [HttpPut("PutLogin/{id:int}/{login}")]
+        public IActionResult PutLogin(int id, string login)
         {
             try
             {
@@ -121,8 +122,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutUserPassword/{id:int}/{password}")]
-        public IActionResult PutUserPassword(int id, string password)
+        [HttpPut("PutPassword/{id:int}/{password}")]
+        public IActionResult PutPassword(int id, string password)
         {
             try
             {
@@ -144,8 +145,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutUserNickname/{id:int}/{nickname}")]
-        public IActionResult PutUserNickname(int id, string nickname)
+        [HttpPut("PutNickname/{id:int}/{nickname}")]
+        public IActionResult PutNickname(int id, string nickname)
         {
             try
             {
@@ -167,8 +168,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutUserEmail/{id:int}/{email}")]
-        public IActionResult PutUserEmail(int id, string email)
+        [HttpPut("PutEmail/{id:int}/{email}")]
+        public IActionResult PutEmail(int id, string email)
         {
             try
             {
@@ -192,7 +193,7 @@ namespace WebAPI.Controllers
 
        
         [HttpPut("PutGameStats/{id:int}/{gameStatsID:int}")]
-        public IActionResult PutGameStat(int id, int gameStatsID)
+        public IActionResult PutGameStats(int id, int gameStatsID)
         {
             try
             {
@@ -217,8 +218,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutUserMoneyOnAccount/{id:int}/{money:float}")]
-        public IActionResult PutUserMoneyOnAccount(int id, float money)
+        [HttpPut("PutMoneyOnAccount/{id:int}/{money:float}")]
+        public IActionResult PutMoneyOnAccount(int id, float money)
         {
             try
             {
@@ -240,8 +241,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutUserAvatar/{id:int}")]
-        public IActionResult PutUserAvatar(int id, IFormFile logo)
+        [HttpPut("PutAvatar/{id:int}")]
+        public IActionResult PutAvatar(int id, IFormFile logo)
         {
             try
             {
