@@ -64,7 +64,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("Post/{name}/{price:float}/{devID:int}")]
-        public IActionResult Post(string name, float price, int devID, int achCount = 0)
+        public IActionResult Post(string name, float price, int devID, int achCount = 0, IFormFile? logo = null)
         {
             try
             {
@@ -78,12 +78,23 @@ namespace WebAPI.Controllers
                     Game game = new Game
                     {
                         Name = name,
-                        LogoURL = $"{S3Bucket.GameBucketUrl}{S3Bucket.DefaultLogoName}",
+                       
                         Price = price,
                         DeveloperID = devID,
                         AchievementsCount = achCount,
                         PublishDate = DateTime.UtcNow
                     };
+
+                    if (logo == null)
+                    {
+                        game.LogoURL = $"{S3Bucket.GameBucketUrl}{S3Bucket.DefaultLogoName}";
+                    }
+                    else
+                    {
+                        Guid guid = Guid.NewGuid();
+                        S3Bucket.AddObject(logo, S3Bucket.GameBucketPath, guid).Wait();
+                        game.LogoURL = $"{S3Bucket.GameBucketUrl}{guid}";
+                    }
 
                     db.Games.Add(game);
                     db.SaveChanges();

@@ -65,7 +65,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("Post/{name}")]
-        public IActionResult Post(string name)
+        public IActionResult Post(string name, IFormFile? logo=null)
         {
             try
             {
@@ -75,10 +75,20 @@ namespace WebAPI.Controllers
                 {
                     Developer dev = new Developer
                     {
-                        Name = name,
-                        LogoURL = $"{S3Bucket.DeveloperBucketUrl}{S3Bucket.DefaultLogoName}",
+                        Name = name,       
                         RegistrationDate = DateTime.UtcNow,
                     };
+
+                    if(logo==null)
+                    {
+                        dev.LogoURL = $"{S3Bucket.DeveloperBucketUrl}{S3Bucket.DefaultLogoName}";
+                    }
+                    else
+                    {
+                        Guid guid = Guid.NewGuid();
+                        S3Bucket.AddObject(logo, S3Bucket.DeveloperBucketPath, guid).Wait();
+                        dev.LogoURL = $"{S3Bucket.DeveloperBucketUrl}{guid}";
+                    }
 
                     db.Developers.Add(dev);
                     db.SaveChanges();

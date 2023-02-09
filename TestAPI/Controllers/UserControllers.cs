@@ -65,7 +65,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("Post/{login}/{password}/{nickname}")]
-        public IActionResult Post(string login, string password, string nickname, string? email = null)
+        public IActionResult Post(string login, string password, string nickname, string? email = null, IFormFile? logo = null)
         {
             try
             {
@@ -82,11 +82,21 @@ namespace WebAPI.Controllers
                         PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
                         Nickame=nickname,
                         Email = email==null? null :email,
-                        AvatarURL = $"{S3Bucket.UserBucketUrl}{S3Bucket.DefaultLogoName}",
                         MoneyOnAccount =0,
                         CreationDate = DateTime.UtcNow,
                         LastLogInDate = DateTime.UtcNow,
                     };
+
+                    if (logo == null)
+                    {
+                        user.AvatarURL = $"{S3Bucket.UserBucketUrl}{S3Bucket.DefaultLogoName}";
+                    }
+                    else
+                    {
+                        Guid guid = Guid.NewGuid();
+                        S3Bucket.AddObject(logo, S3Bucket.UserBucketPath, guid).Wait();
+                        user.AvatarURL = $"{S3Bucket.UserBucketUrl}{guid}";
+                    }
 
                     db.Users.Add(user);
                     db.SaveChanges();
