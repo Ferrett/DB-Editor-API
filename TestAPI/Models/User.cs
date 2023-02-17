@@ -25,13 +25,7 @@ namespace WebAPI.Models
         public string? Email { get; set; }
 
         [Required]
-        public float MoneyOnAccount { get; set; }
-
-        [Required]
         public DateTime CreationDate { get; set; }
-
-        [Required]
-        public DateTime LastLogInDate { get; set; }
 
         [Required]
         [JsonIgnore]

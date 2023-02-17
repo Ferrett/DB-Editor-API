@@ -29,17 +29,17 @@ namespace WebAPI.Logic
 
         public static void ValidateGameID(int id)
         {
-            ValidateList(new ApplicationContext().Games);
+            ValidateList(new ApplicationContext().Game);
 
-            if (new ApplicationContext().Games.Where(x => x.ID == id).FirstOrDefault() == null)
+            if (new ApplicationContext().Game.Where(x => x.ID == id).FirstOrDefault() == null)
                 throw new Exception($"Game with ID {id} do not exist");
         }
 
         public static void ValidateDeveloperID(int id)
         {
-            ValidateList(new ApplicationContext().Developers);
+            ValidateList(new ApplicationContext().Developer);
 
-            if (new ApplicationContext().Developers.Where(x => x.ID == id).FirstOrDefault() == null)
+            if (new ApplicationContext().Developer.Where(x => x.ID == id).FirstOrDefault() == null)
                 throw new Exception($"Developer with ID {id} do not exist");
         }
 
@@ -47,7 +47,7 @@ namespace WebAPI.Logic
         {
             ValidateNameLength(name);
 
-            if (new ApplicationContext().Developers.Where(x => x.Name.ToLower() == name.ToLower()).Any())
+            if (new ApplicationContext().Developer.Where(x => x.Name.ToLower() == name.ToLower()).Any())
                 throw new Exception($"Developer with name {name} already exists");
         }
 
@@ -55,7 +55,7 @@ namespace WebAPI.Logic
         {
             ValidateNameLength(name);
 
-            if (new ApplicationContext().Games.Where(x => x.Name.ToLower() == name.ToLower()).Any())
+            if (new ApplicationContext().Game.Where(x => x.Name.ToLower() == name.ToLower()).Any())
                 throw new Exception($"Game with name {name} already exists");
         }
 
@@ -89,31 +89,31 @@ namespace WebAPI.Logic
 
         public static void ValidateGameStatsID(int id)
         {
-            ValidateList(new ApplicationContext().GamesStats);
+            ValidateList(new ApplicationContext().GameStats);
 
-            if (new ApplicationContext().GamesStats.Where(x => x.ID == id).FirstOrDefault() == null)
+            if (new ApplicationContext().GameStats.Where(x => x.ID == id).FirstOrDefault() == null)
                 throw new Exception($"Game stats with ID {id} do not exist");
         }
 
         public static void ValidateUserID(int id)
         {
-            ValidateList(new ApplicationContext().Users);
+            ValidateList(new ApplicationContext().User);
 
-            if (new ApplicationContext().Users.Where(x => x.ID == id).FirstOrDefault() == null)
+            if (new ApplicationContext().User.Where(x => x.ID == id).FirstOrDefault() == null)
                 throw new Exception($"User with ID {id} do not exist");
         }
 
         public static void ValidateReviewID(int id)
         {
-            ValidateList(new ApplicationContext().Reviews);
+            ValidateList(new ApplicationContext().Review);
 
-            if (new ApplicationContext().Reviews.Where(x => x.ID == id).FirstOrDefault() == null)
+            if (new ApplicationContext().Review.Where(x => x.ID == id).FirstOrDefault() == null)
                 throw new Exception($"Review with ID {id} do not exist");
         }
 
         public static void ValidateGottenAchievements(int id, int achCount)
         {
-            GameStats gameStats = new ApplicationContext().GamesStats.Where(x => x.ID == id).First();
+            GameStats gameStats = new ApplicationContext().GameStats.Where(x => x.ID == id).First();
 
             if (achCount < 0)
                 throw new Exception($"Achievements count can't be negative");
@@ -121,13 +121,13 @@ namespace WebAPI.Logic
             if (achCount <= gameStats.AchievementsGot)
                 throw new Exception($"New achievements count should be bigger than previous ({gameStats.AchievementsGot})");
 
-            if (achCount > new ApplicationContext().Games.Where(x=>x.ID == gameStats.GameID).First().AchievementsCount)
-                throw new Exception($"Achievements count can't be greater than achievements count of the game ({new ApplicationContext().Games.Where(x => x.ID == gameStats.GameID).First().AchievementsCount})");
+            if (achCount > new ApplicationContext().Game.Where(x=>x.ID == gameStats.GameID).First().AchievementsCount)
+                throw new Exception($"Achievements count can't be greater than achievements count of the game ({new ApplicationContext().Game.Where(x => x.ID == gameStats.GameID).First().AchievementsCount})");
         }
 
         public static void ValidateHoursPlayed(int id, float hoursPlayed)
         {
-            GameStats gameStats = new ApplicationContext().GamesStats.Where(x => x.ID == id).First();
+            GameStats gameStats = new ApplicationContext().GameStats.Where(x => x.ID == id).First();
 
             if (hoursPlayed < 0)
                 throw new Exception($"Hours played can't be negative");
@@ -147,7 +147,7 @@ namespace WebAPI.Logic
 
         public static void ValidateReviewApproval(int id, bool isPositive)
         {
-            if (isPositive == new ApplicationContext().Reviews.Where(x => x.ID == id).First().IsPositive)
+            if (isPositive == new ApplicationContext().Review.Where(x => x.ID == id).First().IsPositive)
                 throw new Exception($"Review is already {(isPositive==true?"Positive":"Negative")}");
         }
 
@@ -173,7 +173,7 @@ namespace WebAPI.Logic
             if (login.Length > MaxLoginength)
                 throw new Exception($"Login should be shorter than {MaxLoginength} symbols");
 
-            if (new ApplicationContext().Users.Where(x => x.Login.ToLower() == login.ToLower()).Any())
+            if (new ApplicationContext().User.Where(x => x.Login.ToLower() == login.ToLower()).Any())
                 throw new Exception($"User with login {login} already exists");
         }
 
@@ -206,13 +206,13 @@ namespace WebAPI.Logic
 
         internal static void IsReviewExists(int userID, int gameID)
         {
-            if(new ApplicationContext().Reviews.Where(x=> x.UserID == userID && x.GameID == gameID).Any())
+            if(new ApplicationContext().Review.Where(x=> x.UserID == userID && x.GameID == gameID).Any())
                 throw new Exception($"Review already exists");
         }
 
         internal static void GameSatsExists(int userID, int gameID)
         {
-            if (new ApplicationContext().GamesStats.Where(x => x.UserID == userID && x.GameID == gameID).Any())
+            if (new ApplicationContext().GameStats.Where(x => x.UserID == userID && x.GameID == gameID).Any())
                 throw new Exception($"Games stats already exists");
         }
     }

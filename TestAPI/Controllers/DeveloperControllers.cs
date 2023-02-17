@@ -14,9 +14,9 @@ namespace WebAPI.Controllers
         {
             try
             {
-                Validation.ValidateList(new ApplicationContext().Developers);
+                Validation.ValidateList(new ApplicationContext().Developer);
 
-                return Ok(new ApplicationContext().Developers.ToList());
+                return Ok(new ApplicationContext().Developer.ToList());
             }
             catch (Exception ex)
             {
@@ -33,7 +33,7 @@ namespace WebAPI.Controllers
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    Developer dev = db.Developers.Where(x => x.ID == id).First();
+                    Developer dev = db.Developer.Where(x => x.ID == id).First();
                     return Ok(dev);
                 }
             }
@@ -52,8 +52,8 @@ namespace WebAPI.Controllers
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    Developer dev = db.Developers.Where(x => x.ID == id).First();
-                    db.Developers.Remove(dev);
+                    Developer dev = db.Developer.Where(x => x.ID == id).First();
+                    db.Developer.Remove(dev);
                     db.SaveChanges();
                     return Ok();
                 }
@@ -90,7 +90,7 @@ namespace WebAPI.Controllers
                         dev.LogoURL = $"{S3Bucket.DeveloperBucketUrl}{guid}";
                     }
 
-                    db.Developers.Add(dev);
+                    db.Developer.Add(dev);
                     db.SaveChanges();
                     return Ok();
                 }
@@ -112,7 +112,7 @@ namespace WebAPI.Controllers
                 using (ApplicationContext db = new ApplicationContext())
                 {
 
-                    Developer dev = db.Developers.Where(x => x.ID == id).First();
+                    Developer dev = db.Developer.Where(x => x.ID == id).First();
                     dev.Name = name;
                     db.SaveChanges();
                     return Ok();
@@ -136,9 +136,9 @@ namespace WebAPI.Controllers
                     Guid guid = Guid.NewGuid();
 
                     S3Bucket.AddObject(logo, S3Bucket.DeveloperBucketPath, guid).Wait();
-                    S3Bucket.DeleteObject(db.Developers.Where(x => x.ID == id).First().LogoURL, S3Bucket.DeveloperBucketPath).Wait();
+                    S3Bucket.DeleteObject(db.Developer.Where(x => x.ID == id).First().LogoURL, S3Bucket.DeveloperBucketPath).Wait();
 
-                    Developer dev = db.Developers.Where(x => x.ID == id).First();
+                    Developer dev = db.Developer.Where(x => x.ID == id).First();
                     dev.LogoURL = $"{S3Bucket.DeveloperBucketUrl}{guid}";
                     db.SaveChanges();
                     return Ok();

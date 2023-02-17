@@ -13,9 +13,9 @@ namespace WebAPI.Controllers
         {
             try
             {
-                Validation.ValidateList(new ApplicationContext().Games);
+                Validation.ValidateList(new ApplicationContext().Game);
 
-                return Ok(new ApplicationContext().Games.ToList());
+                return Ok(new ApplicationContext().Game.ToList());
             }
             catch (Exception ex)
             {
@@ -32,7 +32,7 @@ namespace WebAPI.Controllers
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    Game game = db.Games.Where(x => x.ID == id).First();
+                    Game game = db.Game.Where(x => x.ID == id).First();
                     return Ok(game);
                 }
             }
@@ -51,8 +51,8 @@ namespace WebAPI.Controllers
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    Game game = db.Games.Where(x => x.ID == id).First();
-                    db.Games.Remove(game);
+                    Game game = db.Game.Where(x => x.ID == id).First();
+                    db.Game.Remove(game);
                     db.SaveChanges();
                     return Ok();
                 }
@@ -96,7 +96,7 @@ namespace WebAPI.Controllers
                         game.LogoURL = $"{S3Bucket.GameBucketUrl}{guid}";
                     }
 
-                    db.Games.Add(game);
+                    db.Game.Add(game);
                     db.SaveChanges();
                     return Ok();
                 }
@@ -117,7 +117,7 @@ namespace WebAPI.Controllers
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    Game game = db.Games.Where(x => x.ID == id).First();
+                    Game game = db.Game.Where(x => x.ID == id).First();
                     game.AchievementsCount = achCount;
                     db.SaveChanges();
                     return Ok();
@@ -139,7 +139,7 @@ namespace WebAPI.Controllers
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    Game game = db.Games.Where(x => x.ID == id).First();
+                    Game game = db.Game.Where(x => x.ID == id).First();
                     game.Price = price;
                     db.SaveChanges();
                     return Ok();
@@ -163,7 +163,7 @@ namespace WebAPI.Controllers
                 {
                     Validation.ValidateGameID(id);
 
-                    Game game = db.Games.Where(x => x.ID == id).First();
+                    Game game = db.Game.Where(x => x.ID == id).First();
                     game.Name = name;
                     db.SaveChanges();
                     return Ok();
@@ -187,9 +187,9 @@ namespace WebAPI.Controllers
                     Guid guid = Guid.NewGuid();
 
                     S3Bucket.AddObject(logo, S3Bucket.GameBucketPath, guid).Wait();
-                    S3Bucket.DeleteObject(db.Developers.Where(x => x.ID == id).First().LogoURL, S3Bucket.GameBucketPath).Wait();
+                    S3Bucket.DeleteObject(db.Developer.Where(x => x.ID == id).First().LogoURL, S3Bucket.GameBucketPath).Wait();
 
-                    Game game = db.Games.Where(x => x.ID == id).First();
+                    Game game = db.Game.Where(x => x.ID == id).First();
                     game.LogoURL = $"{S3Bucket.GameBucketUrl}{guid}";
                     db.SaveChanges();
                     return Ok();

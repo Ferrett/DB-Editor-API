@@ -13,9 +13,9 @@ namespace WebAPI.Controllers
         {
             try
             {
-                Validation.ValidateList(new ApplicationContext().GamesStats);
+                Validation.ValidateList(new ApplicationContext().GameStats);
 
-                return Ok(new ApplicationContext().GamesStats.ToList());
+                return Ok(new ApplicationContext().GameStats.ToList());
             }
             catch (Exception ex)
             {
@@ -32,7 +32,7 @@ namespace WebAPI.Controllers
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    Game game = db.Games.Where(x => x.ID == id).First();
+                    Game game = db.Game.Where(x => x.ID == id).First();
                     return Ok(game);
                 }
             }
@@ -51,8 +51,8 @@ namespace WebAPI.Controllers
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    GameStats gameStats = db.GamesStats.Where(x => x.ID == id).First();
-                    db.GamesStats.Remove(gameStats);
+                    GameStats gameStats = db.GameStats.Where(x => x.ID == id).First();
+                    db.GameStats.Remove(gameStats);
                     db.SaveChanges();
                     return Ok();
                 }
@@ -83,7 +83,7 @@ namespace WebAPI.Controllers
                         PurchasehDate = DateTime.UtcNow,
                     };
 
-                    db.GamesStats.Add(gameStats);
+                    db.GameStats.Add(gameStats);
                     db.SaveChanges();
                     return Ok();
                 }
@@ -104,7 +104,7 @@ namespace WebAPI.Controllers
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    GameStats gameStats = db.GamesStats.Where(x => x.ID == id).First();
+                    GameStats gameStats = db.GameStats.Where(x => x.ID == id).First();
                     gameStats.AchievementsGot = achGot;
                     db.SaveChanges();
                     return Ok();
@@ -126,7 +126,7 @@ namespace WebAPI.Controllers
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    GameStats gameStats = db.GamesStats.Where(x => x.ID == id).First();
+                    GameStats gameStats = db.GameStats.Where(x => x.ID == id).First();
                     gameStats.HoursPlayed = hoursPlayed;
                     db.SaveChanges();
                     return Ok();
@@ -139,8 +139,8 @@ namespace WebAPI.Controllers
         }
 
 
-        [HttpPut("PutGameLaunchDate/{id:int}")]
-        public IActionResult PutGameLaunchDate(int id)
+        [HttpPut("PutGameLaunched/{id:int}")]
+        public IActionResult PutGameLaunched(int id)
         {
             try
             {
@@ -148,7 +148,7 @@ namespace WebAPI.Controllers
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    GameStats gameStats = db.GamesStats.Where(x => x.ID == id).First();
+                    GameStats gameStats = db.GameStats.Where(x => x.ID == id).First();
                     gameStats.LastLaunchDate = DateTime.UtcNow;
                     db.SaveChanges();
                     return Ok();

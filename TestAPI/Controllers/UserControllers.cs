@@ -14,9 +14,9 @@ namespace WebAPI.Controllers
         {
             try
             {
-                Validation.ValidateList(new ApplicationContext().Users);
+                Validation.ValidateList(new ApplicationContext().User);
 
-                return Ok(new ApplicationContext().Users.ToList());
+                return Ok(new ApplicationContext().User.ToList());
             }
             catch (Exception ex)
             {
@@ -33,7 +33,7 @@ namespace WebAPI.Controllers
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    User user = db.Users.Where(x => x.ID == id).First();
+                    User user = db.User.Where(x => x.ID == id).First();
                     return Ok(user);
                 }
             }
@@ -52,8 +52,8 @@ namespace WebAPI.Controllers
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    User user = db.Users.Where(x => x.ID == id).First();
-                    db.Users.Remove(user);
+                    User user = db.User.Where(x => x.ID == id).First();
+                    db.User.Remove(user);
                     db.SaveChanges();
                     return Ok();
                 }
@@ -82,9 +82,7 @@ namespace WebAPI.Controllers
                         PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
                         Nickame=nickname,
                         Email = email==null? null :email,
-                        MoneyOnAccount =0,
                         CreationDate = DateTime.UtcNow,
-                        LastLogInDate = DateTime.UtcNow,
                     };
 
                     if (logo == null)
@@ -98,7 +96,7 @@ namespace WebAPI.Controllers
                         user.AvatarURL = $"{S3Bucket.UserBucketUrl}{guid}";
                     }
 
-                    db.Users.Add(user);
+                    db.User.Add(user);
                     db.SaveChanges();
                     return Ok();
                 }
@@ -119,7 +117,7 @@ namespace WebAPI.Controllers
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    User user = db.Users.Where(x => x.ID == id).First();
+                    User user = db.User.Where(x => x.ID == id).First();
                     user.Login = login;
 
                     db.SaveChanges();
@@ -142,7 +140,7 @@ namespace WebAPI.Controllers
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    User user = db.Users.Where(x => x.ID == id).First();
+                    User user = db.User.Where(x => x.ID == id).First();
                     user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
 
                     db.SaveChanges();
@@ -165,7 +163,7 @@ namespace WebAPI.Controllers
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    User user = db.Users.Where(x => x.ID == id).First();
+                    User user = db.User.Where(x => x.ID == id).First();
                     user.Nickame = nickname;
 
                     db.SaveChanges();
@@ -188,7 +186,7 @@ namespace WebAPI.Controllers
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    User user = db.Users.Where(x => x.ID == id).First();
+                    User user = db.User.Where(x => x.ID == id).First();
                     user.Email = email;
 
                     db.SaveChanges();
@@ -201,58 +199,8 @@ namespace WebAPI.Controllers
             }
         }
 
-       
-        [HttpPut("PutGameStats/{id:int}/{gameStatsID:int}")]
-        public IActionResult PutGameStats(int id, int gameStatsID)
-        {
-            try
-            {
-                Validation.ValidateUserID(id);
-                Validation.ValidateGameStatsID(gameStatsID);
-
-                using (ApplicationContext db = new ApplicationContext())
-                {
-                    User user = db.Users.Where(x => x.ID == id).First();
-                    GameStats gameStats = db.GamesStats.Where(x => x.ID == gameStatsID).First();
-
-                    user.GamesStats!.Add(gameStats);
-                    gameStats.UserID= user.ID;
-
-                    db.SaveChanges();
-                    return Ok();
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPut("PutMoneyOnAccount/{id:int}/{money:float}")]
-        public IActionResult PutMoneyOnAccount(int id, float money)
-        {
-            try
-            {
-                Validation.ValidateUserID(id);
-                Validation.ValidateMoneyOnAccount(money);
-
-                using (ApplicationContext db = new ApplicationContext())
-                {
-                    User user = db.Users.Where(x => x.ID == id).First();
-                    user.MoneyOnAccount = money;
-
-                    db.SaveChanges();
-                    return Ok();
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPut("PutAvatar/{id:int}")]
-        public IActionResult PutAvatar(int id, IFormFile logo)
+        [HttpPut("PutLogo/{id:int}")]
+        public IActionResult PutLogo(int id, IFormFile logo)
         {
             try
             {
@@ -263,9 +211,9 @@ namespace WebAPI.Controllers
                     Guid guid = Guid.NewGuid();
 
                     S3Bucket.AddObject(logo, S3Bucket.UserBucketPath, guid).Wait();
-                    S3Bucket.DeleteObject(db.Users.Where(x => x.ID == id).First().AvatarURL, S3Bucket.UserBucketPath).Wait();
+                    S3Bucket.DeleteObject(db.User.Where(x => x.ID == id).First().AvatarURL, S3Bucket.UserBucketPath).Wait();
 
-                    User user = db.Users.Where(x => x.ID == id).First();
+                    User user = db.User.Where(x => x.ID == id).First();
                     user.AvatarURL = $"{S3Bucket.UserBucketUrl}{guid}";
                     db.SaveChanges();
                     return Ok();

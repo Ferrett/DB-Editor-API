@@ -13,9 +13,9 @@ namespace WebAPI.Controllers
         {
             try
             {
-                Validation.ValidateList(new ApplicationContext().Reviews);
+                Validation.ValidateList(new ApplicationContext().Review);
 
-                return Ok(new ApplicationContext().Reviews.ToList());
+                return Ok(new ApplicationContext().Review.ToList());
             }
             catch (Exception ex)
             {
@@ -32,7 +32,7 @@ namespace WebAPI.Controllers
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    Review rev = db.Reviews.Where(x => x.ID == id).First();
+                    Review rev = db.Review.Where(x => x.ID == id).First();
                     return Ok(rev);
                 }
             }
@@ -51,8 +51,8 @@ namespace WebAPI.Controllers
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    Review rev = db.Reviews.Where(x => x.ID == id).First();
-                    db.Reviews.Remove(rev);
+                    Review rev = db.Review.Where(x => x.ID == id).First();
+                    db.Review.Remove(rev);
                     db.SaveChanges();
                     return Ok();
                 }
@@ -85,7 +85,7 @@ namespace WebAPI.Controllers
                         LastEditDate= DateTime.UtcNow,
                     };
 
-                    db.Reviews.Add(rev);
+                    db.Review.Add(rev);
                     db.SaveChanges();
                     return Ok();
                 }
@@ -106,7 +106,7 @@ namespace WebAPI.Controllers
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    Review rev = db.Reviews.Where(x => x.ID == id).First();
+                    Review rev = db.Review.Where(x => x.ID == id).First();
                     rev.Text = text == null ? DBNull.Value.ToString() : text;
                     rev.LastEditDate = DateTime.UtcNow;
                     db.SaveChanges();
@@ -129,7 +129,7 @@ namespace WebAPI.Controllers
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
-                    Review rev = db.Reviews.Where(x => x.ID == id).First();
+                    Review rev = db.Review.Where(x => x.ID == id).First();
                     rev.IsPositive = isPositive;
                     rev.LastEditDate = DateTime.UtcNow;
                     db.SaveChanges();

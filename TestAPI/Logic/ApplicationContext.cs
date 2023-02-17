@@ -5,11 +5,11 @@ namespace WebAPI.Logic
 {
     public class ApplicationContext : DbContext
     {
-        public DbSet<User> Users => Set<User>();
-        public DbSet<Review> Reviews => Set<Review>();
-        public DbSet<GameStats> GamesStats => Set<GameStats>();
-        public DbSet<Game> Games => Set<Game>();
-        public DbSet<Developer> Developers => Set<Developer>();
+        public DbSet<User> User => Set<User>();
+        public DbSet<Review> Review => Set<Review>();
+        public DbSet<GameStats> GameStats => Set<GameStats>();
+        public DbSet<Game> Game => Set<Game>();
+        public DbSet<Developer> Developer => Set<Developer>();
 
         public ApplicationContext()
         {
