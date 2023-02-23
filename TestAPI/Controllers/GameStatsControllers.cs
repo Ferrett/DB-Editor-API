@@ -94,6 +94,50 @@ namespace WebAPI.Controllers
             }
         }
 
+        [HttpPut("PutGame/{id:int}/{gameID:int}")]
+        public IActionResult PutGame(int id, int gameID)
+        {
+            try
+            {
+                Validation.ValidateGameStatsID(id);
+                Validation.ValidateGameID(gameID);
+
+                using (ApplicationContext db = new ApplicationContext())
+                {
+                    GameStats gameStats = db.GameStats.Where(x => x.ID == id).First();
+                    gameStats.GameID = gameID;
+                    db.SaveChanges();
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("PutUser/{id:int}/{userID:int}")]
+        public IActionResult PutUser(int id, int userID)
+        {
+            try
+            {
+                Validation.ValidateGameStatsID(id);
+                Validation.ValidateUserID(userID);
+
+                using (ApplicationContext db = new ApplicationContext())
+                {
+                    GameStats gameStats = db.GameStats.Where(x => x.ID == id).First();
+                    gameStats.UserID = userID;
+                    db.SaveChanges();
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPut("PutGottenAchievements/{id:int}/{achGot:int}")]
         public IActionResult PutGottenAchievements(int id, int achGot)
         {

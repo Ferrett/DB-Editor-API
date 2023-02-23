@@ -107,6 +107,28 @@ namespace WebAPI.Controllers
             }
         }
 
+        [HttpPut("PutDeveloper/{id:int}/{developerID:int}")]
+        public IActionResult PutDeveloper(int id, int developerID)
+        {
+            try
+            {
+                Validation.ValidateGameID(id);
+                Validation.ValidateDeveloperID(developerID);
+
+                using (ApplicationContext db = new ApplicationContext())
+                {
+                    Game game = db.Game.Where(x => x.ID == id).First();
+                    game.DeveloperID = developerID;
+                    db.SaveChanges();
+                    return Ok();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPut("PutAchievementsCount/{id:int}/{achCount:int}")]
         public IActionResult PutAchievementsCount(int id, int achCount)
         {
