@@ -23,7 +23,5 @@ namespace WebAPI.Models
         public DateTime PurchasehDate { get; set; }
 
         public DateTime LastLaunchDate { get; set; }
-
-        public int ReviewID { get; set; }
     }
 }
