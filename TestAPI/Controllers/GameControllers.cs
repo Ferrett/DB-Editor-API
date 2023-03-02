@@ -197,7 +197,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutLogo/{id:int}/{logo}")]
+        [HttpPut("PutLogo/{id:int}")]
         public IActionResult PutLogo(int id, IFormFile logo)
         {
             try
@@ -209,7 +209,7 @@ namespace WebAPI.Controllers
                     Guid guid = Guid.NewGuid();
 
                     S3Bucket.AddObject(logo, S3Bucket.GameBucketPath, guid).Wait();
-                    S3Bucket.DeleteObject(db.Developer.Where(x => x.ID == id).First().LogoURL, S3Bucket.GameBucketPath).Wait();
+                    S3Bucket.DeleteObject(db.Game.Where(x => x.ID == id).First().LogoURL, S3Bucket.GameBucketPath).Wait();
 
                     Game game = db.Game.Where(x => x.ID == id).First();
                     game.LogoURL = $"{S3Bucket.GameBucketUrl}{guid}";

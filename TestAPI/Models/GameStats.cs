@@ -20,8 +20,6 @@ namespace WebAPI.Models
         public int AchievementsGot { get; set; }
 
         [Required]
-        public DateTime PurchasehDate { get; set; }
-
-        public DateTime LastLaunchDate { get; set; }
+        public DateTime PurchaseDate { get; set; }
     }
 }

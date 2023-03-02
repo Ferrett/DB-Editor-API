@@ -113,27 +113,32 @@ namespace WebAPI.Logic
 
         public static void ValidateGottenAchievements(int id, int achCount)
         {
-            GameStats gameStats = new ApplicationContext().GameStats.Where(x => x.ID == id).First();
+            if (achCount != 0)
+            {
+                GameStats gameStats = new ApplicationContext().GameStats.Where(x => x.ID == id).First();
 
+
+                if (achCount <= gameStats.AchievementsGot)
+                    throw new Exception($"New achievements count should be bigger than previous ({gameStats.AchievementsGot})");
+
+                if (achCount > new ApplicationContext().Game.Where(x => x.ID == gameStats.GameID).First().AchievementsCount)
+                    throw new Exception($"Achievements count can't be greater than achievements count of the game ({new ApplicationContext().Game.Where(x => x.ID == gameStats.GameID).First().AchievementsCount})");
+            }
             if (achCount < 0)
                 throw new Exception($"Achievements count can't be negative");
-
-            if (achCount <= gameStats.AchievementsGot)
-                throw new Exception($"New achievements count should be bigger than previous ({gameStats.AchievementsGot})");
-
-            if (achCount > new ApplicationContext().Game.Where(x=>x.ID == gameStats.GameID).First().AchievementsCount)
-                throw new Exception($"Achievements count can't be greater than achievements count of the game ({new ApplicationContext().Game.Where(x => x.ID == gameStats.GameID).First().AchievementsCount})");
         }
 
         public static void ValidateHoursPlayed(int id, float hoursPlayed)
         {
-            GameStats gameStats = new ApplicationContext().GameStats.Where(x => x.ID == id).First();
+            if (hoursPlayed != 0)
+            {
+                GameStats gameStats = new ApplicationContext().GameStats.Where(x => x.ID == id).First();
 
+                if (hoursPlayed <= gameStats.HoursPlayed)
+                    throw new Exception($"Hours played number should be bigger than previous ({gameStats.HoursPlayed})");
+            }
             if (hoursPlayed < 0)
                 throw new Exception($"Hours played can't be negative");
-
-            if (hoursPlayed <= gameStats.HoursPlayed)
-                throw new Exception($"Hours played number should be bigger than previous ({gameStats.HoursPlayed})");
         }
 
         public static void ValidateReviewText(string? text)

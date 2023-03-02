@@ -64,13 +64,15 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("Post/{userID:int}/{gameID:int}")]
-        public IActionResult Post(int userID, int gameID)
+        public IActionResult Post(int userID, int gameID, int achGot=0,int hoursPlayed=0)
         {
             try
             {
                 Validation.GameSatsExists(userID, gameID);
                 Validation.ValidateUserID(userID);
                 Validation.ValidateGameID(gameID);
+                Validation.ValidateGottenAchievements(0, achGot);
+                Validation.ValidateHoursPlayed(0,hoursPlayed);
 
                 using (ApplicationContext db = new ApplicationContext())
                 {
@@ -78,9 +80,9 @@ namespace WebAPI.Controllers
                     {
                         UserID = userID,
                         GameID = gameID,
-                        HoursPlayed= 0,
-                        AchievementsGot = 0,
-                        PurchasehDate = DateTime.UtcNow,
+                        HoursPlayed= hoursPlayed,
+                        AchievementsGot = achGot,
+                        PurchaseDate = DateTime.UtcNow,
                     };
 
                     db.GameStats.Add(gameStats);
@@ -172,28 +174,6 @@ namespace WebAPI.Controllers
                 {
                     GameStats gameStats = db.GameStats.Where(x => x.ID == id).First();
                     gameStats.HoursPlayed = hoursPlayed;
-                    db.SaveChanges();
-                    return Ok();
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-
-        [HttpPut("PutGameLaunched/{id:int}")]
-        public IActionResult PutGameLaunched(int id)
-        {
-            try
-            {
-                Validation.ValidateGameStatsID(id);
-
-                using (ApplicationContext db = new ApplicationContext())
-                {
-                    GameStats gameStats = db.GameStats.Where(x => x.ID == id).First();
-                    gameStats.LastLaunchDate = DateTime.UtcNow;
                     db.SaveChanges();
                     return Ok();
                 }
