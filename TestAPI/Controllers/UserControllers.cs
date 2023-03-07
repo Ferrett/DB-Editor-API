@@ -78,10 +78,10 @@ namespace WebAPI.Controllers
                 {
                     User user = new User
                     {
-                        Login= login,
+                        Login = login,
                         PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
-                        Nickame=nickname,
-                        Email = email==null? null :email,
+                        Nickname = nickname,
+                        Email = email == null ? null : email,
                         CreationDate = DateTime.UtcNow,
                     };
 
@@ -164,7 +164,7 @@ namespace WebAPI.Controllers
                 using (ApplicationContext db = new ApplicationContext())
                 {
                     User user = db.User.Where(x => x.ID == id).First();
-                    user.Nickame = nickname;
+                    user.Nickname = nickname;
 
                     db.SaveChanges();
                     return Ok();

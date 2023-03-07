@@ -17,7 +17,7 @@ namespace WebAPI.Models
 
         [Required]
         [MaxLength(25), MinLength(4)]
-        public string Nickame { get; set; } = null!;
+        public string Nickname { get; set; } = null!;
 
         [Required]
         public string AvatarURL { get; set; } = null!;
