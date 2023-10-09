@@ -13,9 +13,9 @@ namespace WebAPI.Controllers
         {
             try
             {
-                Validation.ValidateList(new ApplicationContext().Game);
+                Validation.ValidateList(new ApplicationDbContext().Game);
 
-                return Ok(new ApplicationContext().Game.ToList());
+                return Ok(new ApplicationDbContext().Game.ToList());
             }
             catch (Exception ex)
             {
@@ -30,7 +30,7 @@ namespace WebAPI.Controllers
             {
                 Validation.ValidateGameID(id);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     Game game = db.Game.Where(x => x.ID == id).First();
                     return Ok(game);
@@ -49,7 +49,7 @@ namespace WebAPI.Controllers
             {
                 Validation.ValidateGameID(id);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     Game game = db.Game.Where(x => x.ID == id).First();
                     db.Game.Remove(game);
@@ -73,7 +73,7 @@ namespace WebAPI.Controllers
                 Validation.ValidateDeveloperID(devID);
                 Validation.ValidateAchievementsCount(achCount);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     Game game = new Game
                     {
@@ -115,7 +115,7 @@ namespace WebAPI.Controllers
                 Validation.ValidateGameID(id);
                 Validation.ValidateDeveloperID(developerID);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     Game game = db.Game.Where(x => x.ID == id).First();
                     game.DeveloperID = developerID;
@@ -137,7 +137,7 @@ namespace WebAPI.Controllers
                 Validation.ValidateGameID(id);
                 Validation.ValidateAchievementsCount(achCount);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     Game game = db.Game.Where(x => x.ID == id).First();
                     game.AchievementsCount = achCount;
@@ -159,7 +159,7 @@ namespace WebAPI.Controllers
                 Validation.ValidateGameID(id);
                 Validation.ValidateGamePrice(price);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     Game game = db.Game.Where(x => x.ID == id).First();
                     game.Price = price;
@@ -181,7 +181,7 @@ namespace WebAPI.Controllers
                 Validation.ValidateGameID(id);
                 Validation.ValidateGameName(name);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     Validation.ValidateGameID(id);
 
@@ -204,7 +204,7 @@ namespace WebAPI.Controllers
             {
                 Validation.ValidateGameID(id);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     Guid guid = Guid.NewGuid();
 

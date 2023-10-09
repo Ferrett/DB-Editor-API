@@ -14,9 +14,9 @@ namespace WebAPI.Controllers
         {
             try
             {
-                Validation.ValidateList(new ApplicationContext().Developer);
+                Validation.ValidateList(new ApplicationDbContext().Developer);
 
-                return Ok(new ApplicationContext().Developer.ToList());
+                return Ok(new ApplicationDbContext().Developer.ToList());
             }
             catch (Exception ex)
             {
@@ -31,7 +31,7 @@ namespace WebAPI.Controllers
             {
                 Validation.ValidateDeveloperID(id);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     Developer dev = db.Developer.Where(x => x.ID == id).First();
                     return Ok(dev);
@@ -50,7 +50,7 @@ namespace WebAPI.Controllers
             {
                 Validation.ValidateDeveloperID(id);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     Developer dev = db.Developer.Where(x => x.ID == id).First();
                     db.Developer.Remove(dev);
@@ -71,7 +71,7 @@ namespace WebAPI.Controllers
             {
                 Validation.ValidateDeveloperName(name);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     Developer dev = new Developer
                     {
@@ -109,7 +109,7 @@ namespace WebAPI.Controllers
                 Validation.ValidateDeveloperName(name);
                 Validation.ValidateDeveloperID(id);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
 
                     Developer dev = db.Developer.Where(x => x.ID == id).First();
@@ -131,7 +131,7 @@ namespace WebAPI.Controllers
             {
                 Validation.ValidateDeveloperID(id);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     Guid guid = Guid.NewGuid();
 

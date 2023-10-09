@@ -13,9 +13,9 @@ namespace WebAPI.Controllers
         {
             try
             {
-                Validation.ValidateList(new ApplicationContext().Review);
+                Validation.ValidateList(new ApplicationDbContext().Review);
 
-                return Ok(new ApplicationContext().Review.ToList());
+                return Ok(new ApplicationDbContext().Review.ToList());
             }
             catch (Exception ex)
             {
@@ -30,7 +30,7 @@ namespace WebAPI.Controllers
             {
                 Validation.ValidateReviewID(id);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     Review rev = db.Review.Where(x => x.ID == id).First();
                     return Ok(rev);
@@ -49,7 +49,7 @@ namespace WebAPI.Controllers
             {
                 Validation.ValidateReviewID(id);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     Review rev = db.Review.Where(x => x.ID == id).First();
                     db.Review.Remove(rev);
@@ -73,7 +73,7 @@ namespace WebAPI.Controllers
                 Validation.ValidateGameID(gameID);
                 Validation.ValidateReviewText(text);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     Review rev = new Review
                     {
@@ -104,7 +104,7 @@ namespace WebAPI.Controllers
                 Validation.ValidateReviewID(id);
                 Validation.ValidateUserID(userID);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     Review rev = db.Review.Where(x => x.ID == id).First();
                     rev.UserID = userID;
@@ -127,7 +127,7 @@ namespace WebAPI.Controllers
                 Validation.ValidateReviewID(id);
                 Validation.ValidateGameID(gameID);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     Review rev = db.Review.Where(x => x.ID == id).First();
                     rev.GameID = gameID;
@@ -150,7 +150,7 @@ namespace WebAPI.Controllers
                 Validation.ValidateReviewID(id);
                 Validation.ValidateReviewText(text);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     Review rev = db.Review.Where(x => x.ID == id).First();
                     rev.Text = text == null ? DBNull.Value.ToString() : text;
@@ -173,7 +173,7 @@ namespace WebAPI.Controllers
                 Validation.ValidateReviewID(id);
                 Validation.ValidateReviewApproval(id, isPositive);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     Review rev = db.Review.Where(x => x.ID == id).First();
                     rev.IsPositive = isPositive;

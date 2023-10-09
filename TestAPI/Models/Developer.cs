@@ -14,12 +14,13 @@ namespace WebAPI.Models
         public string Name { get; set; } = null!;
 
         [Required]
+        [MinLength(5, ErrorMessage = "The Link is incorrect")]
         public string LogoURL { get; set; } = null!;
 
         [Required]
         public DateTime RegistrationDate { get; set; }
 
         [JsonIgnore]
-        public virtual List<Game> PublishedGames { get; set; } = new List<Game>();
+        public ICollection<Game> PublishedGames { get; set; } = new List<Game>();
     }
 }

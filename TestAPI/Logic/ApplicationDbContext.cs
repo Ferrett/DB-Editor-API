@@ -3,7 +3,7 @@ using WebAPI.Models;
 
 namespace WebAPI.Logic
 {
-    public class ApplicationContext : DbContext
+    public class ApplicationDbContext : DbContext
     {
         public DbSet<User> User => Set<User>();
         public DbSet<Review> Review => Set<Review>();
@@ -11,9 +11,10 @@ namespace WebAPI.Logic
         public DbSet<Game> Game => Set<Game>();
         public DbSet<Developer> Developer => Set<Developer>();
 
-        public ApplicationContext()
+        public ApplicationDbContext()
         {
-            Database.EnsureCreated();
+            //Database.EnsureCreated();
+            //Database.EnsureDeleted();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

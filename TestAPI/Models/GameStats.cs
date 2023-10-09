@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace WebAPI.Models
 {
@@ -10,13 +9,17 @@ namespace WebAPI.Models
 
         [Required]
         public int UserID { get; set; }
+        public User User { get; set; } = null!;
 
         [Required]
-        public int GameID { get; set; } 
+        public int GameID { get; set; }
+        public Game Game { get; set; } = null!;
 
         [Required]
+        [Range(0.0, Double.MaxValue)]
         public float HoursPlayed { get; set; }
 
+        [Range(0.0, 1000)]
         public int AchievementsGot { get; set; }
 
         [Required]

@@ -14,9 +14,9 @@ namespace WebAPI.Controllers
         {
             try
             {
-                Validation.ValidateList(new ApplicationContext().User);
+                Validation.ValidateList(new ApplicationDbContext().User);
 
-                return Ok(new ApplicationContext().User.ToList());
+                return Ok(new ApplicationDbContext().User.ToList());
             }
             catch (Exception ex)
             {
@@ -31,7 +31,7 @@ namespace WebAPI.Controllers
             {
                 Validation.ValidateUserID(id);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     User user = db.User.Where(x => x.ID == id).First();
                     return Ok(user);
@@ -50,7 +50,7 @@ namespace WebAPI.Controllers
             {
                 Validation.ValidateUserID(id);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     User user = db.User.Where(x => x.ID == id).First();
                     db.User.Remove(user);
@@ -74,7 +74,7 @@ namespace WebAPI.Controllers
                 Validation.ValidateNameLength(nickname);
                 Validation.ValidateEmail(email);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     User user = new User
                     {
@@ -115,7 +115,7 @@ namespace WebAPI.Controllers
                 Validation.ValidateUserID(id);
                 Validation.ValidateLogin(login);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     User user = db.User.Where(x => x.ID == id).First();
                     user.Login = login;
@@ -138,7 +138,7 @@ namespace WebAPI.Controllers
                 Validation.ValidateUserID(id);
                 Validation.ValidatePassword(password);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     User user = db.User.Where(x => x.ID == id).First();
                     user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
@@ -161,7 +161,7 @@ namespace WebAPI.Controllers
                 Validation.ValidateUserID(id);
                 Validation.ValidateNameLength(nickname);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     User user = db.User.Where(x => x.ID == id).First();
                     user.Nickname = nickname;
@@ -184,7 +184,7 @@ namespace WebAPI.Controllers
                 Validation.ValidateUserID(id);
                 Validation.ValidateEmail(email);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     User user = db.User.Where(x => x.ID == id).First();
                     user.Email = email;
@@ -206,7 +206,7 @@ namespace WebAPI.Controllers
             {
                 Validation.ValidateUserID(id);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     Guid guid = Guid.NewGuid();
 

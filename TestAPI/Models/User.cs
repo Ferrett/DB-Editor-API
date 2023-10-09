@@ -10,18 +10,21 @@ namespace WebAPI.Models
         public int ID { get; set; }
 
         [Required]
+        [StringLength(30, ErrorMessage = "{0} must be between {2} and {1} characters long.", MinimumLength = 7)]
         public string Login { get; set; } = null!;
 
         [Required]
         public string PasswordHash { get; set; } = null!;
 
         [Required]
-        [MaxLength(25), MinLength(4)]
+        [StringLength(30, ErrorMessage = "{0} must be between {2} and {1} characters long.", MinimumLength = 1)]
         public string Nickname { get; set; } = null!;
 
         [Required]
+        [MinLength(5, ErrorMessage = "The Link is incorrect")]
         public string AvatarURL { get; set; } = null!;
 
+        [StringLength(30, ErrorMessage = "{0} must be between {2} and {1} characters long.", MinimumLength = 1)]
         public string? Email { get; set; }
 
         [Required]
@@ -29,6 +32,6 @@ namespace WebAPI.Models
 
         [Required]
         [JsonIgnore]
-        public virtual List<GameStats>? GamesStats { get; set; } = new List<GameStats>();
+        public ICollection<GameStats>? GamesStats { get; set; } = new List<GameStats>();
     }
 }

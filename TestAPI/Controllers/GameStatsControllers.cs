@@ -13,9 +13,9 @@ namespace WebAPI.Controllers
         {
             try
             {
-                Validation.ValidateList(new ApplicationContext().GameStats);
+                Validation.ValidateList(new ApplicationDbContext().GameStats);
 
-                return Ok(new ApplicationContext().GameStats.ToList());
+                return Ok(new ApplicationDbContext().GameStats.ToList());
             }
             catch (Exception ex)
             {
@@ -30,7 +30,7 @@ namespace WebAPI.Controllers
             {
                 Validation.ValidateGameStatsID(id);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     Game game = db.Game.Where(x => x.ID == id).First();
                     return Ok(game);
@@ -49,7 +49,7 @@ namespace WebAPI.Controllers
             {
                 Validation.ValidateGameStatsID(id);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     GameStats gameStats = db.GameStats.Where(x => x.ID == id).First();
                     db.GameStats.Remove(gameStats);
@@ -74,7 +74,7 @@ namespace WebAPI.Controllers
                 Validation.ValidateGottenAchievements(0, achGot);
                 Validation.ValidateHoursPlayed(0,hoursPlayed);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     GameStats gameStats = new GameStats
                     {
@@ -104,7 +104,7 @@ namespace WebAPI.Controllers
                 Validation.ValidateGameStatsID(id);
                 Validation.ValidateGameID(gameID);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     GameStats gameStats = db.GameStats.Where(x => x.ID == id).First();
                     gameStats.GameID = gameID;
@@ -126,7 +126,7 @@ namespace WebAPI.Controllers
                 Validation.ValidateGameStatsID(id);
                 Validation.ValidateUserID(userID);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     GameStats gameStats = db.GameStats.Where(x => x.ID == id).First();
                     gameStats.UserID = userID;
@@ -148,7 +148,7 @@ namespace WebAPI.Controllers
                 Validation.ValidateGameStatsID(id);
                 Validation.ValidateGottenAchievements(id, achGot);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     GameStats gameStats = db.GameStats.Where(x => x.ID == id).First();
                     gameStats.AchievementsGot = achGot;
@@ -170,7 +170,7 @@ namespace WebAPI.Controllers
                 Validation.ValidateGameStatsID(id);
                 Validation.ValidateHoursPlayed(id, hoursPlayed);
 
-                using (ApplicationContext db = new ApplicationContext())
+                using (ApplicationDbContext db = new ApplicationDbContext())
                 {
                     GameStats gameStats = db.GameStats.Where(x => x.ID == id).First();
                     gameStats.HoursPlayed = hoursPlayed;
