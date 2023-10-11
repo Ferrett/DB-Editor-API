@@ -7,7 +7,7 @@ namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("/User")]
-    public class UserControllers : Controller
+    public class UserController : Controller
     {
         [HttpGet("GetAll")]
         public IActionResult GetAll()

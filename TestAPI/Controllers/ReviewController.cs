@@ -6,7 +6,7 @@ namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("/Review")]
-    public class ReviewControllers : Controller
+    public class ReviewController : Controller
     {
         [HttpGet("GetAll")]
         public IActionResult GetAll()

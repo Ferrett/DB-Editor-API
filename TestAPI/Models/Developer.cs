@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using WebAPI.Logic;
 
 namespace WebAPI.Models
 {
@@ -13,9 +14,7 @@ namespace WebAPI.Models
         [MaxLength(50), MinLength(4)]
         public string Name { get; set; } = null!;
 
-        [Required]
-        [MinLength(5, ErrorMessage = "The Link is incorrect")]
-        public string LogoURL { get; set; } = null!;
+        public string? LogoURL { get; set; }
 
         [Required]
         public DateTime RegistrationDate { get; set; }

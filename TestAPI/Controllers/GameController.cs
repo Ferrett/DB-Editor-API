@@ -6,7 +6,7 @@ namespace WebAPI.Controllers
 {
     [ApiController]
     [Route("/Game")]
-    public class GameControllers : Controller
+    public class GameController : Controller
     {
         [HttpGet("GetAll")]
         public IActionResult GetAll()
