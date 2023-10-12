@@ -106,12 +106,12 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var match = await dbcontext.Game.FindAsync(id);
+                var game = await dbcontext.Game.FindAsync(id);
 
-                if (match == null)
+                if (game == null)
                     return NoContent();
 
-                dbcontext.Game.Remove(match);
+                dbcontext.Game.Remove(game);
                 await dbcontext.SaveChangesAsync();
 
                 return Ok();

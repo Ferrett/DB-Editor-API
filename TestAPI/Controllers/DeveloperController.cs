@@ -105,12 +105,12 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var match = await dbcontext.Developer.FindAsync(id);
+                var developer = await dbcontext.Developer.FindAsync(id);
 
-                if (match == null)
+                if (developer == null)
                     return NoContent();
 
-                dbcontext.Developer.Remove(match);
+                dbcontext.Developer.Remove(developer);
                 await dbcontext.SaveChangesAsync();
 
                 return Ok();
