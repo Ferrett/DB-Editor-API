@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
 using WebAPI.Models;
 using static System.Net.Mime.MediaTypeNames;
@@ -9,14 +10,19 @@ namespace WebAPI.Controllers
     [Route("/User")]
     public class UserController : Controller
     {
-        [HttpGet("GetAll")]
-        public IActionResult GetAll()
+        private readonly ApplicationDbContext dbcontext;
+
+        public UserController(ApplicationDbContext context)
+        {
+            dbcontext = context;
+        }
+
+        [HttpGet("GetUsers")]
+        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             try
             {
-                Validation.ValidateList(new ApplicationDbContext().User);
-
-                return Ok(new ApplicationDbContext().User.ToList());
+                return Ok(await dbcontext.User.ToListAsync());
             }
             catch (Exception ex)
             {
@@ -24,18 +30,18 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpGet("Get/{id:int}")]
-        public IActionResult Get(int id)
+
+        [HttpGet("GetUser/{id:int}")]
+        public async Task<ActionResult<User>> GetUser(int id)
         {
             try
             {
-                Validation.ValidateUserID(id);
+                var user = await dbcontext.User.FindAsync(id);
 
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    User user = db.User.Where(x => x.ID == id).First();
-                    return Ok(user);
-                }
+                if (user == null)
+                    return NoContent();
+
+                return Ok(user);
             }
             catch (Exception ex)
             {
@@ -43,20 +49,18 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpDelete("Delete/{id:int}")]
-        public IActionResult Delete(int id)
+        [HttpPost("PostUser")]
+        public async Task<ActionResult<User>> PostUser([FromBody] User user)
         {
             try
             {
-                Validation.ValidateUserID(id);
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    User user = db.User.Where(x => x.ID == id).First();
-                    db.User.Remove(user);
-                    db.SaveChanges();
-                    return Ok();
-                }
+                await dbcontext.User.AddAsync(user);
+                await dbcontext.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(PostUser), new { id = user.ID }, user);
             }
             catch (Exception ex)
             {
@@ -64,42 +68,33 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPost("Post/{login}/{password}/{nickname}")]
-        public IActionResult Post(string login, string password, string nickname, string? email = null, IFormFile? logo = null)
+        [HttpPut("PutUser/{id:int}")]
+        public async Task<ActionResult<User>> PutUser(int id, [FromBody] User User)
         {
             try
             {
-                Validation.ValidateLogin(login);
-                Validation.ValidatePassword(password);
-                Validation.ValidateNameLength(nickname);
-                Validation.ValidateEmail(email);
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    User user = new User
-                    {
-                        Login = login,
-                        PasswordHash = BCrypt.Net.BCrypt.HashPassword(password),
-                        Nickname = nickname,
-                        Email = email == null ? null : email,
-                        CreationDate = DateTime.UtcNow,
-                    };
+                if (id != User.ID)
+                    return BadRequest();
 
-                    if (logo == null)
-                    {
-                        user.AvatarURL = $"{S3Bucket.UserBucketUrl}{S3Bucket.DefaultLogoName}";
-                    }
-                    else
-                    {
-                        Guid guid = Guid.NewGuid();
-                        S3Bucket.AddObject(logo, S3Bucket.UserBucketPath, guid).Wait();
-                        user.AvatarURL = $"{S3Bucket.UserBucketUrl}{guid}";
-                    }
+                var userFromDb = await dbcontext.User.FindAsync(id);
 
-                    db.User.Add(user);
-                    db.SaveChanges();
-                    return Ok();
-                }
+                if (userFromDb == null)
+                    return NoContent();
+
+                userFromDb.Login = User.Login;
+                userFromDb.PasswordHash = User.PasswordHash;
+                userFromDb.Nickname = User.Nickname;
+                userFromDb.ProfilePictureURL = User.ProfilePictureURL;
+                userFromDb.Email = User.Email;
+                userFromDb.CreationDate = User.CreationDate;
+                userFromDb.GamesStats = User.GamesStats;
+
+                await dbcontext.SaveChangesAsync();
+
+                return Ok(userFromDb);
             }
             catch (Exception ex)
             {
@@ -107,124 +102,26 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutLogin/{id:int}/{login}")]
-        public IActionResult PutLogin(int id, string login)
+        [HttpDelete("DeleteUser/{id:int}")]
+        public async Task<ActionResult<User>> DeleteUser(int id)
         {
             try
             {
-                Validation.ValidateUserID(id);
-                Validation.ValidateLogin(login);
+                var user = await dbcontext.User.FindAsync(id);
 
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    User user = db.User.Where(x => x.ID == id).First();
-                    user.Login = login;
+                if (user == null)
+                    return NoContent();
 
-                    db.SaveChanges();
-                    return Ok();
-                }
+                dbcontext.User.Remove(user);
+                await dbcontext.SaveChangesAsync();
+
+                return Ok();
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
         }
-
-        [HttpPut("PutPassword/{id:int}/{password}")]
-        public IActionResult PutPassword(int id, string password)
-        {
-            try
-            {
-                Validation.ValidateUserID(id);
-                Validation.ValidatePassword(password);
-
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    User user = db.User.Where(x => x.ID == id).First();
-                    user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(password);
-
-                    db.SaveChanges();
-                    return Ok();
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPut("PutNickname/{id:int}/{nickname}")]
-        public IActionResult PutNickname(int id, string nickname)
-        {
-            try
-            {
-                Validation.ValidateUserID(id);
-                Validation.ValidateNameLength(nickname);
-
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    User user = db.User.Where(x => x.ID == id).First();
-                    user.Nickname = nickname;
-
-                    db.SaveChanges();
-                    return Ok();
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPut("PutEmail/{id:int}/{email}")]
-        public IActionResult PutEmail(int id, string email)
-        {
-            try
-            {
-                Validation.ValidateUserID(id);
-                Validation.ValidateEmail(email);
-
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    User user = db.User.Where(x => x.ID == id).First();
-                    user.Email = email;
-
-                    db.SaveChanges();
-                    return Ok();
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPut("PutLogo/{id:int}")]
-        public IActionResult PutLogo(int id, IFormFile logo)
-        {
-            try
-            {
-                Validation.ValidateUserID(id);
-
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    Guid guid = Guid.NewGuid();
-
-                    S3Bucket.AddObject(logo, S3Bucket.UserBucketPath, guid).Wait();
-                    S3Bucket.DeleteObject(db.User.Where(x => x.ID == id).First().AvatarURL, S3Bucket.UserBucketPath).Wait();
-
-                    User user = db.User.Where(x => x.ID == id).First();
-                    user.AvatarURL = $"{S3Bucket.UserBucketUrl}{guid}";
-                    db.SaveChanges();
-                    return Ok();
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
     }
 }
 

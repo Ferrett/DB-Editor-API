@@ -83,5 +83,39 @@ namespace WebAPI.Controllers
             }
         }
 
+        [HttpPost("UpdateUserProfilePicture")]
+        public async Task<ActionResult<FileUploadController>> UpdateUserProfilePicture(int userID, IFormFile? logo = null)
+        {
+            try
+            {
+                var user = await dbcontext.User.FindAsync(userID);
+
+                if (user == null)
+                    return NoContent();
+
+                if (logo == null)
+                {
+                    user.ProfilePictureURL = $"{S3Bucket.UserBucketUrl}{S3Bucket.DefaultLogoName}";
+                }
+                else
+                {
+                    Guid guid = Guid.NewGuid();
+
+                    S3Bucket.AddObject(logo, S3Bucket.UserBucketPath, guid).Wait();
+                    S3Bucket.DeleteObject(user.ProfilePictureURL!, S3Bucket.UserBucketPath).Wait();
+
+                    user.ProfilePictureURL = $"{S3Bucket.GameBucketUrl}{guid}";
+                }
+
+                await dbcontext.SaveChangesAsync();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
     }
 }
