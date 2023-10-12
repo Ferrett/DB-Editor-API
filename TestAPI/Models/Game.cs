@@ -13,21 +13,23 @@ namespace WebAPI.Models
         [MaxLength(25),MinLength(4)]
         public string Name { get; set; } = null!;
 
-        [Required]
-        public string LogoURL { get; set; } = null!;
+        public string? LogoURL { get; set; }
 
         [Required]
+        [Range(0.0, 1000)]
         public float Price { get; set; }
-
-        [Required]
-        public int DeveloperID { get; set; }
 
         [Required]
         public DateTime PublishDate { get; set; }
 
+        [Range(0.0, 1000)]
         public int AchievementsCount { get; set; }
 
+        [Required]
+        public int DeveloperID { get; set; }
+        public Developer Developer { get; set; } = null!;
+
         [JsonIgnore]
-        public virtual List<Review>? Reviews { get; set; } = new List<Review>();
+        public ICollection<Review>? Reviews { get; set; } = new List<Review>();
     }
 }
