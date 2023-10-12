@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
 using WebAPI.Models;
 
@@ -8,14 +9,19 @@ namespace WebAPI.Controllers
     [Route("/Review")]
     public class ReviewController : Controller
     {
-        [HttpGet("GetAll")]
-        public IActionResult GetAll()
+        private readonly ApplicationDbContext dbcontext;
+
+        public ReviewController(ApplicationDbContext context)
+        {
+            dbcontext = context;
+        }
+
+        [HttpGet("GetReviews")]
+        public async Task<ActionResult<IEnumerable<Review>>> GetReviews()
         {
             try
             {
-                Validation.ValidateList(new ApplicationDbContext().Review);
-
-                return Ok(new ApplicationDbContext().Review.ToList());
+                return Ok(await dbcontext.Review.ToListAsync());
             }
             catch (Exception ex)
             {
@@ -23,18 +29,17 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpGet("Get/{id:int}")]
-        public IActionResult Get(int id)
+        [HttpGet("GetReview/{id:int}")]
+        public async Task<ActionResult<Review>> GetReview(int id)
         {
             try
             {
-                Validation.ValidateReviewID(id);
+                var review = await dbcontext.Review.FindAsync(id);
 
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    Review rev = db.Review.Where(x => x.ID == id).First();
-                    return Ok(rev);
-                }
+                if (review == null)
+                    return NoContent();
+
+                return Ok(review);
             }
             catch (Exception ex)
             {
@@ -42,20 +47,18 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpDelete("Delete/{id:int}")]
-        public IActionResult Delete(int id)
+        [HttpPost("PostReview")]
+        public async Task<ActionResult<Review>> PostReview([FromBody] Review review)
         {
             try
             {
-                Validation.ValidateReviewID(id);
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    Review rev = db.Review.Where(x => x.ID == id).First();
-                    db.Review.Remove(rev);
-                    db.SaveChanges();
-                    return Ok();
-                }
+                await dbcontext.Review.AddAsync(review);
+                await dbcontext.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(PostReview), new { id = review.ID }, review);
             }
             catch (Exception ex)
             {
@@ -63,32 +66,34 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPost("Post/{isPostive:bool}/{gameID:int}/{userID:int}")]
-        public IActionResult Post(bool isPostive, int userID, int gameID, string? text = null)
+        [HttpPut("PutReview/{id:int}")]
+        public async Task<ActionResult<Review>> PutReview(int id, [FromBody] Review review)
         {
             try
             {
-                Validation.IsReviewExists(userID, gameID);
-                Validation.ValidateUserID(userID);
-                Validation.ValidateGameID(gameID);
-                Validation.ValidateReviewText(text);
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    Review rev = new Review
-                    {
-                        Text = text == null? null:text,
-                        IsPositive = isPostive,
-                        GameID = gameID,
-                        UserID = userID,
-                        CreationDate = DateTime.UtcNow,
-                        LastEditDate= DateTime.UtcNow,
-                    };
+                if (id != review.ID)
+                    return BadRequest();
 
-                    db.Review.Add(rev);
-                    db.SaveChanges();
-                    return Ok();
-                }
+                var reviewFromDB = await dbcontext.Review.FindAsync(id);
+
+                if (reviewFromDB == null)
+                    return NoContent();
+
+                reviewFromDB.Text = review.Text;
+                reviewFromDB.IsPositive = review.IsPositive;
+                reviewFromDB.CreationDate = review.CreationDate;
+                reviewFromDB.LastEditDate = review.LastEditDate;
+                reviewFromDB.GameID = review.GameID;
+                reviewFromDB.Game = review.Game;
+                reviewFromDB.UserID = review.UserID;
+                reviewFromDB.User = review.User;
+
+                await dbcontext.SaveChangesAsync();
+
+                return Ok(reviewFromDB);
             }
             catch (Exception ex)
             {
@@ -96,92 +101,20 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutUser/{id:int}/{userID:int}")]
-        public IActionResult PutUser(int id, int userID)
+        [HttpDelete("DeleteReview/{id:int}")]
+        public async Task<ActionResult<Review>> DeleteReview(int id)
         {
             try
             {
-                Validation.ValidateReviewID(id);
-                Validation.ValidateUserID(userID);
+                var review = await dbcontext.Review.FindAsync(id);
 
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    Review rev = db.Review.Where(x => x.ID == id).First();
-                    rev.UserID = userID;
-                    db.SaveChanges();
+                if (review == null)
+                    return NoContent();
 
-                    return Ok();
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+                dbcontext.Review.Remove(review);
+                await dbcontext.SaveChangesAsync();
 
-        [HttpPut("PutGame/{id:int}/{gameID:int}")]
-        public IActionResult PutGame(int id, int gameID)
-        {
-            try
-            {
-                Validation.ValidateReviewID(id);
-                Validation.ValidateGameID(gameID);
-
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    Review rev = db.Review.Where(x => x.ID == id).First();
-                    rev.GameID = gameID;
-                    db.SaveChanges();
-
-                    return Ok();
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPut("PutText/{id:int}")]
-        public IActionResult PutText(int id, string? text=null)
-        {
-            try
-            {
-                Validation.ValidateReviewID(id);
-                Validation.ValidateReviewText(text);
-
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    Review rev = db.Review.Where(x => x.ID == id).First();
-                    rev.Text = text == null ? DBNull.Value.ToString() : text;
-                    rev.LastEditDate = DateTime.UtcNow;
-                    db.SaveChanges();
-                    return Ok();
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPut("PutApproval/{id:int}/{isPositive:bool}")]
-        public IActionResult PutApproval(int id, bool isPositive)
-        {
-            try
-            {
-                Validation.ValidateReviewID(id);
-                Validation.ValidateReviewApproval(id, isPositive);
-
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    Review rev = db.Review.Where(x => x.ID == id).First();
-                    rev.IsPositive = isPositive;
-                    rev.LastEditDate = DateTime.UtcNow;
-                    db.SaveChanges();
-
-                    return Ok();
-                }
+                return Ok();
             }
             catch (Exception ex)
             {
