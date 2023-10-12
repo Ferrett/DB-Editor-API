@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
 using WebAPI.Models;
 
@@ -8,14 +9,19 @@ namespace WebAPI.Controllers
     [Route("/Game")]
     public class GameController : Controller
     {
-        [HttpGet("GetAll")]
-        public IActionResult GetAll()
+        private readonly ApplicationDbContext dbcontext;
+
+        public GameController(ApplicationDbContext context)
+        {
+            dbcontext = context;
+        }
+
+        [HttpGet("GetGames")]
+        public async Task<ActionResult<IEnumerable<Game>>> GetGames()
         {
             try
             {
-                Validation.ValidateList(new ApplicationDbContext().Game);
-
-                return Ok(new ApplicationDbContext().Game.ToList());
+                return Ok(await dbcontext.Game.ToListAsync());
             }
             catch (Exception ex)
             {
@@ -23,18 +29,17 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpGet("Get/{id:int}")]
-        public IActionResult Get(int id)
+        [HttpGet("GetGame/{id:int}")]
+        public async Task<ActionResult<Game>> GetGame(int id)
         {
             try
             {
-                Validation.ValidateGameID(id);
+                var game = await dbcontext.Game.FindAsync(id);
 
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    Game game = db.Game.Where(x => x.ID == id).First();
-                    return Ok(game);
-                }
+                if (game == null)
+                    return NoContent();
+
+                return Ok(game);
             }
             catch (Exception ex)
             {
@@ -42,20 +47,18 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpDelete("Delete/{id:int}")]
-        public IActionResult Delete(int id)
+        [HttpPost("PostGame")]
+        public async Task<ActionResult<Game>> PostGame([FromBody] Game game)
         {
             try
             {
-                Validation.ValidateGameID(id);
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    Game game = db.Game.Where(x => x.ID == id).First();
-                    db.Game.Remove(game);
-                    db.SaveChanges();
-                    return Ok();
-                }
+                await dbcontext.Game.AddAsync(game);
+                await dbcontext.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(PostGame), new { id = game.ID }, game);
             }
             catch (Exception ex)
             {
@@ -63,43 +66,34 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPost("Post/{name}/{price:float}/{devID:int}")]
-        public IActionResult Post(string name, float price, int devID, int achCount = 0, IFormFile? logo = null)
+        [HttpPut("PutGame/{id:int}")]
+        public async Task<ActionResult<Game>> PutGame(int id, [FromBody] Game game)
         {
             try
             {
-                Validation.ValidateGameName(name);
-                Validation.ValidateGamePrice(price);
-                Validation.ValidateDeveloperID(devID);
-                Validation.ValidateAchievementsCount(achCount);
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
 
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    Game game = new Game
-                    {
-                        Name = name,
-                       
-                        Price = price,
-                        DeveloperID = devID,
-                        AchievementsCount = achCount,
-                        PublishDate = DateTime.UtcNow
-                    };
+                if (id != game.ID)
+                    return BadRequest();
 
-                    if (logo == null)
-                    {
-                        game.LogoURL = $"{S3Bucket.GameBucketUrl}{S3Bucket.DefaultLogoName}";
-                    }
-                    else
-                    {
-                        Guid guid = Guid.NewGuid();
-                        S3Bucket.AddObject(logo, S3Bucket.GameBucketPath, guid).Wait();
-                        game.LogoURL = $"{S3Bucket.GameBucketUrl}{guid}";
-                    }
+                var gameFromDb = await dbcontext.Game.FindAsync(id);
 
-                    db.Game.Add(game);
-                    db.SaveChanges();
-                    return Ok();
-                }
+                if (gameFromDb == null)
+                    return NoContent();
+
+                gameFromDb.Name = game.Name;
+                gameFromDb.LogoURL = game.LogoURL;
+                gameFromDb.Price = game.Price;
+                gameFromDb.PublishDate= game.PublishDate;
+                gameFromDb.AchievementsCount= game.AchievementsCount;
+                gameFromDb.DeveloperID= game.DeveloperID;
+                gameFromDb.Developer= game.Developer;
+                gameFromDb.Reviews= game.Reviews;
+
+                await dbcontext.SaveChangesAsync();
+
+                return Ok(gameFromDb);
             }
             catch (Exception ex)
             {
@@ -107,115 +101,20 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutDeveloper/{id:int}/{developerID:int}")]
-        public IActionResult PutDeveloper(int id, int developerID)
+        [HttpDelete("DeleteGame/{id:int}")]
+        public async Task<ActionResult<Game>> DeleteGame(int id)
         {
             try
             {
-                Validation.ValidateGameID(id);
-                Validation.ValidateDeveloperID(developerID);
+                var match = await dbcontext.Game.FindAsync(id);
 
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    Game game = db.Game.Where(x => x.ID == id).First();
-                    game.DeveloperID = developerID;
-                    db.SaveChanges();
-                    return Ok();
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+                if (match == null)
+                    return NoContent();
 
-        [HttpPut("PutAchievementsCount/{id:int}/{achCount:int}")]
-        public IActionResult PutAchievementsCount(int id, int achCount)
-        {
-            try
-            {
-                Validation.ValidateGameID(id);
-                Validation.ValidateAchievementsCount(achCount);
+                dbcontext.Game.Remove(match);
+                await dbcontext.SaveChangesAsync();
 
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    Game game = db.Game.Where(x => x.ID == id).First();
-                    game.AchievementsCount = achCount;
-                    db.SaveChanges();
-                    return Ok();
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPut("PutPrice/{id:int}/{price:float}")]
-        public IActionResult PutPrice(int id, float price)
-        {
-            try
-            {
-                Validation.ValidateGameID(id);
-                Validation.ValidateGamePrice(price);
-
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    Game game = db.Game.Where(x => x.ID == id).First();
-                    game.Price = price;
-                    db.SaveChanges();
-                    return Ok();
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPut("PutName/{id:int}/{name}")]
-        public IActionResult PutName(int id, string name)
-        {
-            try
-            {
-                Validation.ValidateGameID(id);
-                Validation.ValidateGameName(name);
-
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    Validation.ValidateGameID(id);
-
-                    Game game = db.Game.Where(x => x.ID == id).First();
-                    game.Name = name;
-                    db.SaveChanges();
-                    return Ok();
-                }
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPut("PutLogo/{id:int}")]
-        public IActionResult PutLogo(int id, IFormFile logo)
-        {
-            try
-            {
-                Validation.ValidateGameID(id);
-
-                using (ApplicationDbContext db = new ApplicationDbContext())
-                {
-                    Guid guid = Guid.NewGuid();
-
-                    S3Bucket.AddObject(logo, S3Bucket.GameBucketPath, guid).Wait();
-                    S3Bucket.DeleteObject(db.Game.Where(x => x.ID == id).First().LogoURL, S3Bucket.GameBucketPath).Wait();
-
-                    Game game = db.Game.Where(x => x.ID == id).First();
-                    game.LogoURL = $"{S3Bucket.GameBucketUrl}{guid}";
-                    db.SaveChanges();
-                    return Ok();
-                }
+                return Ok();
             }
             catch (Exception ex)
             {

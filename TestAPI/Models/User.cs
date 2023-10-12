@@ -20,9 +20,7 @@ namespace WebAPI.Models
         [StringLength(30, ErrorMessage = "{0} must be between {2} and {1} characters long.", MinimumLength = 1)]
         public string Nickname { get; set; } = null!;
 
-        [Required]
-        [MinLength(5, ErrorMessage = "The Link is incorrect")]
-        public string AvatarURL { get; set; } = null!;
+        public string? AvatarURL { get; set; } 
 
         [StringLength(30, ErrorMessage = "{0} must be between {2} and {1} characters long.", MinimumLength = 1)]
         public string? Email { get; set; }

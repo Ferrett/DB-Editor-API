@@ -13,9 +13,7 @@ namespace WebAPI.Models
         [MaxLength(25),MinLength(4)]
         public string Name { get; set; } = null!;
 
-        [Required]
-        [MinLength(5, ErrorMessage = "The Link is incorrect")]
-        public string LogoURL { get; set; } = null!;
+        public string? LogoURL { get; set; }
 
         [Required]
         [Range(0.0, 1000)]

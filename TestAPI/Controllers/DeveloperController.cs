@@ -31,7 +31,7 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpGet("GetDeveloper{id:int}")]
+        [HttpGet("GetDeveloper/{id:int}")]
         public async Task<ActionResult<Developer>> GetDeveloper(int id)
         {
             try
@@ -57,7 +57,7 @@ namespace WebAPI.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                dbcontext.Developer.Add(developer);
+                await dbcontext.Developer.AddAsync(developer);
                 await dbcontext.SaveChangesAsync();
 
                 return CreatedAtAction(nameof(PostDeveloper), new { id = developer.ID }, developer);
