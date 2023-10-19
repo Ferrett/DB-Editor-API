@@ -43,13 +43,13 @@ namespace WebAPI.Logic
             if (file == DefaultLogoName)
                 return;
 
-            var cock = new DeleteObjectRequest
+            var deleteObject = new DeleteObjectRequest
             {
                 BucketName = bucket,
                 Key = file
             };
 
-            await client.DeleteObjectAsync(cock);
+            await client.DeleteObjectAsync(deleteObject);
         }
     }
 }
