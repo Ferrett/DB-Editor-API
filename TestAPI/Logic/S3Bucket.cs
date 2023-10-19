@@ -6,19 +6,19 @@ namespace WebAPI.Logic
 {
     public static class S3Bucket
     {
-        private static readonly RegionEndpoint bucketRegion = RegionEndpoint.EUNorth1;
-
         private static IAmazonS3 client = new AmazonS3Client(bucketRegion);
 
-        public static string DeveloperBucketUrl = @"https://webapilogos.s3.eu-north-1.amazonaws.com/developer/";
-        public static string GameBucketUrl = @"https://webapilogos.s3.eu-north-1.amazonaws.com/game/";
-        public static string UserBucketUrl = @"https://webapilogos.s3.eu-north-1.amazonaws.com/user/";
+        private static readonly RegionEndpoint bucketRegion = RegionEndpoint.EUNorth1;
 
-        public static string DeveloperBucketPath = @"webapilogos/developer";
-        public static string GameBucketPath = @"webapilogos/game";
-        public static string UserBucketPath = @"webapilogos/user";
+        public const string DeveloperBucketUrl = @"https://webapilogos.s3.eu-north-1.amazonaws.com/developer/";
+        public const string GameBucketUrl = @"https://webapilogos.s3.eu-north-1.amazonaws.com/game/";
+        public const string UserBucketUrl = @"https://webapilogos.s3.eu-north-1.amazonaws.com/user/";
 
-        public static string DefaultLogoName = "dummy.png";
+        public const string DeveloperBucketPath = @"webapilogos/developer";
+        public const string GameBucketPath = @"webapilogos/game";
+        public const string UserBucketPath = @"webapilogos/user";
+
+        public const string DefaultLogoName = "dummy.png";
 
         public static async Task AddObject(IFormFile file, string bucket, Guid guid)
         {
@@ -43,13 +43,13 @@ namespace WebAPI.Logic
             if (file == DefaultLogoName)
                 return;
 
-            var cock = new DeleteObjectRequest
+            var deleteObject = new DeleteObjectRequest
             {
                 BucketName = bucket,
                 Key = file
             };
 
-            await client.DeleteObjectAsync(cock);
+            await client.DeleteObjectAsync(deleteObject);
         }
     }
 }
