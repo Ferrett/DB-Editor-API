@@ -9,10 +9,12 @@ namespace WebAPI.Controllers
     public class FileUploadController : Controller
     {
         private readonly ApplicationDbContext dbcontext;
+        private readonly IS3Bucket bucket;
 
-        public FileUploadController(ApplicationDbContext context)
+        public FileUploadController(ApplicationDbContext _context, IS3Bucket _bucket)
         {
-            dbcontext = context;
+            dbcontext = _context;
+            bucket = _bucket;
         }
 
         [HttpPost("UpdateDeveloperLogo")]
@@ -27,16 +29,16 @@ namespace WebAPI.Controllers
 
                 if (logo == null)
                 {
-                    developer.LogoURL = $"{S3Bucket.DeveloperBucketUrl}{S3Bucket.DefaultLogoName}";
+                    developer.LogoURL = $"{bucket.DeveloperBucketUrl}{bucket.DefaultLogoName}";
                 }
                 else
                 {
                     Guid guid = Guid.NewGuid();
 
-                    S3Bucket.AddObject(logo, S3Bucket.DeveloperBucketPath, guid).Wait();
-                    S3Bucket.DeleteObject(developer.LogoURL!, S3Bucket.DeveloperBucketPath).Wait();
+                    bucket.AddObject(logo, bucket.DeveloperBucketPath, guid).Wait();
+                    bucket.DeleteObject(developer.LogoURL!, bucket.DeveloperBucketPath).Wait();
 
-                    developer.LogoURL = $"{S3Bucket.DeveloperBucketUrl}{guid}";
+                    developer.LogoURL = $"{bucket.DeveloperBucketUrl}{guid}";
                 }
 
                 await dbcontext.SaveChangesAsync();
@@ -61,16 +63,16 @@ namespace WebAPI.Controllers
 
                 if (logo == null)
                 {
-                    game.LogoURL = $"{S3Bucket.GameBucketUrl}{S3Bucket.DefaultLogoName}";
+                    game.LogoURL = $"{bucket.GameBucketUrl}{bucket.DefaultLogoName}";
                 }
                 else
                 {
                     Guid guid = Guid.NewGuid();
 
-                    S3Bucket.AddObject(logo, S3Bucket.GameBucketPath, guid).Wait();
-                    S3Bucket.DeleteObject(game.LogoURL!, S3Bucket.GameBucketPath).Wait();
+                    bucket.AddObject(logo, bucket.GameBucketPath, guid).Wait();
+                    bucket.DeleteObject(game.LogoURL!, bucket.GameBucketPath).Wait();
 
-                    game.LogoURL = $"{S3Bucket.GameBucketUrl}{guid}";
+                    game.LogoURL = $"{bucket.GameBucketUrl}{guid}";
                 }
 
                 await dbcontext.SaveChangesAsync();
@@ -95,16 +97,16 @@ namespace WebAPI.Controllers
 
                 if (logo == null)
                 {
-                    user.ProfilePictureURL = $"{S3Bucket.UserBucketUrl}{S3Bucket.DefaultLogoName}";
+                    user.ProfilePictureURL = $"{bucket.UserBucketUrl}{bucket.DefaultLogoName}";
                 }
                 else
                 {
                     Guid guid = Guid.NewGuid();
 
-                    S3Bucket.AddObject(logo, S3Bucket.UserBucketPath, guid).Wait();
-                    S3Bucket.DeleteObject(user.ProfilePictureURL!, S3Bucket.UserBucketPath).Wait();
+                    bucket.AddObject(logo, bucket.UserBucketPath, guid).Wait();
+                    bucket.DeleteObject(user.ProfilePictureURL!, bucket.UserBucketPath).Wait();
 
-                    user.ProfilePictureURL = $"{S3Bucket.GameBucketUrl}{guid}";
+                    user.ProfilePictureURL = $"{bucket.GameBucketUrl}{guid}";
                 }
 
                 await dbcontext.SaveChangesAsync();
