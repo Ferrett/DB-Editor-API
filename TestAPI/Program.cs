@@ -16,6 +16,7 @@ builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddTransient<IS3Bucket, ImageUploadS3Bucket>();
 builder.Services.AddDbContext<ApplicationDbContext>();
 
 var app = builder.Build();
