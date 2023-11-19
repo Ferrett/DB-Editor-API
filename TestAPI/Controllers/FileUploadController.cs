@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WebAPI.Logic;
 using WebAPI.Models;
+using WebAPI.Services.S3Bucket;
 
 namespace WebAPI.Controllers
 {
@@ -23,22 +24,23 @@ namespace WebAPI.Controllers
             try
             {
                 var developer = await dbcontext.Developer.FindAsync(developerID);
+                DeveloperProfilePictureUpload developerProfilePictureUpload = new DeveloperProfilePictureUpload();
 
                 if (developer == null)
                     return NoContent();
 
                 if (logo == null)
                 {
-                    developer.LogoURL = $"{bucket.DeveloperBucketUrl}{bucket.DefaultLogoName}";
+                    developer.LogoURL = $"{developerProfilePictureUpload.BucketUrl}{developerProfilePictureUpload.Placeholder}";
                 }
                 else
                 {
                     Guid guid = Guid.NewGuid();
 
-                    bucket.AddObject(logo, bucket.DeveloperBucketPath, guid).Wait();
-                    bucket.DeleteObject(developer.LogoURL!, bucket.DeveloperBucketPath).Wait();
+                    bucket.AddObject(logo,  guid).Wait();
+                    bucket.DeleteObject(developer.LogoURL!).Wait();
 
-                    developer.LogoURL = $"{bucket.DeveloperBucketUrl}{guid}";
+                    developer.LogoURL = $"{developerProfilePictureUpload.BucketUrl}{guid}";
                 }
 
                 await dbcontext.SaveChangesAsync();
@@ -57,22 +59,23 @@ namespace WebAPI.Controllers
             try
             {
                 var game = await dbcontext.Game.FindAsync(gameID);
+                GameLogoUpload gameLogoUpload = new GameLogoUpload();
 
                 if (game == null)
                     return NoContent();
 
                 if (logo == null)
                 {
-                    game.LogoURL = $"{bucket.GameBucketUrl}{bucket.DefaultLogoName}";
+                    game.LogoURL = $"{gameLogoUpload.BucketUrl}{gameLogoUpload.Placeholder}";
                 }
                 else
                 {
                     Guid guid = Guid.NewGuid();
 
-                    bucket.AddObject(logo, bucket.GameBucketPath, guid).Wait();
-                    bucket.DeleteObject(game.LogoURL!, bucket.GameBucketPath).Wait();
+                    bucket.AddObject(logo, guid).Wait();
+                    bucket.DeleteObject(game.LogoURL!).Wait();
 
-                    game.LogoURL = $"{bucket.GameBucketUrl}{guid}";
+                    game.LogoURL = $"{gameLogoUpload.BucketUrl}{guid}";
                 }
 
                 await dbcontext.SaveChangesAsync();
@@ -91,22 +94,23 @@ namespace WebAPI.Controllers
             try
             {
                 var user = await dbcontext.User.FindAsync(userID);
-
+                UserProfilePictureUpload userProfilePictureUpload = new UserProfilePictureUpload();
+                
                 if (user == null)
                     return NoContent();
 
                 if (logo == null)
                 {
-                    user.ProfilePictureURL = $"{bucket.UserBucketUrl}{bucket.DefaultLogoName}";
+                    user.ProfilePictureURL = $"{userProfilePictureUpload.BucketUrl}{userProfilePictureUpload.Placeholder}";
                 }
                 else
                 {
                     Guid guid = Guid.NewGuid();
 
-                    bucket.AddObject(logo, bucket.UserBucketPath, guid).Wait();
-                    bucket.DeleteObject(user.ProfilePictureURL!, bucket.UserBucketPath).Wait();
+                    bucket.AddObject(logo, guid).Wait();
+                    bucket.DeleteObject(user.ProfilePictureURL!).Wait();
 
-                    user.ProfilePictureURL = $"{bucket.GameBucketUrl}{guid}";
+                    user.ProfilePictureURL = $"{userProfilePictureUpload.BucketUrl}{guid}";
                 }
 
                 await dbcontext.SaveChangesAsync();

@@ -3,8 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using WebAPI.Logic;
 using WebAPI.Models;
+using WebAPI.Services.S3Bucket;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,7 +19,13 @@ builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddTransient<IS3Bucket, ImageUploadS3Bucket>();
+
+builder.Services.Scan(scan => scan
+    .FromAssemblyOf<ImageUpload>()
+    .AddClasses(classes => classes.AssignableTo<IS3Bucket>())
+    .AsImplementedInterfaces()
+    .WithTransientLifetime());
+
 builder.Services.AddDbContext<ApplicationDbContext>();
 
 var app = builder.Build();
