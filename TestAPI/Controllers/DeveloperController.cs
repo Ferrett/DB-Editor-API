@@ -4,6 +4,8 @@ using System.Data;
 using System.Text.RegularExpressions;
 using WebAPI.Logic;
 using WebAPI.Models;
+using WebAPI.Services.Validation.DeveloperValidation;
+using WebAPI.Services.Validation.UserValidation;
 
 namespace WebAPI.Controllers
 {
@@ -12,10 +14,12 @@ namespace WebAPI.Controllers
     public class DeveloperController : Controller
     {
         private readonly ApplicationDbContext dbcontext;
+        private readonly IDeveloperValidation developerValidation;
 
-        public DeveloperController(ApplicationDbContext context)
+        public DeveloperController(ApplicationDbContext context, IDeveloperValidation _developerValidation)
         {
             dbcontext = context;
+            developerValidation = _developerValidation;
         }
 
         [HttpGet("GetDevelopers")]
@@ -50,17 +54,19 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("PostDeveloper")]
-        public async Task<ActionResult<Developer>> PostDeveloper([FromBody] Developer developer)
+        public async Task<ActionResult<Developer>> PostDeveloper([FromBody] Developer newDeveloper)
         {
             try
             {
+                developerValidation.Validate(newDeveloper, dbcontext.Developer, ModelState);
+
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                await dbcontext.Developer.AddAsync(developer);
+                await dbcontext.Developer.AddAsync(newDeveloper);
                 await dbcontext.SaveChangesAsync();
 
-                return CreatedAtAction(nameof(PostDeveloper), new { id = developer.ID }, developer);
+                return CreatedAtAction(nameof(PostDeveloper), new { id = newDeveloper.ID }, newDeveloper);
             }
             catch (Exception ex)
             {
@@ -69,25 +75,24 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("PutDeveloper/{id:int}")]
-        public async Task<ActionResult<Developer>> PutDeveloper(int id, [FromBody] Developer developer)
+        public async Task<ActionResult<Developer>> PutDeveloper(int id, [FromBody] Developer newDeveloper)
         {
             try
             {
+                developerValidation.Validate(newDeveloper, dbcontext.Developer, ModelState);
+
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
-
-                if (id != developer.ID)
-                    return BadRequest();
 
                 var developerFromDb = await dbcontext.Developer.FindAsync(id);
 
                 if (developerFromDb == null)
                     return NoContent();
 
-                developerFromDb.Name = developer.Name;
-                developerFromDb.LogoURL = developer.LogoURL;
-                developerFromDb.RegistrationDate = developer.RegistrationDate;
-                developerFromDb.PublishedGames = developer.PublishedGames;
+                developerFromDb.Name = newDeveloper.Name;
+                developerFromDb.LogoURL = newDeveloper.LogoURL;
+                developerFromDb.RegistrationDate = newDeveloper.RegistrationDate;
+                developerFromDb.PublishedGames = newDeveloper.PublishedGames;
 
                 await dbcontext.SaveChangesAsync();
 

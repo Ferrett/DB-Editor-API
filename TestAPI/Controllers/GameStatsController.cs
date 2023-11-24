@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
 using WebAPI.Models;
+using WebAPI.Services.Validation.GameStatsValidation;
+using WebAPI.Services.Validation.UserValidation;
 
 namespace WebAPI.Controllers
 {
@@ -10,10 +12,11 @@ namespace WebAPI.Controllers
     public class GameStatsController : Controller
     {
         private readonly ApplicationDbContext dbcontext;
-
-        public GameStatsController(ApplicationDbContext context)
+        private readonly IGameStatsValidation gameStatsValidation;
+        public GameStatsController(ApplicationDbContext context, IGameStatsValidation _gameStatsValidation)
         {
             dbcontext = context;
+            gameStatsValidation = _gameStatsValidation;
         }
 
         [HttpGet("GetGamesStats")]
@@ -48,17 +51,19 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("PostGameStats")]
-        public async Task<ActionResult<GameStats>> PostGameStats([FromBody] GameStats gameStats)
+        public async Task<ActionResult<GameStats>> PostGameStats([FromBody] GameStats newGameStats)
         {
             try
             {
+                gameStatsValidation.Validate(newGameStats, dbcontext.GameStats, ModelState);
+
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                await dbcontext.GameStats.AddAsync(gameStats);
+                await dbcontext.GameStats.AddAsync(newGameStats);
                 await dbcontext.SaveChangesAsync();
 
-                return CreatedAtAction(nameof(PostGameStats), new { id = gameStats.ID }, gameStats);
+                return CreatedAtAction(nameof(PostGameStats), new { id = newGameStats.ID }, newGameStats);
             }
             catch (Exception ex)
             {
@@ -67,28 +72,27 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("PutGameStats/{id:int}")]
-        public async Task<ActionResult<GameStats>> PutGameStats(int id, [FromBody] GameStats gameStats)
+        public async Task<ActionResult<GameStats>> PutGameStats(int id, [FromBody] GameStats newGameStats)
         {
             try
             {
+                gameStatsValidation.Validate(newGameStats, dbcontext.GameStats, ModelState);
+
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
-
-                if (id != gameStats.ID)
-                    return BadRequest();
 
                 var gameStatsFromDb = await dbcontext.GameStats.FindAsync(id);
 
                 if (gameStatsFromDb == null)
                     return NoContent();
 
-                gameStatsFromDb.UserID = gameStats.UserID;
-                gameStatsFromDb.User = gameStats.User;
-                gameStatsFromDb.GameID = gameStats.GameID;
-                gameStatsFromDb.Game = gameStats.Game;
-                gameStatsFromDb.HoursPlayed = gameStats.HoursPlayed;
-                gameStatsFromDb.AchievementsGot = gameStats.AchievementsGot;
-                gameStatsFromDb.PurchaseDate = gameStats.PurchaseDate;
+                gameStatsFromDb.UserID = newGameStats.UserID;
+                gameStatsFromDb.User = newGameStats.User;
+                gameStatsFromDb.GameID = newGameStats.GameID;
+                gameStatsFromDb.Game = newGameStats.Game;
+                gameStatsFromDb.HoursPlayed = newGameStats.HoursPlayed;
+                gameStatsFromDb.AchievementsGot = newGameStats.AchievementsGot;
+                gameStatsFromDb.PurchaseDate = newGameStats.PurchaseDate;
 
                 await dbcontext.SaveChangesAsync();
 

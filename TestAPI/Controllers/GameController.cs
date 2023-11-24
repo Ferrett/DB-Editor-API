@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
 using WebAPI.Models;
+using WebAPI.Services.Validation.GameValidation;
+using WebAPI.Services.Validation.UserValidation;
 
 namespace WebAPI.Controllers
 {
@@ -10,10 +12,12 @@ namespace WebAPI.Controllers
     public class GameController : Controller
     {
         private readonly ApplicationDbContext dbcontext;
+        private readonly IGameValidation gameValidation;
 
-        public GameController(ApplicationDbContext context)
+        public GameController(ApplicationDbContext context, IGameValidation _gameValidation)
         {
             dbcontext = context;
+            gameValidation = _gameValidation;
         }
 
         [HttpGet("GetGames")]
@@ -48,17 +52,19 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("PostGame")]
-        public async Task<ActionResult<Game>> PostGame([FromBody] Game game)
+        public async Task<ActionResult<Game>> PostGame([FromBody] Game newGame)
         {
             try
             {
+                gameValidation.Validate(newGame, dbcontext.Game, ModelState);
+
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                await dbcontext.Game.AddAsync(game);
+                await dbcontext.Game.AddAsync(newGame);
                 await dbcontext.SaveChangesAsync();
 
-                return CreatedAtAction(nameof(PostGame), new { id = game.ID }, game);
+                return CreatedAtAction(nameof(PostGame), new { id = newGame.ID }, newGame);
             }
             catch (Exception ex)
             {
@@ -67,29 +73,28 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("PutGame/{id:int}")]
-        public async Task<ActionResult<Game>> PutGame(int id, [FromBody] Game game)
+        public async Task<ActionResult<Game>> PutGame(int id, [FromBody] Game newGame)
         {
             try
             {
+                gameValidation.Validate(newGame, dbcontext.Game, ModelState);
+
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
-
-                if (id != game.ID)
-                    return BadRequest();
 
                 var gameFromDb = await dbcontext.Game.FindAsync(id);
 
                 if (gameFromDb == null)
                     return NoContent();
 
-                gameFromDb.Name = game.Name;
-                gameFromDb.LogoURL = game.LogoURL;
-                gameFromDb.Price = game.Price;
-                gameFromDb.PublishDate= game.PublishDate;
-                gameFromDb.AchievementsCount= game.AchievementsCount;
-                gameFromDb.DeveloperID= game.DeveloperID;
-                gameFromDb.Developer= game.Developer;
-                gameFromDb.Reviews= game.Reviews;
+                gameFromDb.Name = newGame.Name;
+                gameFromDb.LogoURL = newGame.LogoURL;
+                gameFromDb.Price = newGame.Price;
+                gameFromDb.PublishDate= newGame.PublishDate;
+                gameFromDb.AchievementsCount= newGame.AchievementsCount;
+                gameFromDb.DeveloperID= newGame.DeveloperID;
+                gameFromDb.Developer= newGame.Developer;
+                gameFromDb.Reviews= newGame.Reviews;
 
                 await dbcontext.SaveChangesAsync();
 

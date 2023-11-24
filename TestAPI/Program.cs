@@ -8,6 +8,12 @@ using WebAPI.Logic;
 using WebAPI.Models;
 using WebAPI.Services.S3Bucket;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Identity;
+using WebAPI.Services.Validation.UserValidation;
+using WebAPI.Services.Validation.DeveloperValidation;
+using WebAPI.Services.Validation.GameValidation;
+using WebAPI.Services.Validation.GameStatsValidation;
+using WebAPI.Services.Validation.ReviewValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +25,11 @@ builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<IUserValidation, UserValidation>();
+builder.Services.AddScoped<IDeveloperValidation, DeveloperValidation>();
+builder.Services.AddScoped<IGameValidation, GameValidation>();
+builder.Services.AddScoped<IReviewValidation, ReviewValidation>();
+builder.Services.AddScoped<IGameStatsValidation, GameStatsValidation>();
 
 builder.Services.Scan(scan => scan
     .FromAssemblyOf<ImageUpload>()

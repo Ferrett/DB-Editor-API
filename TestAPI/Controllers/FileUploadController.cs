@@ -2,6 +2,9 @@
 using WebAPI.Logic;
 using WebAPI.Models;
 using WebAPI.Services.S3Bucket;
+using WebAPI.Services.S3Bucket.Developer;
+using WebAPI.Services.S3Bucket.Game;
+using WebAPI.Services.S3Bucket.User;
 
 namespace WebAPI.Controllers
 {

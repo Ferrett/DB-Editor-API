@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
 using WebAPI.Models;
+using WebAPI.Services.Validation.ReviewValidation;
+using WebAPI.Services.Validation.UserValidation;
 
 namespace WebAPI.Controllers
 {
@@ -10,10 +12,11 @@ namespace WebAPI.Controllers
     public class ReviewController : Controller
     {
         private readonly ApplicationDbContext dbcontext;
-
-        public ReviewController(ApplicationDbContext context)
+        private readonly IReviewValidation reviewValidation;
+        public ReviewController(ApplicationDbContext context, IReviewValidation _reviewValidation)
         {
             dbcontext = context;
+            reviewValidation = _reviewValidation;
         }
 
         [HttpGet("GetReviews")]
@@ -48,17 +51,19 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("PostReview")]
-        public async Task<ActionResult<Review>> PostReview([FromBody] Review review)
+        public async Task<ActionResult<Review>> PostReview([FromBody] Review newReview)
         {
             try
             {
+                reviewValidation.Validate(newReview, dbcontext.Review, ModelState);
+
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                await dbcontext.Review.AddAsync(review);
+                await dbcontext.Review.AddAsync(newReview);
                 await dbcontext.SaveChangesAsync();
 
-                return CreatedAtAction(nameof(PostReview), new { id = review.ID }, review);
+                return CreatedAtAction(nameof(PostReview), new { id = newReview.ID }, newReview);
             }
             catch (Exception ex)
             {
@@ -67,29 +72,28 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("PutReview/{id:int}")]
-        public async Task<ActionResult<Review>> PutReview(int id, [FromBody] Review review)
+        public async Task<ActionResult<Review>> PutReview(int id, [FromBody] Review newReview)
         {
             try
             {
+                reviewValidation.Validate(newReview, dbcontext.Review, ModelState);
+
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
-
-                if (id != review.ID)
-                    return BadRequest();
 
                 var reviewFromDB = await dbcontext.Review.FindAsync(id);
 
                 if (reviewFromDB == null)
                     return NoContent();
 
-                reviewFromDB.Text = review.Text;
-                reviewFromDB.IsPositive = review.IsPositive;
-                reviewFromDB.CreationDate = review.CreationDate;
-                reviewFromDB.LastEditDate = review.LastEditDate;
-                reviewFromDB.GameID = review.GameID;
-                reviewFromDB.Game = review.Game;
-                reviewFromDB.UserID = review.UserID;
-                reviewFromDB.User = review.User;
+                reviewFromDB.Text = newReview.Text;
+                reviewFromDB.IsPositive = newReview.IsPositive;
+                reviewFromDB.CreationDate = newReview.CreationDate;
+                reviewFromDB.LastEditDate = newReview.LastEditDate;
+                reviewFromDB.GameID = newReview.GameID;
+                reviewFromDB.Game = newReview.Game;
+                reviewFromDB.UserID = newReview.UserID;
+                reviewFromDB.User = newReview.User;
 
                 await dbcontext.SaveChangesAsync();
 

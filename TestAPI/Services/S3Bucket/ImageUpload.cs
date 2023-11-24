@@ -1,4 +1,5 @@
 ﻿using Amazon;
+using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
 using Amazon.S3;
 using Amazon.S3.Model;
 
@@ -9,9 +10,8 @@ namespace WebAPI.Services.S3Bucket
         public static IAmazonS3 client = new AmazonS3Client(RegionEndpoint.EUNorth1);
         public string Placeholder { get; } = @"dummy.png";
         public string ContentType { get; } = @"image/png";
-
+        public string BucketName { get; } = @"webapilogos";
         public abstract string BucketUrl { get; }
-        public abstract string BucketPath { get; }
 
 
         public async Task AddObject(IFormFile file, Guid fileGuid)
@@ -21,7 +21,7 @@ namespace WebAPI.Services.S3Bucket
 
             var putObject = new PutObjectRequest
             {
-                BucketName = BucketPath,
+                BucketName = BucketName + new Uri(BucketUrl).AbsolutePath.TrimEnd('/'),
                 ContentType = ContentType,
                 Key = fileGuid.ToString(),
                 InputStream = ms,
@@ -39,7 +39,7 @@ namespace WebAPI.Services.S3Bucket
 
             var deleteObject = new DeleteObjectRequest
             {
-                BucketName = BucketPath,
+                BucketName = BucketName + new Uri(BucketUrl).AbsolutePath.TrimEnd('/'),
                 Key = file
             };
 
