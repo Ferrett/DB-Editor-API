@@ -1,7 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Amazon.S3.Model;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
 using WebAPI.Models;
+using WebAPI.Services.S3Bucket;
+using WebAPI.Services.S3Bucket.User;
+using WebAPI.Services.Validation.UserValidation;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace WebAPI.Controllers
@@ -11,10 +15,16 @@ namespace WebAPI.Controllers
     public class UserController : Controller
     {
         private readonly ApplicationDbContext dbcontext;
+        private readonly IUserValidation userValidation;
+        private readonly IS3Bucket bucket;
+        private readonly IConfiguration configuration;
 
-        public UserController(ApplicationDbContext context)
+        public UserController(ApplicationDbContext context, IS3Bucket _bucket, IUserValidation _userValidation, IConfiguration _configuration)
         {
             dbcontext = context;
+            userValidation = _userValidation;
+            bucket = _bucket;
+            configuration = _configuration;
         }
 
         [HttpGet("GetUsers")]
@@ -50,17 +60,19 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("PostUser")]
-        public async Task<ActionResult<User>> PostUser([FromBody] User user)
+        public async Task<ActionResult<User>> PostUser([FromBody] User newUser)
         {
             try
             {
+                userValidation.Validate(newUser,dbcontext.User.ToList(),ModelState);
+
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                await dbcontext.User.AddAsync(user);
+                await dbcontext.User.AddAsync(newUser);
                 await dbcontext.SaveChangesAsync();
 
-                return CreatedAtAction(nameof(PostUser), new { id = user.ID }, user);
+                return CreatedAtAction(nameof(PostUser), new { id = newUser.ID }, newUser);
             }
             catch (Exception ex)
             {
@@ -69,32 +81,67 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("PutUser/{id:int}")]
-        public async Task<ActionResult<User>> PutUser(int id, [FromBody] User User)
+        public async Task<ActionResult<User>> PutUser(int id, [FromBody] User newUser)
         {
             try
             {
+                userValidation.Validate(newUser, dbcontext.User.ToList(), ModelState);
+
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
-
-                if (id != User.ID)
-                    return BadRequest();
 
                 var userFromDb = await dbcontext.User.FindAsync(id);
 
                 if (userFromDb == null)
                     return NoContent();
 
-                userFromDb.Login = User.Login;
-                userFromDb.PasswordHash = User.PasswordHash;
-                userFromDb.Nickname = User.Nickname;
-                userFromDb.ProfilePictureURL = User.ProfilePictureURL;
-                userFromDb.Email = User.Email;
-                userFromDb.CreationDate = User.CreationDate;
-                userFromDb.GamesStats = User.GamesStats;
+                userFromDb.Login = newUser.Login;
+                userFromDb.PasswordHash = newUser.PasswordHash;
+                userFromDb.Nickname = newUser.Nickname;
+                userFromDb.ProfilePictureURL = newUser.ProfilePictureURL;
+                userFromDb.Email = newUser.Email;
+                userFromDb.CreationDate = newUser.CreationDate;
+                userFromDb.GamesStats = newUser.GamesStats;
 
                 await dbcontext.SaveChangesAsync();
 
                 return Ok(userFromDb);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("PutProfilePicture/{id:int}")]
+        public async Task<ActionResult<User>> PutProfilePicture(int id, IFormFile? logo = null)
+        {
+            try
+            {
+               UserProfilePictureUpload userProfilePictureUpload = new UserProfilePictureUpload(configuration);
+
+                var user = await dbcontext.User.FindAsync(id);
+
+                if (user == null)
+                    return NoContent();
+
+                if (logo == null)
+                {
+                    user.ProfilePictureURL = $"{userProfilePictureUpload.BucketUrl}{userProfilePictureUpload.Placeholder}";
+                }
+                else
+                {
+                    Guid guid = Guid.NewGuid();
+
+                    bucket.AddObject(logo, guid).Wait();
+                    bucket.DeleteObject(user.ProfilePictureURL!).Wait();
+
+                    user.ProfilePictureURL = $"{userProfilePictureUpload.BucketUrl}{guid}";
+                }
+
+                await dbcontext.SaveChangesAsync();
+
+                return Ok();
             }
             catch (Exception ex)
             {
