@@ -2,6 +2,11 @@
 {
     public class GameLogoUpload : ImageUpload
     {
-        public override string BucketUrl { get => @"https://webapilogos.s3.eu-north-1.amazonaws.com/game/"; }
+        public override string BucketUrl { get; }
+
+        public GameLogoUpload(IConfiguration configuration)
+        {
+            BucketUrl = configuration.GetValue<string>("ApiLinks:GameUrl");
+        }
     }
 }

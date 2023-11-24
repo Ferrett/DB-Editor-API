@@ -1,7 +1,14 @@
-﻿namespace WebAPI.Services.S3Bucket.Developer
+﻿using System.Configuration;
+
+namespace WebAPI.Services.S3Bucket.Developer
 {
     public class DeveloperProfilePictureUpload : ImageUpload
     {
-        public override string BucketUrl { get => @"https://webapilogos.s3.eu-north-1.amazonaws.com/developer/"; }
+        public override string BucketUrl { get; }
+
+        public DeveloperProfilePictureUpload(IConfiguration configuration)
+        {
+            BucketUrl = configuration.GetValue<string>("ApiLinks:DeveloperUrl");
+        }
     }
 }

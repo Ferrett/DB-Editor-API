@@ -6,10 +6,10 @@ namespace WebAPI.Services.Validation.DeveloperValidation
 {
     public class DeveloperValidation : IDeveloperValidation
     {
-        public void Validate(Developer newDeveloper, DbSet<Developer> developers, ModelStateDictionary modelState)
+        public void Validate(Developer newDeveloper, List<Developer> developers, ModelStateDictionary modelState)
         {
             if (IsAllLettersOrDigits(newDeveloper.Name) == false)
-                modelState.AddModelError("NameLettersOrDigits", $"Developer name can contain only latin letters or digits");
+                modelState.AddModelError("NameLettersOrDigits", "Developer name can contain only latin letters or digits");
 
             if (developers.Where(x => x.Name.ToLower() == newDeveloper.Name.ToLower()).Any())
                 modelState.AddModelError("NameAlreadyExists", $"Developer with name {newDeveloper.Name} already exists");

@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Amazon.S3.Model;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
 using WebAPI.Models;
 using WebAPI.Services.S3Bucket;
+using WebAPI.Services.S3Bucket.User;
 using WebAPI.Services.Validation.UserValidation;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -14,11 +16,15 @@ namespace WebAPI.Controllers
     {
         private readonly ApplicationDbContext dbcontext;
         private readonly IUserValidation userValidation;
+        private readonly IS3Bucket bucket;
+        private readonly IConfiguration configuration;
 
-        public UserController(ApplicationDbContext context, IUserValidation _userValidation)
+        public UserController(ApplicationDbContext context, IS3Bucket _bucket, IUserValidation _userValidation, IConfiguration _configuration)
         {
             dbcontext = context;
             userValidation = _userValidation;
+            bucket = _bucket;
+            configuration = _configuration;
         }
 
         [HttpGet("GetUsers")]
@@ -58,7 +64,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                userValidation.Validate(newUser,dbcontext.User,ModelState);
+                userValidation.Validate(newUser,dbcontext.User.ToList(),ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -79,7 +85,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                userValidation.Validate(newUser, dbcontext.User, ModelState);
+                userValidation.Validate(newUser, dbcontext.User.ToList(), ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -100,6 +106,42 @@ namespace WebAPI.Controllers
                 await dbcontext.SaveChangesAsync();
 
                 return Ok(userFromDb);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("PutProfilePicture/{id:int}")]
+        public async Task<ActionResult<User>> PutProfilePicture(int id, IFormFile? logo = null)
+        {
+            try
+            {
+               UserProfilePictureUpload userProfilePictureUpload = new UserProfilePictureUpload(configuration);
+
+                var user = await dbcontext.User.FindAsync(id);
+
+                if (user == null)
+                    return NoContent();
+
+                if (logo == null)
+                {
+                    user.ProfilePictureURL = $"{userProfilePictureUpload.BucketUrl}{userProfilePictureUpload.Placeholder}";
+                }
+                else
+                {
+                    Guid guid = Guid.NewGuid();
+
+                    bucket.AddObject(logo, guid).Wait();
+                    bucket.DeleteObject(user.ProfilePictureURL!).Wait();
+
+                    user.ProfilePictureURL = $"{userProfilePictureUpload.BucketUrl}{guid}";
+                }
+
+                await dbcontext.SaveChangesAsync();
+
+                return Ok();
             }
             catch (Exception ex)
             {

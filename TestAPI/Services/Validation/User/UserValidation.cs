@@ -7,10 +7,10 @@ namespace WebAPI.Services.Validation.UserValidation
 {
     public class UserValidation : IUserValidation
     {
-        public void Validate(User newUser, DbSet<User> users, ModelStateDictionary modelState)
+        public void Validate(User newUser, List<User> users, ModelStateDictionary modelState)
         {
             if (IsAllLettersOrDigits(newUser.Login) == false)
-                modelState.AddModelError("LoginLettersOrDigits", $"Login can contain only latin letters or digits");
+                modelState.AddModelError("LoginLettersOrDigits", "Login can contain only latin letters or digits");
 
             if (users.Where(x => x.Login.ToLower() == newUser.Login.ToLower()).Any())
                 modelState.AddModelError("LoginAlreadyExists", $"User with login {newUser.Login} already exists");

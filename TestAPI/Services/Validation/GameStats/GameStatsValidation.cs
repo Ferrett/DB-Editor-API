@@ -6,7 +6,7 @@ namespace WebAPI.Services.Validation.GameStatsValidation
 {
     public class GameStatsValidation : IGameStatsValidation
     {
-        public void Validate(GameStats newGameStats, DbSet<GameStats> gamesStats, ModelStateDictionary modelState)
+        public void Validate(GameStats newGameStats, List<GameStats> gamesStats, ModelStateDictionary modelState)
         {
             if (gamesStats.Where(x => x.UserID == newGameStats.UserID && x.GameID == newGameStats.GameID).Any())
                 modelState.AddModelError("AlreadyExists", "This games statistics already exists");

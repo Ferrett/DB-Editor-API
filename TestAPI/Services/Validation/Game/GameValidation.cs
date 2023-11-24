@@ -6,10 +6,10 @@ namespace WebAPI.Services.Validation.GameValidation
 {
     public class GameValidation : IGameValidation
     {
-        public void Validate(Game newGame, DbSet<Game> games, ModelStateDictionary modelState)
+        public void Validate(Game newGame, List<Game> games, ModelStateDictionary modelState)
         {
             if (IsAllLettersOrDigits(newGame.Name) == false)
-                modelState.AddModelError("NameLettersOrDigits", $"Game name can contain only latin letters or digits");
+                modelState.AddModelError("NameLettersOrDigits", "Game name can contain only latin letters or digits");
 
             if (games.Where(x => x.Name.ToLower() == newGame.Name.ToLower()).Any())
                 modelState.AddModelError("AlreadyExists", $"Game with name {newGame.Name} already exists");

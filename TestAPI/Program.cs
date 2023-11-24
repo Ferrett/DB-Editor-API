@@ -25,11 +25,7 @@ builder.Services.AddAWSLambdaHosting(LambdaEventSource.HttpApi);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IUserValidation, UserValidation>();
-builder.Services.AddScoped<IDeveloperValidation, DeveloperValidation>();
-builder.Services.AddScoped<IGameValidation, GameValidation>();
-builder.Services.AddScoped<IReviewValidation, ReviewValidation>();
-builder.Services.AddScoped<IGameStatsValidation, GameStatsValidation>();
+builder.Services.AddDbContext<ApplicationDbContext>();
 
 builder.Services.Scan(scan => scan
     .FromAssemblyOf<ImageUpload>()
@@ -37,7 +33,13 @@ builder.Services.Scan(scan => scan
     .AsImplementedInterfaces()
     .WithTransientLifetime());
 
-builder.Services.AddDbContext<ApplicationDbContext>();
+builder.Services.AddScoped<IUserValidation, UserValidation>();
+builder.Services.AddScoped<IDeveloperValidation, DeveloperValidation>();
+builder.Services.AddScoped<IGameValidation, GameValidation>();
+builder.Services.AddScoped<IReviewValidation, ReviewValidation>();
+builder.Services.AddScoped<IGameStatsValidation, GameStatsValidation>();
+
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
 var app = builder.Build();
 
