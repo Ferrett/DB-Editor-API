@@ -4,7 +4,7 @@
 
 namespace WebAPI.Migrations
 {
-    public partial class UserUpd : Migration
+    public partial class Upd999 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

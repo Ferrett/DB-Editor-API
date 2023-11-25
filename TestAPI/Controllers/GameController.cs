@@ -62,10 +62,13 @@ namespace WebAPI.Controllers
         {
             try
             {
-                gameValidation.Validate(newGame, dbcontext.Game.ToList(), ModelState);
+                gameValidation.Validate(newGame, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
+
+                GameLogoUpload gameLogoUpload = new GameLogoUpload(configuration);
+                newGame.LogoURL = $"{gameLogoUpload.BucketUrl}{gameLogoUpload.Placeholder}";
 
                 await dbcontext.Game.AddAsync(newGame);
                 await dbcontext.SaveChangesAsync();
@@ -83,7 +86,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                gameValidation.Validate(newGame, dbcontext.Game.ToList(), ModelState);
+                gameValidation.Validate(newGame,  ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -96,11 +99,11 @@ namespace WebAPI.Controllers
                 gameFromDb.Name = newGame.Name;
                 gameFromDb.LogoURL = newGame.LogoURL;
                 gameFromDb.Price = newGame.Price;
-                gameFromDb.PublishDate= newGame.PublishDate;
-                gameFromDb.AchievementsCount= newGame.AchievementsCount;
-                gameFromDb.DeveloperID= newGame.DeveloperID;
-                gameFromDb.Developer= newGame.Developer;
-                gameFromDb.Reviews= newGame.Reviews;
+                gameFromDb.PublishDate = newGame.PublishDate;
+                gameFromDb.AchievementsCount = newGame.AchievementsCount;
+                gameFromDb.DeveloperID = newGame.DeveloperID;
+                gameFromDb.Developer = newGame.Developer;
+                gameFromDb.Reviews = newGame.Reviews;
 
                 await dbcontext.SaveChangesAsync();
 
@@ -112,8 +115,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutLogo/{id:int}")]
-        public async Task<ActionResult<Game>> PutLogo(int id, IFormFile? logo = null)
+        [HttpPut("PutGameLogo/{id:int}")]
+        public async Task<ActionResult<Game>> PutGameLogo(int id, IFormFile? logo = null)
         {
             try
             {
@@ -124,18 +127,20 @@ namespace WebAPI.Controllers
                 if (game == null)
                     return NoContent();
 
+                if (game.LogoURL != $"{gameLogoUpload.BucketUrl}{gameLogoUpload.Placeholder}")
+                    await gameLogoUpload.DeleteObject(game.LogoURL!);
+
                 if (logo == null)
                 {
                     game.LogoURL = $"{gameLogoUpload.BucketUrl}{gameLogoUpload.Placeholder}";
                 }
                 else
                 {
-                    Guid guid = Guid.NewGuid();
+                    Guid newLogoGuid = Guid.NewGuid();
 
-                    bucket.AddObject(logo, guid).Wait();
-                    bucket.DeleteObject(game.LogoURL!).Wait();
-
-                    game.LogoURL = $"{gameLogoUpload.BucketUrl}{guid}";
+                    await gameLogoUpload.AddObject(logo, newLogoGuid);
+              
+                    game.LogoURL = $"{gameLogoUpload.BucketUrl}{newLogoGuid}";
                 }
 
                 await dbcontext.SaveChangesAsync();

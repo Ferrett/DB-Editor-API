@@ -55,7 +55,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                reviewValidation.Validate(newReview, dbcontext.Review.ToList(), ModelState);
+                reviewValidation.Validate(newReview, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -76,7 +76,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                reviewValidation.Validate(newReview, dbcontext.Review.ToList(), ModelState);
+                reviewValidation.Validate(newReview,  ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);

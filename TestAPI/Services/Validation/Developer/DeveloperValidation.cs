@@ -1,18 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
+using WebAPI.Logic;
 using WebAPI.Models;
 
 namespace WebAPI.Services.Validation.DeveloperValidation
 {
     public class DeveloperValidation : IDeveloperValidation
     {
-        public void Validate(Developer newDeveloper, List<Developer> developers, ModelStateDictionary modelState)
+        private readonly ApplicationDbContext dbcontext;
+        public DeveloperValidation(ApplicationDbContext context)
+        {
+            dbcontext = context;
+        }
+        public void Validate(Developer newDeveloper,  ModelStateDictionary modelState)
         {
             if (IsAllLettersOrDigits(newDeveloper.Name) == false)
                 modelState.AddModelError("NameLettersOrDigits", "Developer name can contain only latin letters or digits");
 
-            if (developers.Where(x => x.Name.ToLower() == newDeveloper.Name.ToLower()).Any())
-                modelState.AddModelError("NameAlreadyExists", $"Developer with name {newDeveloper.Name} already exists");
+            if (dbcontext.Developer.Any(x => x.Name.ToLower() == newDeveloper.Name.ToLower()))
+                modelState.AddModelError("NameAlreadyExists", $"Developer with name \"{newDeveloper.Name}\" already exists");
         }
 
         public bool IsAllLettersOrDigits(string str)

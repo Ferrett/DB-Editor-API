@@ -64,10 +64,13 @@ namespace WebAPI.Controllers
         {
             try
             {
-                userValidation.Validate(newUser,dbcontext.User.ToList(),ModelState);
+                userValidation.Validate(newUser,  ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
+
+                UserProfilePictureUpload userPfpUpload = new UserProfilePictureUpload(configuration);
+                newUser.ProfilePictureURL = $"{userPfpUpload.BucketUrl}{userPfpUpload.Placeholder}";
 
                 await dbcontext.User.AddAsync(newUser);
                 await dbcontext.SaveChangesAsync();
@@ -85,7 +88,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                userValidation.Validate(newUser, dbcontext.User.ToList(), ModelState);
+                userValidation.Validate(newUser,  ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -113,35 +116,37 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutProfilePicture/{id:int}")]
-        public async Task<ActionResult<User>> PutProfilePicture(int id, IFormFile? logo = null)
+        [HttpPut("PutUserProfilePicture/{id:int}")]
+        public async Task<ActionResult<User>> PutUserProfilePicture(int id, IFormFile? profilePicture = null)
         {
             try
             {
-               UserProfilePictureUpload userProfilePictureUpload = new UserProfilePictureUpload(configuration);
-
+                UserProfilePictureUpload userPfpUpload = new UserProfilePictureUpload(configuration);
+                
                 var user = await dbcontext.User.FindAsync(id);
 
                 if (user == null)
                     return NoContent();
 
-                if (logo == null)
+                if (user.ProfilePictureURL != $"{userPfpUpload.BucketUrl}{userPfpUpload.Placeholder}")
+                    await userPfpUpload.DeleteObject(user.ProfilePictureURL!);
+
+                if (profilePicture == null)
                 {
-                    user.ProfilePictureURL = $"{userProfilePictureUpload.BucketUrl}{userProfilePictureUpload.Placeholder}";
+                    user.ProfilePictureURL = $"{userPfpUpload.BucketUrl}{userPfpUpload.Placeholder}";
                 }
                 else
                 {
-                    Guid guid = Guid.NewGuid();
+                    Guid newPfpGuid = Guid.NewGuid();
 
-                    bucket.AddObject(logo, guid).Wait();
-                    bucket.DeleteObject(user.ProfilePictureURL!).Wait();
+                    await userPfpUpload.AddObject(profilePicture, newPfpGuid);
 
-                    user.ProfilePictureURL = $"{userProfilePictureUpload.BucketUrl}{guid}";
+                    user.ProfilePictureURL = $"{userPfpUpload.BucketUrl}{newPfpGuid}";
                 }
 
                 await dbcontext.SaveChangesAsync();
 
-                return Ok();
+                return Ok(user);
             }
             catch (Exception ex)
             {

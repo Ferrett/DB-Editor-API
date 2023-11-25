@@ -6,6 +6,6 @@ namespace WebAPI.Services.Validation.UserValidation
 {
     public interface IUserValidation
     {
-        void Validate(User newUser, List<User> users, ModelStateDictionary modelState);
+        void Validate(User newUser,  ModelStateDictionary modelState);
     }
 }

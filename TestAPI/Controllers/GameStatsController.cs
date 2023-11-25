@@ -55,7 +55,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                gameStatsValidation.Validate(newGameStats, dbcontext.GameStats.ToList(), ModelState);
+                gameStatsValidation.Validate(newGameStats,  ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -76,7 +76,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                gameStatsValidation.Validate(newGameStats, dbcontext.GameStats.ToList(), ModelState);
+                gameStatsValidation.Validate(newGameStats, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);

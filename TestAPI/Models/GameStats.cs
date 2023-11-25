@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace WebAPI.Models
 {
@@ -6,14 +7,6 @@ namespace WebAPI.Models
     {
         [Key]
         public int ID { get; set; }
-
-        [Required]
-        public int UserID { get; set; }
-        public User User { get; set; } = null!;
-
-        [Required]
-        public int GameID { get; set; }
-        public Game Game { get; set; } = null!;
 
         [Required]
         [Range(0.0, Double.MaxValue)]
@@ -24,5 +17,17 @@ namespace WebAPI.Models
 
         [Required]
         public DateTime PurchaseDate { get; set; }
+
+        [Required]
+        public int UserID { get; set; }
+
+        [JsonIgnore]
+        public User? User { get; set; }
+
+        [Required]
+        public int GameID { get; set; }
+
+        [JsonIgnore]
+        public Game? Game { get; set; } 
     }
 }
