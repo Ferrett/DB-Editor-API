@@ -27,7 +27,9 @@ namespace WebAPI.Models
 
         [Required]
         public int DeveloperID { get; set; }
-        public Developer Developer { get; set; } = null!;
+
+        [JsonIgnore]
+        public Developer? Developer { get; set; }
 
         [JsonIgnore]
         public ICollection<Review>? Reviews { get; set; } = new List<Review>();

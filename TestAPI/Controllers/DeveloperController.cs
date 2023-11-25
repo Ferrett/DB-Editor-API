@@ -7,6 +7,7 @@ using WebAPI.Logic;
 using WebAPI.Models;
 using WebAPI.Services.S3Bucket;
 using WebAPI.Services.S3Bucket.Developer;
+using WebAPI.Services.S3Bucket.User;
 using WebAPI.Services.Validation.DeveloperValidation;
 using WebAPI.Services.Validation.UserValidation;
 
@@ -65,10 +66,13 @@ namespace WebAPI.Controllers
         {
             try
             {
-                developerValidation.Validate(newDeveloper, dbcontext.Developer.ToList(), ModelState);
+                developerValidation.Validate(newDeveloper, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
+
+                DeveloperProfilePictureUpload developerLogoUpload = new DeveloperProfilePictureUpload(configuration);
+                newDeveloper.LogoURL = $"{developerLogoUpload.BucketUrl}{developerLogoUpload.Placeholder}";
 
                 await dbcontext.Developer.AddAsync(newDeveloper);
                 await dbcontext.SaveChangesAsync();
@@ -86,7 +90,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                developerValidation.Validate(newDeveloper, dbcontext.Developer.ToList(), ModelState);
+                developerValidation.Validate(newDeveloper, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -111,30 +115,32 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutLogo/{id:int}")]
-        public async Task<ActionResult<Developer>> PutLogo(int id, IFormFile? logo = null)
+        [HttpPut("PutDeveloperLogo/{id:int}")]
+        public async Task<ActionResult<Developer>> PutDeveloperLogo(int id, IFormFile? logo = null)
         {
             try
             {
-                DeveloperProfilePictureUpload developerProfilePictureUpload = new DeveloperProfilePictureUpload(configuration);
+                DeveloperProfilePictureUpload developerLogoUpload = new DeveloperProfilePictureUpload(configuration);
 
                 var developer = await dbcontext.Developer.FindAsync(id);
 
                 if (developer == null)
                     return NoContent();
 
+                if (developer.LogoURL != $"{developerLogoUpload.BucketUrl}{developerLogoUpload.Placeholder}")
+                    await developerLogoUpload.DeleteObject(developer.LogoURL!);
+
                 if (logo == null)
                 {
-                    developer.LogoURL = $"{developerProfilePictureUpload.BucketUrl}{developerProfilePictureUpload.Placeholder}";
+                    developer.LogoURL = $"{developerLogoUpload.BucketUrl}{developerLogoUpload.Placeholder}";
                 }
                 else
                 {
-                    Guid guid = Guid.NewGuid();
+                    Guid newLogoGuid = Guid.NewGuid();
 
-                    bucket.AddObject(logo, guid).Wait();
-                    bucket.DeleteObject(developer.LogoURL!).Wait();
+                    await developerLogoUpload.AddObject(logo, newLogoGuid);
 
-                    developer.LogoURL = $"{developerProfilePictureUpload.BucketUrl}{guid}";
+                    developer.LogoURL = $"{developerLogoUpload.BucketUrl}{newLogoGuid}";
                 }
 
                 await dbcontext.SaveChangesAsync();

@@ -6,6 +6,6 @@ namespace WebAPI.Services.Validation.ReviewValidation
 {
     public interface IReviewValidation
     {
-        void Validate(Review newReview, List<Review> reviews, ModelStateDictionary modelState);
+        void Validate(Review newReview, ModelStateDictionary modelState);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Reflection.Emit;
 using WebAPI.Models;
 
 namespace WebAPI.Logic
@@ -24,8 +25,8 @@ namespace WebAPI.Logic
             .AddJsonFile("appsettings.json")
             .Build();
 
-
             optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
         }
+       
     }
 }

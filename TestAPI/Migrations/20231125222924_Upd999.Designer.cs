@@ -12,8 +12,8 @@ using WebAPI.Logic;
 namespace WebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20231124003851_LastUPD")]
-    partial class LastUPD
+    [Migration("20231125222924_Upd999")]
+    partial class Upd999
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
