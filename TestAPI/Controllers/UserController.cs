@@ -113,8 +113,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutProfilePicture/{id:int}")]
-        public async Task<ActionResult<User>> PutProfilePicture(int id, IFormFile? logo = null)
+        [HttpPut("PutUserProfilePicture/{id:int}")]
+        public async Task<ActionResult<User>> PutUserProfilePicture(int id, IFormFile? logo = null)
         {
             try
             {

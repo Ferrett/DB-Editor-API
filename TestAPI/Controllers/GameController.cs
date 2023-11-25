@@ -112,8 +112,8 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpPut("PutLogo/{id:int}")]
-        public async Task<ActionResult<Game>> PutLogo(int id, IFormFile? logo = null)
+        [HttpPut("PutGameLogo/{id:int}")]
+        public async Task<ActionResult<Game>> PutGameLogo(int id, IFormFile? logo = null)
         {
             try
             {
