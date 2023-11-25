@@ -1,7 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Amazon.S3.Model;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
 using WebAPI.Models;
+using WebAPI.Services.S3Bucket;
+using WebAPI.Services.S3Bucket.Game;
+using WebAPI.Services.Validation.GameValidation;
+using WebAPI.Services.Validation.UserValidation;
 
 namespace WebAPI.Controllers
 {
@@ -10,10 +15,15 @@ namespace WebAPI.Controllers
     public class GameController : Controller
     {
         private readonly ApplicationDbContext dbcontext;
-
-        public GameController(ApplicationDbContext context)
+        private readonly IGameValidation gameValidation;
+        private readonly IS3Bucket bucket;
+        private readonly IConfiguration configuration;
+        public GameController(ApplicationDbContext context, IS3Bucket _bucket, IGameValidation _gameValidation, IConfiguration _configuration)
         {
             dbcontext = context;
+            gameValidation = _gameValidation;
+            bucket = _bucket;
+            configuration = _configuration;
         }
 
         [HttpGet("GetGames")]
@@ -48,17 +58,19 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("PostGame")]
-        public async Task<ActionResult<Game>> PostGame([FromBody] Game game)
+        public async Task<ActionResult<Game>> PostGame([FromBody] Game newGame)
         {
             try
             {
+                gameValidation.Validate(newGame, dbcontext.Game.ToList(), ModelState);
+
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                await dbcontext.Game.AddAsync(game);
+                await dbcontext.Game.AddAsync(newGame);
                 await dbcontext.SaveChangesAsync();
 
-                return CreatedAtAction(nameof(PostGame), new { id = game.ID }, game);
+                return CreatedAtAction(nameof(PostGame), new { id = newGame.ID }, newGame);
             }
             catch (Exception ex)
             {
@@ -67,33 +79,68 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("PutGame/{id:int}")]
-        public async Task<ActionResult<Game>> PutGame(int id, [FromBody] Game game)
+        public async Task<ActionResult<Game>> PutGame(int id, [FromBody] Game newGame)
         {
             try
             {
+                gameValidation.Validate(newGame, dbcontext.Game.ToList(), ModelState);
+
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
-
-                if (id != game.ID)
-                    return BadRequest();
 
                 var gameFromDb = await dbcontext.Game.FindAsync(id);
 
                 if (gameFromDb == null)
                     return NoContent();
 
-                gameFromDb.Name = game.Name;
-                gameFromDb.LogoURL = game.LogoURL;
-                gameFromDb.Price = game.Price;
-                gameFromDb.PublishDate= game.PublishDate;
-                gameFromDb.AchievementsCount= game.AchievementsCount;
-                gameFromDb.DeveloperID= game.DeveloperID;
-                gameFromDb.Developer= game.Developer;
-                gameFromDb.Reviews= game.Reviews;
+                gameFromDb.Name = newGame.Name;
+                gameFromDb.LogoURL = newGame.LogoURL;
+                gameFromDb.Price = newGame.Price;
+                gameFromDb.PublishDate= newGame.PublishDate;
+                gameFromDb.AchievementsCount= newGame.AchievementsCount;
+                gameFromDb.DeveloperID= newGame.DeveloperID;
+                gameFromDb.Developer= newGame.Developer;
+                gameFromDb.Reviews= newGame.Reviews;
 
                 await dbcontext.SaveChangesAsync();
 
                 return Ok(gameFromDb);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("PutLogo/{id:int}")]
+        public async Task<ActionResult<Game>> PutLogo(int id, IFormFile? logo = null)
+        {
+            try
+            {
+                GameLogoUpload gameLogoUpload = new GameLogoUpload(configuration);
+
+                var game = await dbcontext.Game.FindAsync(id);
+
+                if (game == null)
+                    return NoContent();
+
+                if (logo == null)
+                {
+                    game.LogoURL = $"{gameLogoUpload.BucketUrl}{gameLogoUpload.Placeholder}";
+                }
+                else
+                {
+                    Guid guid = Guid.NewGuid();
+
+                    bucket.AddObject(logo, guid).Wait();
+                    bucket.DeleteObject(game.LogoURL!).Wait();
+
+                    game.LogoURL = $"{gameLogoUpload.BucketUrl}{guid}";
+                }
+
+                await dbcontext.SaveChangesAsync();
+
+                return Ok();
             }
             catch (Exception ex)
             {

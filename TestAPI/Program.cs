@@ -3,8 +3,17 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using WebAPI.Logic;
 using WebAPI.Models;
+using WebAPI.Services.S3Bucket;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Identity;
+using WebAPI.Services.Validation.UserValidation;
+using WebAPI.Services.Validation.DeveloperValidation;
+using WebAPI.Services.Validation.GameValidation;
+using WebAPI.Services.Validation.GameStatsValidation;
+using WebAPI.Services.Validation.ReviewValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +26,20 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ApplicationDbContext>();
+
+builder.Services.Scan(scan => scan
+    .FromAssemblyOf<ImageUpload>()
+    .AddClasses(classes => classes.AssignableTo<IS3Bucket>())
+    .AsImplementedInterfaces()
+    .WithTransientLifetime());
+
+builder.Services.AddScoped<IUserValidation, UserValidation>();
+builder.Services.AddScoped<IDeveloperValidation, DeveloperValidation>();
+builder.Services.AddScoped<IGameValidation, GameValidation>();
+builder.Services.AddScoped<IReviewValidation, ReviewValidation>();
+builder.Services.AddScoped<IGameStatsValidation, GameStatsValidation>();
+
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
 var app = builder.Build();
 
