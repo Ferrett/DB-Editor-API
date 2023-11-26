@@ -23,7 +23,7 @@ namespace WebAPI.Models
 
         public string? ProfilePictureURL { get; set; } 
 
-        [StringLength(30, ErrorMessage = "{0} must be between {2} and {1} characters long.", MinimumLength = 1)]
+        [StringLength(50, ErrorMessage = "{0} must be between {2} and {1} characters long.", MinimumLength = 1)]
         public string? Email { get; set; }
 
         [Required]
