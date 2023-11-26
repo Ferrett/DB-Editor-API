@@ -82,11 +82,12 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("PutGame/{id:int}")]
-        public async Task<ActionResult<Game>> PutGame(int id, [FromBody] Game newGame)
+        public async Task<ActionResult<Game>> PutGame(int id, [FromBody] Game updatedGame)
         {
             try
             {
-                gameValidation.Validate(newGame,  ModelState);
+                updatedGame.ID= id;
+                gameValidation.Validate(updatedGame,  ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -96,14 +97,13 @@ namespace WebAPI.Controllers
                 if (gameFromDb == null)
                     return NoContent();
 
-                gameFromDb.Name = newGame.Name;
-                gameFromDb.LogoURL = newGame.LogoURL;
-                gameFromDb.Price = newGame.Price;
-                gameFromDb.PublishDate = newGame.PublishDate;
-                gameFromDb.AchievementsCount = newGame.AchievementsCount;
-                gameFromDb.DeveloperID = newGame.DeveloperID;
-                gameFromDb.Developer = newGame.Developer;
-                gameFromDb.Reviews = newGame.Reviews;
+                gameFromDb.Name = updatedGame.Name;
+                gameFromDb.Price = updatedGame.Price;
+                gameFromDb.PublishDate = updatedGame.PublishDate;
+                gameFromDb.AchievementsCount = updatedGame.AchievementsCount;
+                gameFromDb.DeveloperID = updatedGame.DeveloperID;
+                gameFromDb.Developer = updatedGame.Developer;
+                gameFromDb.Reviews = updatedGame.Reviews;
 
                 await dbcontext.SaveChangesAsync();
 

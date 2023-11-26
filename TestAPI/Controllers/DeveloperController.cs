@@ -86,11 +86,12 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("PutDeveloper/{id:int}")]
-        public async Task<ActionResult<Developer>> PutDeveloper(int id, [FromBody] Developer newDeveloper)
+        public async Task<ActionResult<Developer>> PutDeveloper(int id, [FromBody] Developer updatedDeveloper)
         {
             try
             {
-                developerValidation.Validate(newDeveloper, ModelState);
+                updatedDeveloper.ID = id;
+                developerValidation.Validate(updatedDeveloper, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -100,10 +101,9 @@ namespace WebAPI.Controllers
                 if (developerFromDb == null)
                     return NoContent();
 
-                developerFromDb.Name = newDeveloper.Name;
-                developerFromDb.LogoURL = newDeveloper.LogoURL;
-                developerFromDb.RegistrationDate = newDeveloper.RegistrationDate;
-                developerFromDb.PublishedGames = newDeveloper.PublishedGames;
+                developerFromDb.Name = updatedDeveloper.Name;
+                developerFromDb.RegistrationDate = updatedDeveloper.RegistrationDate;
+                developerFromDb.PublishedGames = updatedDeveloper.PublishedGames;
 
                 await dbcontext.SaveChangesAsync();
 

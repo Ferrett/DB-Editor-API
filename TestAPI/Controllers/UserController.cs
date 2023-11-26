@@ -64,7 +64,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                userValidation.Validate(newUser,  ModelState);
+                userValidation.ValidateNewUser(newUser,  ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -84,11 +84,12 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("PutUser/{id:int}")]
-        public async Task<ActionResult<User>> PutUser(int id, [FromBody] User newUser)
+        public async Task<ActionResult<User>> PutUser(int id, [FromBody] User upadtedUser)
         {
             try
             {
-                userValidation.Validate(newUser,  ModelState);
+                upadtedUser.ID = id;
+                userValidation.ValidateNewUser(upadtedUser,  ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -98,13 +99,12 @@ namespace WebAPI.Controllers
                 if (userFromDb == null)
                     return NoContent();
 
-                userFromDb.Login = newUser.Login;
-                userFromDb.PasswordHash = newUser.PasswordHash;
-                userFromDb.Nickname = newUser.Nickname;
-                userFromDb.ProfilePictureURL = newUser.ProfilePictureURL;
-                userFromDb.Email = newUser.Email;
-                userFromDb.CreationDate = newUser.CreationDate;
-                userFromDb.GamesStats = newUser.GamesStats;
+                userFromDb.Login = upadtedUser.Login;
+                userFromDb.PasswordHash = upadtedUser.PasswordHash;
+                userFromDb.Nickname = upadtedUser.Nickname;
+                userFromDb.Email = upadtedUser.Email;
+                userFromDb.CreationDate = upadtedUser.CreationDate;
+                userFromDb.GamesStats = upadtedUser.GamesStats;
 
                 await dbcontext.SaveChangesAsync();
 
@@ -117,7 +117,7 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("PutUserProfilePicture/{id:int}")]
-        public async Task<ActionResult<User>> PutUserProfilePicture(int id, IFormFile? profilePicture = null)
+        public async Task<ActionResult<User>> PutUserProfilePicture(int id, IFormFile? logo = null)
         {
             try
             {
@@ -131,7 +131,7 @@ namespace WebAPI.Controllers
                 if (user.ProfilePictureURL != $"{userPfpUpload.BucketUrl}{userPfpUpload.Placeholder}")
                     await userPfpUpload.DeleteObject(user.ProfilePictureURL!);
 
-                if (profilePicture == null)
+                if (logo == null)
                 {
                     user.ProfilePictureURL = $"{userPfpUpload.BucketUrl}{userPfpUpload.Placeholder}";
                 }
@@ -139,7 +139,7 @@ namespace WebAPI.Controllers
                 {
                     Guid newPfpGuid = Guid.NewGuid();
 
-                    await userPfpUpload.AddObject(profilePicture, newPfpGuid);
+                    await userPfpUpload.AddObject(logo, newPfpGuid);
 
                     user.ProfilePictureURL = $"{userPfpUpload.BucketUrl}{newPfpGuid}";
                 }

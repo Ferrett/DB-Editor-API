@@ -13,12 +13,12 @@ namespace WebAPI.Services.Validation.UserValidation
         {
             dbcontext = context;
         }
-        public void Validate(User newUser, ModelStateDictionary modelState)
+        public void ValidateNewUser(User newUser, ModelStateDictionary modelState)
         {
-            if (IsAllLettersOrDigits(newUser.Login) == false)
+            if (!dbcontext.User.Any(x => x.ID == newUser.ID) && IsAllLettersOrDigits(newUser.Login) == false)
                 modelState.AddModelError("LoginLettersOrDigits", "Login can contain only latin letters or digits");
 
-            if (dbcontext.User.Any(x => x.Login.ToLower() == newUser.Login.ToLower()))
+            if (!dbcontext.User.Any(x=>x.ID==newUser.ID) && dbcontext.User.Any(x => x.Login.ToLower() == newUser.Login.ToLower()))
                 modelState.AddModelError("LoginAlreadyExists", $"User with login \"{newUser.Login}\" already exists");
 
             if (newUser.Email != null && new EmailAddressAttribute().IsValid(newUser.Email) == false)
