@@ -15,7 +15,7 @@ namespace WebAPI.Models
         public string Login { get; set; } = null!;
 
         [Required]
-        public string PasswordHash { get; set; } = null!;
+        public string Password { get; set; } = null!;
 
         [Required]
         [StringLength(30, ErrorMessage = "{0} must be between {2} and {1} characters long.", MinimumLength = 1)]
