@@ -2,6 +2,7 @@
 using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
 using Amazon.S3;
 using Amazon.S3.Model;
+using Amazon.S3.Transfer;
 
 namespace WebAPI.Services.S3Bucket
 {
@@ -10,10 +11,10 @@ namespace WebAPI.Services.S3Bucket
         public string Placeholder { get; } = @"dummy.png";
         public string ContentType { get; } = @"image/png";
         public string BucketName { get; } = @"webapilogos";
+
         public abstract string BucketUrl { get; }
 
-
-        public async Task AddObject(IFormFile file, Guid fileGuid)
+        public async Task AddObject(IFormFile file, Guid fileName)
         {
             using (IAmazonS3 client = new AmazonS3Client(RegionEndpoint.EUNorth1))
             {
@@ -22,9 +23,9 @@ namespace WebAPI.Services.S3Bucket
 
                 var putObject = new PutObjectRequest
                 {
-                    BucketName = BucketName + new Uri(BucketUrl).AbsolutePath.TrimEnd('/'),
+                    BucketName =  BucketName,
                     ContentType = ContentType,
-                    Key = fileGuid.ToString(),
+                    Key = new Uri(BucketUrl).AbsolutePath.TrimStart('/') + fileName.ToString(),
                     InputStream = ms,
                 };
 
@@ -32,23 +33,23 @@ namespace WebAPI.Services.S3Bucket
             }
         }
 
-        public async Task DeleteObject(string file)
+        public async Task DeleteObject(string fileName)
         {
             using (IAmazonS3 client = new AmazonS3Client(RegionEndpoint.EUNorth1))
             {
-                file = file.Split('/').Last();
+                fileName = fileName.Split('/').Last();
 
-                if (file == Placeholder)
+                if (fileName == Placeholder)
                     return;
 
                 var deleteObject = new DeleteObjectRequest
                 {
-                    BucketName = BucketName + new Uri(BucketUrl).AbsolutePath.TrimEnd('/'),
-                    Key = file
+                    BucketName = BucketName,
+                    Key = new Uri(BucketUrl).AbsolutePath.TrimStart('/') + fileName
                 };
 
                 await client.DeleteObjectAsync(deleteObject);
             }
-        }
+        } 
     }
 }
