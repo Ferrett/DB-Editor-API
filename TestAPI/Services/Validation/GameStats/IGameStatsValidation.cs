@@ -6,6 +6,6 @@ namespace WebAPI.Services.Validation.GameStatsValidation
 {
     public interface IGameStatsValidation
     {
-        void Validate(GameStats newGameStats, ModelStateDictionary modelState);
+        void Validate(GameStats gameStats, ModelStateDictionary modelState);
     }
 }

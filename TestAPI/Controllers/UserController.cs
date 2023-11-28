@@ -27,8 +27,8 @@ namespace WebAPI.Controllers
             configuration = _configuration;
         }
 
-        [HttpGet("GetUsers")]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        [HttpGet("GetAllUsers")]
+        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
         {
             try
             {
@@ -64,7 +64,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                userValidation.ValidateNewUser(newUser,  ModelState);
+                userValidation.Validate(newUser, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -89,7 +89,7 @@ namespace WebAPI.Controllers
             try
             {
                 upadtedUser.ID = id;
-                userValidation.ValidateNewUser(upadtedUser,  ModelState);
+                userValidation.Validate(upadtedUser, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -122,7 +122,7 @@ namespace WebAPI.Controllers
             try
             {
                 UserProfilePictureUpload userPfpUpload = new UserProfilePictureUpload(configuration);
-                
+
                 var user = await dbcontext.User.FindAsync(id);
 
                 if (user == null)

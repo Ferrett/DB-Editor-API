@@ -26,8 +26,8 @@ namespace WebAPI.Controllers
             configuration = _configuration;
         }
 
-        [HttpGet("GetGames")]
-        public async Task<ActionResult<IEnumerable<Game>>> GetGames()
+        [HttpGet("GetAllGames")]
+        public async Task<ActionResult<IEnumerable<Game>>> GetAllGames()
         {
             try
             {
@@ -86,8 +86,8 @@ namespace WebAPI.Controllers
         {
             try
             {
-                updatedGame.ID= id;
-                gameValidation.Validate(updatedGame,  ModelState);
+                updatedGame.ID = id;
+                gameValidation.Validate(updatedGame, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -139,7 +139,7 @@ namespace WebAPI.Controllers
                     Guid newLogoGuid = Guid.NewGuid();
 
                     await gameLogoUpload.AddObject(logo, newLogoGuid);
-              
+
                     game.LogoURL = $"{gameLogoUpload.BucketUrl}{newLogoGuid}";
                 }
 

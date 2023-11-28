@@ -13,16 +13,16 @@ namespace WebAPI.Services.Validation.UserValidation
         {
             dbcontext = context;
         }
-        public void ValidateNewUser(User newUser, ModelStateDictionary modelState)
+        public void Validate(User user, ModelStateDictionary modelState)
         {
-            if (!dbcontext.User.Any(x => x.ID == newUser.ID) && IsAllLettersOrDigits(newUser.Login) == false)
+            if (!dbcontext.User.Any(x => x.ID == user.ID) && dbcontext.User.Any(x => x.Login.ToLower() == user.Login.ToLower()))
+                modelState.AddModelError("LoginAlreadyExists", $"User with login \"{user.Login}\" already exists");
+
+            if (IsAllLettersOrDigits(user.Login) == false)
                 modelState.AddModelError("LoginLettersOrDigits", "Login can contain only latin letters or digits");
 
-            if (!dbcontext.User.Any(x=>x.ID==newUser.ID) && dbcontext.User.Any(x => x.Login.ToLower() == newUser.Login.ToLower()))
-                modelState.AddModelError("LoginAlreadyExists", $"User with login \"{newUser.Login}\" already exists");
-
-            if (newUser.Email != null && new EmailAddressAttribute().IsValid(newUser.Email) == false)
-                modelState.AddModelError("EmailAlreadyExists", $"Email \"{newUser.Email}\" is not valid");
+            if (user.Email != null && new EmailAddressAttribute().IsValid(user.Email) == false)
+                modelState.AddModelError("EmailAlreadyExists", $"Email \"{user.Email}\" is not valid");
         }
 
         public bool IsAllLettersOrDigits(string str)

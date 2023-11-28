@@ -30,8 +30,8 @@ namespace WebAPI.Controllers
             configuration = _configuration;
         }
 
-        [HttpGet("GetDevelopers")]
-        public async Task<ActionResult<IEnumerable<Developer>>> GetDevelopers()
+        [HttpGet("GetAllDevelopers")]
+        public async Task<ActionResult<IEnumerable<Developer>>> GetAllDevelopers()
         {
             try
             {

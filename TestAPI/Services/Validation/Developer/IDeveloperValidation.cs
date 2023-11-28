@@ -6,6 +6,6 @@ namespace WebAPI.Services.Validation.DeveloperValidation
 {
     public interface IDeveloperValidation
     {
-        void Validate(Developer newDeveloper, ModelStateDictionary modelState);
+        void Validate(Developer developer, ModelStateDictionary modelState);
     }
 }

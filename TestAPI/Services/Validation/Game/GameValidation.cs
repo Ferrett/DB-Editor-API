@@ -8,21 +8,21 @@ namespace WebAPI.Services.Validation.GameValidation
     public class GameValidation : IGameValidation
     {
         private readonly ApplicationDbContext dbcontext;
-        public GameValidation (ApplicationDbContext context)
+        public GameValidation(ApplicationDbContext context)
         {
             dbcontext = context;
         }
 
-        public void Validate(Game newGame, ModelStateDictionary modelState)
+        public void Validate(Game game, ModelStateDictionary modelState)
         {
-            if (IsAllLettersOrDigits(newGame.Name) == false)
+            if (!dbcontext.Game.Any(x => x.ID == game.ID) && dbcontext.Game.Any(x => x.Name.ToLower() == game.Name.ToLower()))
+                modelState.AddModelError("AlreadyExists", $"Game with name \"{game.Name}\" already exists");
+
+            if (!dbcontext.Developer.Any(x => x.ID == game.DeveloperID))
+                modelState.AddModelError("DeveloperNotExists", $"Developer with ID \"{game.DeveloperID}\" not exists");
+
+            if (IsAllLettersOrDigits(game.Name) == false)
                 modelState.AddModelError("NameLettersOrDigits", "Game name can contain only latin letters or digits");
-
-            if (dbcontext.Game.Any(x => x.Name.ToLower() == newGame.Name.ToLower()))
-                modelState.AddModelError("AlreadyExists", $"Game with name \"{newGame.Name}\" already exists");
-
-            if(!dbcontext.Developer.Any(x=>x.ID==newGame.DeveloperID))
-                modelState.AddModelError("DeveloperNotExists", $"Developer with ID \"{newGame.DeveloperID}\" not exists");
         }
 
 

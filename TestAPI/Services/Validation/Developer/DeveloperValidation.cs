@@ -12,13 +12,13 @@ namespace WebAPI.Services.Validation.DeveloperValidation
         {
             dbcontext = context;
         }
-        public void Validate(Developer newDeveloper,  ModelStateDictionary modelState)
+        public void Validate(Developer developer, ModelStateDictionary modelState)
         {
-            if (IsAllLettersOrDigits(newDeveloper.Name) == false)
-                modelState.AddModelError("NameLettersOrDigits", "Developer name can contain only latin letters or digits");
+            if (!dbcontext.Developer.Any(x => x.ID == developer.ID) && dbcontext.Developer.Any(x => x.Name.ToLower() == developer.Name.ToLower()))
+                modelState.AddModelError("NameAlreadyExists", $"Developer with name \"{developer.Name}\" already exists");
 
-            if (dbcontext.Developer.Any(x => x.Name.ToLower() == newDeveloper.Name.ToLower()))
-                modelState.AddModelError("NameAlreadyExists", $"Developer with name \"{newDeveloper.Name}\" already exists");
+            if (IsAllLettersOrDigits(developer.Name) == false)
+                modelState.AddModelError("NameLettersOrDigits", "Developer name can contain only latin letters or digits");
         }
 
         public bool IsAllLettersOrDigits(string str)
