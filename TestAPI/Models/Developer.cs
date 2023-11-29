@@ -17,9 +17,15 @@ namespace WebAPI.Models
         public string? LogoURL { get; set; }
 
         [Required]
-        public DateTime RegistrationDate { get; set; }
+        public DateTime CreationDate { get; set; }
+
+        [Required]
+        public int UserID { get; set; }
 
         [JsonIgnore]
-        public ICollection<Game> PublishedGames { get; set; } = new List<Game>();
+        public User? User { get; set; }
+
+        [JsonIgnore]
+        public ICollection<Game>? PublishedGames { get; set; } = new List<Game>();
     }
 }

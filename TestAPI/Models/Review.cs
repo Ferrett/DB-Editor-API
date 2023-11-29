@@ -23,11 +23,11 @@ namespace WebAPI.Models
         [Required]
         public int GameID { get; set; }
 
-        [JsonIgnore]
-        public Game? Game { get; set; }
-
         [Required]
         public int UserID { get; set; }
+
+        [JsonIgnore]
+        public Game? Game { get; set; }
 
         [JsonIgnore]
         public User? User { get; set; } 

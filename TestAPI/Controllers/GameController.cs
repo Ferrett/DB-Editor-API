@@ -103,7 +103,6 @@ namespace WebAPI.Controllers
                 gameFromDb.AchievementsCount = updatedGame.AchievementsCount;
                 gameFromDb.DeveloperID = updatedGame.DeveloperID;
                 gameFromDb.Developer = updatedGame.Developer;
-                gameFromDb.Reviews = updatedGame.Reviews;
 
                 await dbcontext.SaveChangesAsync();
 

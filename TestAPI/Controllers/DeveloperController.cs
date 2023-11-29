@@ -102,8 +102,7 @@ namespace WebAPI.Controllers
                     return NoContent();
 
                 developerFromDb.Name = updatedDeveloper.Name;
-                developerFromDb.RegistrationDate = updatedDeveloper.RegistrationDate;
-                developerFromDb.PublishedGames = updatedDeveloper.PublishedGames;
+                developerFromDb.CreationDate = updatedDeveloper.CreationDate;
 
                 await dbcontext.SaveChangesAsync();
 

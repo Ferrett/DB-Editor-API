@@ -104,7 +104,6 @@ namespace WebAPI.Controllers
                 userFromDb.Nickname = upadtedUser.Nickname;
                 userFromDb.Email = upadtedUser.Email;
                 userFromDb.CreationDate = upadtedUser.CreationDate;
-                userFromDb.GamesStats = upadtedUser.GamesStats;
 
                 await dbcontext.SaveChangesAsync();
 

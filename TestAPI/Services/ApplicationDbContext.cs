@@ -27,6 +27,14 @@ namespace WebAPI.Logic
 
             optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
         }
-       
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            //modelBuilder.Entity<Author>()
+            //    .HasOne(a => a.Biography)
+            //    .WithOne(b => b.Author)
+            //    .HasForeignKey<Biography>(b => b.AuthorId);
+        }
+
     }
 }
