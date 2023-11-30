@@ -8,7 +8,7 @@ namespace WebAPI.Services.S3Bucket.Developer
 
         public DeveloperProfilePictureUpload(IConfiguration configuration)
         {
-            BucketUrl = configuration.GetValue<string>("ApiLinks:DeveloperUrl");
+            BucketUrl = configuration["ApiLinks:DeveloperUrl"]!;
         }
     }
 }

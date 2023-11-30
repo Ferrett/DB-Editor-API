@@ -15,7 +15,7 @@ namespace WebAPI.Services.Validation.UserValidation
         }
         public void Validate(User user, ModelStateDictionary modelState)
         {
-            if (!dbcontext.User.Any(x => x.ID == user.ID) && dbcontext.User.Any(x => x.Login.ToLower() == user.Login.ToLower()))
+            if (!dbcontext.User.Any(x => x.ID == user.ID) &&  dbcontext.User.Any(x => x.Login.ToLower() == user.Login.ToLower()))
                 modelState.AddModelError("LoginAlreadyExists", $"User with login \"{user.Login}\" already exists");
 
             if (IsAllLettersOrDigits(user.Login) == false)

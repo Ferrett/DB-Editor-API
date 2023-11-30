@@ -1,4 +1,5 @@
 ﻿using Amazon.S3.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
@@ -14,6 +15,7 @@ using WebAPI.Services.Validation.UserValidation;
 namespace WebAPI.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("/Developer")]
     public class DeveloperController : Controller
     {
