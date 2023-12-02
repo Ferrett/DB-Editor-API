@@ -94,7 +94,7 @@ namespace WebAPI.Controllers
                 gameStatsFromDb.GameID = updatedGameStats.GameID;
                 gameStatsFromDb.Game = updatedGameStats.Game;
                 gameStatsFromDb.HoursPlayed = updatedGameStats.HoursPlayed;
-                gameStatsFromDb.AchievementsGot = updatedGameStats.AchievementsGot;
+                gameStatsFromDb.AchievementsGotten = updatedGameStats.AchievementsGotten;
                 gameStatsFromDb.PurchaseDate = updatedGameStats.PurchaseDate;
 
                 await dbcontext.SaveChangesAsync();

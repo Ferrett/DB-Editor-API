@@ -11,7 +11,7 @@ namespace WebAPI.Models
         public int ID { get; set; }
 
         [Required]
-        [StringLength(30, ErrorMessage = "{0} must be between {2} and {1} characters long.", MinimumLength = 7)]
+        [StringLength(99, ErrorMessage = "{0} must be between {2} and {1} characters long.", MinimumLength = 5)]
         public string Login { get; set; } = null!;
 
         [Required]
@@ -26,7 +26,7 @@ namespace WebAPI.Models
         [Required]
         public DateTime CreationDate { get; set; }
 
-        [StringLength(50, ErrorMessage = "{0} must be between {2} and {1} characters long.", MinimumLength = 1)]
+        [MaxLength(256)]
         public string? Email { get; set; }
 
         [JsonIgnore]

@@ -11,7 +11,7 @@ namespace WebAPI.Models
         public int ID { get; set; }
 
         [Required]
-        [MaxLength(50), MinLength(4)]
+        [MaxLength(256), MinLength(1)]
         public string Name { get; set; } = null!;
 
         public string? LogoURL { get; set; }

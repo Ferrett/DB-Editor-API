@@ -10,19 +10,19 @@ namespace WebAPI.Models
         public int ID { get; set; }
 
         [Required]
-        [MaxLength(25),MinLength(4)]
+        [MaxLength(256),MinLength(1)]
         public string Name { get; set; } = null!;
 
         public string? LogoURL { get; set; }
 
         [Required]
-        [Range(0.0, 1000)]
+        [Range(0.0, 9999)]
         public float Price { get; set; }
 
         [Required]
         public DateTime PublishDate { get; set; }
 
-        [Range(0.0, 1000)]
+        [Range(0.0, 9999)]
         public int AchievementsCount { get; set; }
 
         [Required]

@@ -12,8 +12,8 @@ namespace WebAPI.Models
         [Range(0.0, Double.MaxValue)]
         public float HoursPlayed { get; set; }
 
-        [Range(0.0, 1000)]
-        public int AchievementsGot { get; set; }
+        [Range(0.0, 9999)]
+        public int AchievementsGotten { get; set; }
 
         [Required]
         public DateTime PurchaseDate { get; set; }
