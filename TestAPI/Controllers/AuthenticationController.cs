@@ -12,7 +12,7 @@ using WebAPI.Services.S3Bucket.User;
 using WebAPI.Services.Validation.UserValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication;
-using WebAPI.Services;
+using WebAPI.Services.Authentication;
 
 namespace WebAPI.Controllers
 {
@@ -63,7 +63,7 @@ namespace WebAPI.Controllers
                  authentication.LoginAttempt(userLogin, ModelState);
 
                 if (!ModelState.IsValid)
-                    return Unauthorized(ModelState);
+                    return BadRequest(ModelState);
 
                 return Ok(new { Token = GenerateJwtToken(userLogin.Login) });
             }

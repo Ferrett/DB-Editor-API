@@ -19,7 +19,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Configuration;
 using System.IdentityModel.Tokens;
-using WebAPI.Services;
+using WebAPI.Services.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 

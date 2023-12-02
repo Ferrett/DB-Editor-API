@@ -2,7 +2,7 @@
 using WebAPI.Models;
 using WebAPI.Models.ServiceModels;
 
-namespace WebAPI.Services
+namespace WebAPI.Services.Authentication
 {
     public interface IUserAuthenticationService
     {

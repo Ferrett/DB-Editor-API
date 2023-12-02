@@ -6,7 +6,7 @@ using WebAPI.Models.ServiceModels;
 using WebAPI.Services.S3Bucket.User;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace WebAPI.Services
+namespace WebAPI.Services.Authentication
 {
     public class UserAuthenticationService : IUserAuthenticationService
     {
