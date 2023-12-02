@@ -60,18 +60,12 @@ namespace WebAPI.Controllers
         {
             try
             {
-                User? user = await authentication.FindUserByLogin(userLogin.Login);
+                 authentication.LoginAttempt(userLogin, ModelState);
 
-                if (user == null)
-                    return Unauthorized(new { Error = "Incorrect login" });
+                if (!ModelState.IsValid)
+                    return Unauthorized(ModelState);
 
-                if (authentication.IsPasswordCorrect(user, userLogin.Password))
-                {
-                    var token = GenerateJwtToken(user.Login);
-                    return Ok(new { Token = token });
-                }
-
-                return Unauthorized(new { Error = "Incorrect password" });
+                return Ok(new { Token = GenerateJwtToken(userLogin.Login) });
             }
             catch (Exception ex)
             {
@@ -81,7 +75,7 @@ namespace WebAPI.Controllers
 
         private string GenerateJwtToken(string login)
         {
-            List <Claim> claims = new List<Claim>
+            List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, login),
                 new Claim(ClaimTypes.Role, "user")
@@ -94,7 +88,7 @@ namespace WebAPI.Controllers
                 issuer: configuration["Jwt:Issuer"],
                 audience: configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.Now.AddHours(1),
+                expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: credentials
             );
 

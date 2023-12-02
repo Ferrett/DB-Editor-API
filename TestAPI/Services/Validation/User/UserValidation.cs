@@ -22,7 +22,7 @@ namespace WebAPI.Services.Validation.UserValidation
                 modelState.AddModelError("LoginLettersOrDigits", "Login can contain only latin letters or digits");
 
             if (user.Email != null && new EmailAddressAttribute().IsValid(user.Email) == false)
-                modelState.AddModelError("EmailAlreadyExists", $"Email \"{user.Email}\" is not valid");
+                modelState.AddModelError("EmailIsNotValid", $"Email \"{user.Email}\" is not valid");
         }
 
         public bool IsAllLettersOrDigits(string str)

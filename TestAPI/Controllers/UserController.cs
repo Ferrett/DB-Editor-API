@@ -1,4 +1,5 @@
 ﻿using Amazon.S3.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
@@ -11,6 +12,7 @@ using static System.Net.Mime.MediaTypeNames;
 namespace WebAPI.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("/User")]
     public class UserController : Controller
     {

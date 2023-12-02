@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
 using WebAPI.Models;
@@ -8,6 +9,7 @@ using WebAPI.Services.Validation.UserValidation;
 namespace WebAPI.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("/GameStats")]
     public class GameStatsController : Controller
     {

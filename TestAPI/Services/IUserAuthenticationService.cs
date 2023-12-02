@@ -1,4 +1,5 @@
-﻿using WebAPI.Models;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+using WebAPI.Models;
 using WebAPI.Models.ServiceModels;
 
 namespace WebAPI.Services
@@ -6,7 +7,6 @@ namespace WebAPI.Services
     public interface IUserAuthenticationService
     {
         public User RegistrationModelToUser(RegistrationModel userRegister);
-        public Task<User?> FindUserByLogin(string login);
-        public bool IsPasswordCorrect(User user, string password);
+        public void LoginAttempt(LoginModel loginModel, ModelStateDictionary modelState);
     }
 }

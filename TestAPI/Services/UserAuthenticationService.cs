@@ -4,6 +4,7 @@ using WebAPI.Logic;
 using WebAPI.Models;
 using WebAPI.Models.ServiceModels;
 using WebAPI.Services.S3Bucket.User;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace WebAPI.Services
 {
@@ -31,14 +32,15 @@ namespace WebAPI.Services
             };
         }
 
-        public Task<User?> FindUserByLogin(string login)
+        public void LoginAttempt(LoginModel loginModel, ModelStateDictionary modelState)
         {
-            return dbcontext.User.FirstOrDefaultAsync(x => x.Login == login);
-        }
+            User? user = dbcontext.User.FirstOrDefault(x => x.Login == loginModel.Login);
 
-        public bool IsPasswordCorrect(User user, string password)
-        {
-            return user.Password == password ? true : false;
+            if (user == null)
+                modelState.AddModelError("UserNotFound", $"User with login \"{loginModel.Login}\" not found");
+            else if (user.Password != loginModel.Password)
+                modelState.AddModelError("PasswordIncorrect", "Incorrect password");
+
         }
     }
 }
