@@ -11,19 +11,19 @@ namespace WebAPI.Models
 
         [Required]
         [MaxLength(256),MinLength(1)]
-        public string Name { get; set; } = null!;
+        public string Title { get; set; } = null!;
 
         public string? LogoURL { get; set; }
 
         [Required]
-        [Range(0.0, 9999)]
-        public float Price { get; set; }
+        [Range(0.0, 9999.0)]
+        public float PriceUsd { get; set; }
 
         [Required]
         public DateTime PublishDate { get; set; }
 
-        [Range(0.0, 9999)]
-        public int AchievementsCount { get; set; }
+        [Range(0, 9999)]
+        public int AchievementsAmount { get; set; }
 
         [Required]
         public int DeveloperID { get; set; }

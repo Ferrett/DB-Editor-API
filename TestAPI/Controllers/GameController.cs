@@ -99,10 +99,10 @@ namespace WebAPI.Controllers
                 if (gameFromDb == null)
                     return NoContent();
 
-                gameFromDb.Name = updatedGame.Name;
-                gameFromDb.Price = updatedGame.Price;
+                gameFromDb.Title = updatedGame.Title;
+                gameFromDb.PriceUsd = updatedGame.PriceUsd;
                 gameFromDb.PublishDate = updatedGame.PublishDate;
-                gameFromDb.AchievementsCount = updatedGame.AchievementsCount;
+                gameFromDb.AchievementsAmount = updatedGame.AchievementsAmount;
                 gameFromDb.DeveloperID = updatedGame.DeveloperID;
                 gameFromDb.Developer = updatedGame.Developer;
 

@@ -9,10 +9,10 @@ namespace WebAPI.Models
         public int ID { get; set; }
 
         [Required]
-        [Range(0.0, Double.MaxValue)]
+        [Range(0.0, float.MaxValue)]
         public float HoursPlayed { get; set; }
 
-        [Range(0.0, 9999)]
+        [Range(0, 9999)]
         public int AchievementsGotten { get; set; }
 
         [Required]
