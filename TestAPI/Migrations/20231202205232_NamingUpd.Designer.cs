@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WebAPI.Logic;
@@ -11,9 +12,11 @@ using WebAPI.Logic;
 namespace WebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20231202205232_NamingUpd")]
+    partial class NamingUpd
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,7 +63,7 @@ namespace WebAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
 
-                    b.Property<int>("AchievementsAmount")
+                    b.Property<int>("AchievementsCount")
                         .HasColumnType("integer");
 
                     b.Property<int>("DeveloperID")
@@ -69,16 +72,16 @@ namespace WebAPI.Migrations
                     b.Property<string>("LogoURL")
                         .HasColumnType("text");
 
-                    b.Property<float>("PriceUsd")
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<float>("Price")
                         .HasColumnType("real");
 
                     b.Property<DateTime>("PublishDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
 
                     b.HasKey("ID");
 

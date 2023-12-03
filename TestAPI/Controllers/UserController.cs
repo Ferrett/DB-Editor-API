@@ -1,4 +1,5 @@
 ﻿using Amazon.S3.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
@@ -11,6 +12,7 @@ using static System.Net.Mime.MediaTypeNames;
 namespace WebAPI.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("/User")]
     public class UserController : Controller
     {
@@ -27,8 +29,8 @@ namespace WebAPI.Controllers
             configuration = _configuration;
         }
 
-        [HttpGet("GetUsers")]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        [HttpGet("GetAllUsers")]
+        public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
         {
             try
             {
@@ -64,7 +66,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                userValidation.Validate(newUser,  ModelState);
+                userValidation.Validate(newUser, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -84,11 +86,12 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("PutUser/{id:int}")]
-        public async Task<ActionResult<User>> PutUser(int id, [FromBody] User newUser)
+        public async Task<ActionResult<User>> PutUser(int id, [FromBody] User upadtedUser)
         {
             try
             {
-                userValidation.Validate(newUser,  ModelState);
+                upadtedUser.ID = id;
+                userValidation.Validate(upadtedUser, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -98,13 +101,11 @@ namespace WebAPI.Controllers
                 if (userFromDb == null)
                     return NoContent();
 
-                userFromDb.Login = newUser.Login;
-                userFromDb.PasswordHash = newUser.PasswordHash;
-                userFromDb.Nickname = newUser.Nickname;
-                userFromDb.ProfilePictureURL = newUser.ProfilePictureURL;
-                userFromDb.Email = newUser.Email;
-                userFromDb.CreationDate = newUser.CreationDate;
-                userFromDb.GamesStats = newUser.GamesStats;
+                userFromDb.Login = upadtedUser.Login;
+                userFromDb.Password = upadtedUser.Password;
+                userFromDb.Nickname = upadtedUser.Nickname;
+                userFromDb.Email = upadtedUser.Email;
+                userFromDb.CreationDate = upadtedUser.CreationDate;
 
                 await dbcontext.SaveChangesAsync();
 
@@ -117,12 +118,12 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("PutUserProfilePicture/{id:int}")]
-        public async Task<ActionResult<User>> PutUserProfilePicture(int id, IFormFile? profilePicture = null)
+        public async Task<ActionResult<User>> PutUserProfilePicture(int id, IFormFile? logo = null)
         {
             try
             {
                 UserProfilePictureUpload userPfpUpload = new UserProfilePictureUpload(configuration);
-                
+
                 var user = await dbcontext.User.FindAsync(id);
 
                 if (user == null)
@@ -131,7 +132,7 @@ namespace WebAPI.Controllers
                 if (user.ProfilePictureURL != $"{userPfpUpload.BucketUrl}{userPfpUpload.Placeholder}")
                     await userPfpUpload.DeleteObject(user.ProfilePictureURL!);
 
-                if (profilePicture == null)
+                if (logo == null)
                 {
                     user.ProfilePictureURL = $"{userPfpUpload.BucketUrl}{userPfpUpload.Placeholder}";
                 }
@@ -139,7 +140,7 @@ namespace WebAPI.Controllers
                 {
                     Guid newPfpGuid = Guid.NewGuid();
 
-                    await userPfpUpload.AddObject(profilePicture, newPfpGuid);
+                    await userPfpUpload.AddObject(logo, newPfpGuid);
 
                     user.ProfilePictureURL = $"{userPfpUpload.BucketUrl}{newPfpGuid}";
                 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
 using WebAPI.Models;
@@ -8,6 +9,7 @@ using WebAPI.Services.Validation.UserValidation;
 namespace WebAPI.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("/Review")]
     public class ReviewController : Controller
     {
@@ -19,8 +21,8 @@ namespace WebAPI.Controllers
             reviewValidation = _reviewValidation;
         }
 
-        [HttpGet("GetReviews")]
-        public async Task<ActionResult<IEnumerable<Review>>> GetReviews()
+        [HttpGet("GetAllReviews")]
+        public async Task<ActionResult<IEnumerable<Review>>> GetAllReviews()
         {
             try
             {
@@ -72,11 +74,12 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("PutReview/{id:int}")]
-        public async Task<ActionResult<Review>> PutReview(int id, [FromBody] Review newReview)
+        public async Task<ActionResult<Review>> PutReview(int id, [FromBody] Review updatedReview)
         {
             try
             {
-                reviewValidation.Validate(newReview,  ModelState);
+                updatedReview.ID = id;
+                reviewValidation.Validate(updatedReview, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -86,14 +89,14 @@ namespace WebAPI.Controllers
                 if (reviewFromDB == null)
                     return NoContent();
 
-                reviewFromDB.Text = newReview.Text;
-                reviewFromDB.IsPositive = newReview.IsPositive;
-                reviewFromDB.CreationDate = newReview.CreationDate;
-                reviewFromDB.LastEditDate = newReview.LastEditDate;
-                reviewFromDB.GameID = newReview.GameID;
-                reviewFromDB.Game = newReview.Game;
-                reviewFromDB.UserID = newReview.UserID;
-                reviewFromDB.User = newReview.User;
+                reviewFromDB.Text = updatedReview.Text;
+                reviewFromDB.IsPositive = updatedReview.IsPositive;
+                reviewFromDB.CreationDate = updatedReview.CreationDate;
+                reviewFromDB.LastEditDate = updatedReview.LastEditDate;
+                reviewFromDB.GameID = updatedReview.GameID;
+                reviewFromDB.Game = updatedReview.Game;
+                reviewFromDB.UserID = updatedReview.UserID;
+                reviewFromDB.User = updatedReview.User;
 
                 await dbcontext.SaveChangesAsync();
 

@@ -12,16 +12,16 @@ namespace WebAPI.Services.Validation.GameStatsValidation
         {
             dbcontext = context;
         }
-        public void Validate(GameStats newGameStats, ModelStateDictionary modelState)
+        public void Validate(GameStats gameStats, ModelStateDictionary modelState)
         {
-            if (dbcontext.GameStats.Any(x => x.UserID == newGameStats.UserID && x.GameID == newGameStats.GameID))
+            if (!dbcontext.GameStats.Any(x => x.ID == gameStats.ID) && dbcontext.GameStats.Any(x => x.UserID == gameStats.UserID && x.GameID == gameStats.GameID))
                 modelState.AddModelError("AlreadyExists", "This game statistics already exists");
 
-            if (!dbcontext.User.Any(x => x.ID == newGameStats.UserID))
-                modelState.AddModelError("UserNotExists", $"User with ID \"{newGameStats.UserID}\" not exists");
+            if (!dbcontext.User.Any(x => x.ID == gameStats.UserID))
+                modelState.AddModelError("UserNotExists", $"User with ID \"{gameStats.UserID}\" not exists");
 
-            if (!dbcontext.Game.Any(x => x.ID == newGameStats.GameID))
-                modelState.AddModelError("GameNotExists", $"Game with ID \"{newGameStats.GameID}\" not exists");
+            if (!dbcontext.Game.Any(x => x.ID == gameStats.GameID))
+                modelState.AddModelError("GameNotExists", $"Game with ID \"{gameStats.GameID}\" not exists");
         }
     }
 }

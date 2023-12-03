@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
 using WebAPI.Models;
@@ -8,6 +9,7 @@ using WebAPI.Services.Validation.UserValidation;
 namespace WebAPI.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("/GameStats")]
     public class GameStatsController : Controller
     {
@@ -19,8 +21,8 @@ namespace WebAPI.Controllers
             gameStatsValidation = _gameStatsValidation;
         }
 
-        [HttpGet("GetGamesStats")]
-        public async Task<ActionResult<IEnumerable<GameStats>>> GetGamesStats()
+        [HttpGet("GetAllGamesStats")]
+        public async Task<ActionResult<IEnumerable<GameStats>>> GetAllGamesStats()
         {
             try
             {
@@ -55,7 +57,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                gameStatsValidation.Validate(newGameStats,  ModelState);
+                gameStatsValidation.Validate(newGameStats, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -72,11 +74,12 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("PutGameStats/{id:int}")]
-        public async Task<ActionResult<GameStats>> PutGameStats(int id, [FromBody] GameStats newGameStats)
+        public async Task<ActionResult<GameStats>> PutGameStats(int id, [FromBody] GameStats updatedGameStats)
         {
             try
             {
-                gameStatsValidation.Validate(newGameStats, ModelState);
+                updatedGameStats.ID = id;
+                gameStatsValidation.Validate(updatedGameStats, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -86,13 +89,13 @@ namespace WebAPI.Controllers
                 if (gameStatsFromDb == null)
                     return NoContent();
 
-                gameStatsFromDb.UserID = newGameStats.UserID;
-                gameStatsFromDb.User = newGameStats.User;
-                gameStatsFromDb.GameID = newGameStats.GameID;
-                gameStatsFromDb.Game = newGameStats.Game;
-                gameStatsFromDb.HoursPlayed = newGameStats.HoursPlayed;
-                gameStatsFromDb.AchievementsGot = newGameStats.AchievementsGot;
-                gameStatsFromDb.PurchaseDate = newGameStats.PurchaseDate;
+                gameStatsFromDb.UserID = updatedGameStats.UserID;
+                gameStatsFromDb.User = updatedGameStats.User;
+                gameStatsFromDb.GameID = updatedGameStats.GameID;
+                gameStatsFromDb.Game = updatedGameStats.Game;
+                gameStatsFromDb.HoursPlayed = updatedGameStats.HoursPlayed;
+                gameStatsFromDb.AchievementsGotten = updatedGameStats.AchievementsGotten;
+                gameStatsFromDb.PurchaseDate = updatedGameStats.PurchaseDate;
 
                 await dbcontext.SaveChangesAsync();
 

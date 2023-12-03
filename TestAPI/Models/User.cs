@@ -11,25 +11,27 @@ namespace WebAPI.Models
         public int ID { get; set; }
 
         [Required]
-        [StringLength(30, ErrorMessage = "{0} must be between {2} and {1} characters long.", MinimumLength = 7)]
+        [StringLength(99, ErrorMessage = "{0} must be between {2} and {1} characters long.", MinimumLength = 5)]
         public string Login { get; set; } = null!;
 
         [Required]
-        public string PasswordHash { get; set; } = null!;
+        public string Password { get; set; } = null!;
 
         [Required]
         [StringLength(30, ErrorMessage = "{0} must be between {2} and {1} characters long.", MinimumLength = 1)]
         public string Nickname { get; set; } = null!;
 
-        public string? ProfilePictureURL { get; set; } 
-
-        [StringLength(30, ErrorMessage = "{0} must be between {2} and {1} characters long.", MinimumLength = 1)]
-        public string? Email { get; set; }
+        public string? ProfilePictureURL { get; set; }
 
         [Required]
         public DateTime CreationDate { get; set; }
 
-        [Required]
+        [MaxLength(256)]
+        public string? Email { get; set; }
+
+        [JsonIgnore]
+        public Developer? Developer {get;set;}
+
         [JsonIgnore]
         public ICollection<GameStats>? GamesStats { get; set; } = new List<GameStats>();
     }

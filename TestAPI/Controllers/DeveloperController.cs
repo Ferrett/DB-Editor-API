@@ -1,4 +1,5 @@
 ﻿using Amazon.S3.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
@@ -14,6 +15,7 @@ using WebAPI.Services.Validation.UserValidation;
 namespace WebAPI.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("/Developer")]
     public class DeveloperController : Controller
     {
@@ -30,8 +32,8 @@ namespace WebAPI.Controllers
             configuration = _configuration;
         }
 
-        [HttpGet("GetDevelopers")]
-        public async Task<ActionResult<IEnumerable<Developer>>> GetDevelopers()
+        [HttpGet("GetAllDevelopers")]
+        public async Task<ActionResult<IEnumerable<Developer>>> GetAllDevelopers()
         {
             try
             {
@@ -86,11 +88,12 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("PutDeveloper/{id:int}")]
-        public async Task<ActionResult<Developer>> PutDeveloper(int id, [FromBody] Developer newDeveloper)
+        public async Task<ActionResult<Developer>> PutDeveloper(int id, [FromBody] Developer updatedDeveloper)
         {
             try
             {
-                developerValidation.Validate(newDeveloper, ModelState);
+                updatedDeveloper.ID = id;
+                developerValidation.Validate(updatedDeveloper, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -100,10 +103,8 @@ namespace WebAPI.Controllers
                 if (developerFromDb == null)
                     return NoContent();
 
-                developerFromDb.Name = newDeveloper.Name;
-                developerFromDb.LogoURL = newDeveloper.LogoURL;
-                developerFromDb.RegistrationDate = newDeveloper.RegistrationDate;
-                developerFromDb.PublishedGames = newDeveloper.PublishedGames;
+                developerFromDb.Name = updatedDeveloper.Name;
+                developerFromDb.CreationDate = updatedDeveloper.CreationDate;
 
                 await dbcontext.SaveChangesAsync();
 

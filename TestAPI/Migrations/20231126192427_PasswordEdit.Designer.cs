@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WebAPI.Logic;
@@ -11,9 +12,11 @@ using WebAPI.Logic;
 namespace WebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20231126192427_PasswordEdit")]
+    partial class PasswordEdit
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,24 +33,18 @@ namespace WebAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
 
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<string>("LogoURL")
                         .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
-                    b.Property<int>("UserID")
-                        .HasColumnType("integer");
+                    b.Property<DateTime>("RegistrationDate")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("UserID")
-                        .IsUnique();
 
                     b.ToTable("Developer");
                 });
@@ -60,7 +57,7 @@ namespace WebAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
 
-                    b.Property<int>("AchievementsAmount")
+                    b.Property<int>("AchievementsCount")
                         .HasColumnType("integer");
 
                     b.Property<int>("DeveloperID")
@@ -69,16 +66,16 @@ namespace WebAPI.Migrations
                     b.Property<string>("LogoURL")
                         .HasColumnType("text");
 
-                    b.Property<float>("PriceUsd")
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("character varying(25)");
+
+                    b.Property<float>("Price")
                         .HasColumnType("real");
 
                     b.Property<DateTime>("PublishDate")
                         .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
 
                     b.HasKey("ID");
 
@@ -95,7 +92,7 @@ namespace WebAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ID"));
 
-                    b.Property<int>("AchievementsGotten")
+                    b.Property<int>("AchievementsGot")
                         .HasColumnType("integer");
 
                     b.Property<int>("GameID")
@@ -167,13 +164,13 @@ namespace WebAPI.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
 
                     b.Property<string>("Login")
                         .IsRequired()
-                        .HasMaxLength(99)
-                        .HasColumnType("character varying(99)");
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)");
 
                     b.Property<string>("Nickname")
                         .IsRequired()
@@ -190,17 +187,6 @@ namespace WebAPI.Migrations
                     b.HasKey("ID");
 
                     b.ToTable("User");
-                });
-
-            modelBuilder.Entity("WebAPI.Models.Developer", b =>
-                {
-                    b.HasOne("WebAPI.Models.User", "User")
-                        .WithOne("Developer")
-                        .HasForeignKey("WebAPI.Models.Developer", "UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("WebAPI.Models.Game", b =>
@@ -264,8 +250,6 @@ namespace WebAPI.Migrations
 
             modelBuilder.Entity("WebAPI.Models.User", b =>
                 {
-                    b.Navigation("Developer");
-
                     b.Navigation("GamesStats");
                 });
 #pragma warning restore 612, 618

@@ -6,7 +6,7 @@
 
         public GameLogoUpload(IConfiguration configuration)
         {
-            BucketUrl = configuration.GetValue<string>("ApiLinks:GameUrl");
+            BucketUrl = configuration["ApiLinks:GameUrl"]!;
         }
     }
 }

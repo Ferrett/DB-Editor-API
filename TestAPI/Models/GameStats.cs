@@ -9,11 +9,11 @@ namespace WebAPI.Models
         public int ID { get; set; }
 
         [Required]
-        [Range(0.0, Double.MaxValue)]
+        [Range(0.0, float.MaxValue)]
         public float HoursPlayed { get; set; }
 
-        [Range(0.0, 1000)]
-        public int AchievementsGot { get; set; }
+        [Range(0, 9999)]
+        public int AchievementsGotten { get; set; }
 
         [Required]
         public DateTime PurchaseDate { get; set; }
@@ -21,11 +21,11 @@ namespace WebAPI.Models
         [Required]
         public int UserID { get; set; }
 
-        [JsonIgnore]
-        public User? User { get; set; }
-
         [Required]
         public int GameID { get; set; }
+
+        [JsonIgnore]
+        public User? User { get; set; }
 
         [JsonIgnore]
         public Game? Game { get; set; } 

@@ -10,7 +10,7 @@ namespace WebAPI.Services.S3Bucket.User
 
         public UserProfilePictureUpload(IConfiguration configuration)
         {
-            BucketUrl= configuration.GetValue<string>("ApiLinks:UserUrl");
+            BucketUrl= configuration["ApiLinks:UserUrl"]!;
         }
        
     }

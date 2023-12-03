@@ -13,16 +13,16 @@ namespace WebAPI.Services.Validation.ReviewValidation
         {
             dbcontext = context;
         }
-        public void Validate(Review newReview, ModelStateDictionary modelState)
+        public void Validate(Review review, ModelStateDictionary modelState)
         {
-            if (dbcontext.Review.Any(x => x.UserID == newReview.UserID && x.GameID == newReview.GameID))
+            if (!dbcontext.Review.Any(x => x.ID == review.ID) && dbcontext.Review.Any(x => x.UserID == review.UserID && x.GameID == review.GameID))
                 modelState.AddModelError("AlreadyExists", "This review already exists");
 
-            if (!dbcontext.User.Any(x => x.ID == newReview.UserID))
-                modelState.AddModelError("UserNotExists", $"User with ID \"{newReview.UserID}\" not exists");
+            if (!dbcontext.User.Any(x => x.ID == review.UserID))
+                modelState.AddModelError("UserNotExists", $"User with ID \"{review.UserID}\" not exists");
 
-            if (!dbcontext.Game.Any(x => x.ID == newReview.GameID))
-                modelState.AddModelError("GameNotExists", $"Game with ID \"{newReview.GameID}\" not exists");
+            if (!dbcontext.Game.Any(x => x.ID == review.GameID))
+                modelState.AddModelError("GameNotExists", $"Game with ID \"{review.GameID}\" not exists");
         }
     }
 }

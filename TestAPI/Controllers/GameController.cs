@@ -1,4 +1,5 @@
 ﻿using Amazon.S3.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
@@ -11,6 +12,7 @@ using WebAPI.Services.Validation.UserValidation;
 namespace WebAPI.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("/Game")]
     public class GameController : Controller
     {
@@ -26,8 +28,8 @@ namespace WebAPI.Controllers
             configuration = _configuration;
         }
 
-        [HttpGet("GetGames")]
-        public async Task<ActionResult<IEnumerable<Game>>> GetGames()
+        [HttpGet("GetAllGames")]
+        public async Task<ActionResult<IEnumerable<Game>>> GetAllGames()
         {
             try
             {
@@ -82,11 +84,12 @@ namespace WebAPI.Controllers
         }
 
         [HttpPut("PutGame/{id:int}")]
-        public async Task<ActionResult<Game>> PutGame(int id, [FromBody] Game newGame)
+        public async Task<ActionResult<Game>> PutGame(int id, [FromBody] Game updatedGame)
         {
             try
             {
-                gameValidation.Validate(newGame,  ModelState);
+                updatedGame.ID = id;
+                gameValidation.Validate(updatedGame, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
@@ -96,14 +99,12 @@ namespace WebAPI.Controllers
                 if (gameFromDb == null)
                     return NoContent();
 
-                gameFromDb.Name = newGame.Name;
-                gameFromDb.LogoURL = newGame.LogoURL;
-                gameFromDb.Price = newGame.Price;
-                gameFromDb.PublishDate = newGame.PublishDate;
-                gameFromDb.AchievementsCount = newGame.AchievementsCount;
-                gameFromDb.DeveloperID = newGame.DeveloperID;
-                gameFromDb.Developer = newGame.Developer;
-                gameFromDb.Reviews = newGame.Reviews;
+                gameFromDb.Title = updatedGame.Title;
+                gameFromDb.PriceUsd = updatedGame.PriceUsd;
+                gameFromDb.PublishDate = updatedGame.PublishDate;
+                gameFromDb.AchievementsAmount = updatedGame.AchievementsAmount;
+                gameFromDb.DeveloperID = updatedGame.DeveloperID;
+                gameFromDb.Developer = updatedGame.Developer;
 
                 await dbcontext.SaveChangesAsync();
 
@@ -139,7 +140,7 @@ namespace WebAPI.Controllers
                     Guid newLogoGuid = Guid.NewGuid();
 
                     await gameLogoUpload.AddObject(logo, newLogoGuid);
-              
+
                     game.LogoURL = $"{gameLogoUpload.BucketUrl}{newLogoGuid}";
                 }
 

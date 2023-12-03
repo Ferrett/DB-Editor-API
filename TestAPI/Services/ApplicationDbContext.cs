@@ -27,6 +27,5 @@ namespace WebAPI.Logic
 
             optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
         }
-       
     }
 }
