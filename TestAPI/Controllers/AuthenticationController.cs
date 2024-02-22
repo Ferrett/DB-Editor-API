@@ -13,6 +13,7 @@ using WebAPI.Services.Validation.UserValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication;
 using WebAPI.Services.Authentication;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebAPI.Controllers
 {
@@ -20,16 +21,16 @@ namespace WebAPI.Controllers
     [Route("/Authentication")]
     public class AuthenticationController : Controller
     {
-        private readonly IConfiguration configuration;
-        private readonly ApplicationDbContext dbcontext;
-        private readonly IUserValidation userValidation;
-        private readonly IUserAuthenticationService authentication;
-        public AuthenticationController(IConfiguration _configuration, IUserValidation _userValidation, ApplicationDbContext _dbcontext, IUserAuthenticationService _authentication)
+        private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _dbcontext;
+        private readonly IUserValidation _userValidation;
+        private readonly IUserAuthenticationService _authentication;
+        public AuthenticationController(IConfiguration configuration, IUserValidation userValidation, ApplicationDbContext dbcontext, IUserAuthenticationService authentication)
         {
-            configuration = _configuration;
-            dbcontext = _dbcontext;
-            userValidation = _userValidation;
-            authentication = _authentication;
+            _configuration = configuration;
+            _dbcontext = dbcontext;
+            _userValidation = userValidation;
+            _authentication = authentication;
         }
 
         [HttpPost("RegisterNewUser")]
@@ -37,15 +38,15 @@ namespace WebAPI.Controllers
         {
             try
             {
-                User newUser = authentication.RegistrationModelToUser(userRegister);
+                User newUser = _authentication.RegistrationModelToUser(userRegister);
 
-                userValidation.Validate(newUser, ModelState);
+                _userValidation.Validate(newUser, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                await dbcontext.User.AddAsync(newUser);
-                await dbcontext.SaveChangesAsync();
+                await _dbcontext.User.AddAsync(newUser);
+                await _dbcontext.SaveChangesAsync();
 
                 return CreatedAtAction(nameof(RegisterNewUser), new { id = newUser.ID }, newUser);
             }
@@ -60,17 +61,24 @@ namespace WebAPI.Controllers
         {
             try
             {
-                 authentication.LoginAttempt(userLogin, ModelState);
+                _authentication.LoginAttempt(userLogin, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                return Ok(new { Token = GenerateJwtToken(userLogin.Login) });
+                return  Ok(new { Token = GenerateJwtToken(userLogin.Login) });
             }
             catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
+        }
+
+        [Authorize]
+        [HttpGet("VerifyToken")]
+        public async Task<IActionResult> VerifyToken()
+        {
+            return Ok();
         }
 
         private string GenerateJwtToken(string login)
@@ -81,12 +89,12 @@ namespace WebAPI.Controllers
                 new Claim(ClaimTypes.Role, "user")
             };
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:SecretKey"]!));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]!));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: configuration["Jwt:Issuer"],
-                audience: configuration["Jwt:Audience"],
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
                 claims: claims,
                 expires: DateTime.UtcNow.AddHours(1),
                 signingCredentials: credentials

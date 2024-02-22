@@ -16,17 +16,17 @@ namespace WebAPI.Controllers
     [Route("/User")]
     public class UserController : Controller
     {
-        private readonly ApplicationDbContext dbcontext;
-        private readonly IUserValidation userValidation;
-        private readonly IS3Bucket bucket;
-        private readonly IConfiguration configuration;
+        private readonly ApplicationDbContext _dbcontext;
+        private readonly IUserValidation _userValidation;
+        private readonly IS3Bucket _bucket;
+        private readonly IConfiguration _configuration;
 
-        public UserController(ApplicationDbContext context, IS3Bucket _bucket, IUserValidation _userValidation, IConfiguration _configuration)
+        public UserController(ApplicationDbContext dbcontext, IS3Bucket bucket, IUserValidation userValidation, IConfiguration configuration)
         {
-            dbcontext = context;
-            userValidation = _userValidation;
-            bucket = _bucket;
-            configuration = _configuration;
+            _dbcontext = dbcontext;
+            _userValidation = userValidation;
+            _bucket = bucket;
+            _configuration = configuration;
         }
 
         [HttpGet("GetAllUsers")]
@@ -34,7 +34,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                return Ok(await dbcontext.User.ToListAsync());
+                return Ok(await _dbcontext.User.ToListAsync());
             }
             catch (Exception ex)
             {
@@ -48,7 +48,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var user = await dbcontext.User.FindAsync(id);
+                var user = await _dbcontext.User.FindAsync(id);
 
                 if (user == null)
                     return NoContent();
@@ -61,21 +61,41 @@ namespace WebAPI.Controllers
             }
         }
 
+
+        [HttpGet("GetUserByLogin/{login}")]
+        public async Task<ActionResult<User>> GetUserByLogin(string login)
+        {
+            try
+            {
+                var user = await _dbcontext.User.FirstOrDefaultAsync(x=>x.Login == login);
+
+                if (user == null)
+                    return NoContent();
+
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
         [HttpPost("PostUser")]
         public async Task<ActionResult<User>> PostUser([FromBody] User newUser)
         {
             try
             {
-                userValidation.Validate(newUser, ModelState);
+                _userValidation.Validate(newUser, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                UserProfilePictureUpload userPfpUpload = new UserProfilePictureUpload(configuration);
+                UserProfilePictureUpload userPfpUpload = new UserProfilePictureUpload(_configuration);
                 newUser.ProfilePictureURL = $"{userPfpUpload.BucketUrl}{userPfpUpload.Placeholder}";
 
-                await dbcontext.User.AddAsync(newUser);
-                await dbcontext.SaveChangesAsync();
+                await _dbcontext.User.AddAsync(newUser);
+                await _dbcontext.SaveChangesAsync();
 
                 return CreatedAtAction(nameof(PostUser), new { id = newUser.ID }, newUser);
             }
@@ -91,12 +111,12 @@ namespace WebAPI.Controllers
             try
             {
                 upadtedUser.ID = id;
-                userValidation.Validate(upadtedUser, ModelState);
+                _userValidation.Validate(upadtedUser, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var userFromDb = await dbcontext.User.FindAsync(id);
+                var userFromDb = await _dbcontext.User.FindAsync(id);
 
                 if (userFromDb == null)
                     return NoContent();
@@ -107,7 +127,7 @@ namespace WebAPI.Controllers
                 userFromDb.Email = upadtedUser.Email;
                 userFromDb.CreationDate = upadtedUser.CreationDate;
 
-                await dbcontext.SaveChangesAsync();
+                await _dbcontext.SaveChangesAsync();
 
                 return Ok(userFromDb);
             }
@@ -122,9 +142,9 @@ namespace WebAPI.Controllers
         {
             try
             {
-                UserProfilePictureUpload userPfpUpload = new UserProfilePictureUpload(configuration);
+                UserProfilePictureUpload userPfpUpload = new UserProfilePictureUpload(_configuration);
 
-                var user = await dbcontext.User.FindAsync(id);
+                var user = await _dbcontext.User.FindAsync(id);
 
                 if (user == null)
                     return NoContent();
@@ -145,7 +165,7 @@ namespace WebAPI.Controllers
                     user.ProfilePictureURL = $"{userPfpUpload.BucketUrl}{newPfpGuid}";
                 }
 
-                await dbcontext.SaveChangesAsync();
+                await _dbcontext.SaveChangesAsync();
 
                 return Ok(user);
             }
@@ -160,13 +180,13 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var user = await dbcontext.User.FindAsync(id);
+                var user = await _dbcontext.User.FindAsync(id);
 
                 if (user == null)
                     return NoContent();
 
-                dbcontext.User.Remove(user);
-                await dbcontext.SaveChangesAsync();
+                _dbcontext.User.Remove(user);
+                await _dbcontext.SaveChangesAsync();
 
                 return Ok();
             }

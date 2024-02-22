@@ -11,10 +11,11 @@ namespace WebAPI.Logic
         public DbSet<GameStats> GameStats => Set<GameStats>();
         public DbSet<Game> Game => Set<Game>();
         public DbSet<Developer> Developer => Set<Developer>();
+        public DbSet<UserGame> UserGame => Set<UserGame>();
 
         public ApplicationDbContext()
         {
-            //Database.EnsureCreated();
+            Database.EnsureCreated();
             //Database.EnsureDeleted();
         }
 
@@ -26,6 +27,22 @@ namespace WebAPI.Logic
             .Build();
 
             optionsBuilder.UseNpgsql(configuration.GetConnectionString("DefaultConnection"));
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UserGame>()
+                .HasKey(sc => new { sc.UserID, sc.GameID});
+
+            modelBuilder.Entity<UserGame>()
+                .HasOne(sc => sc.User)
+                .WithMany(s => s.UserGames)
+                .HasForeignKey(sc => sc.UserID);
+
+            modelBuilder.Entity<UserGame>()
+                .HasOne(sc => sc.Game)
+                .WithMany(c => c.UserGames)
+                .HasForeignKey(sc => sc.GameID);
         }
     }
 }

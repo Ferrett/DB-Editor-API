@@ -33,5 +33,8 @@ namespace WebAPI.Models
 
         [JsonIgnore]
         public ICollection<Review>? Reviews { get; set; } = new List<Review>();
+
+        [JsonIgnore]
+        public ICollection<UserGame>? UserGames { get; set; } = new List<UserGame>();
     }
 }

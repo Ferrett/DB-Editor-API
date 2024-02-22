@@ -20,6 +20,7 @@ using System.Text;
 using System.Configuration;
 using System.IdentityModel.Tokens;
 using WebAPI.Services.Authentication;
+using WebAPI.Services.Validation.UserGameValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,6 +45,7 @@ builder.Services.AddScoped<IDeveloperValidation, DeveloperValidation>();
 builder.Services.AddScoped<IGameValidation, GameValidation>();
 builder.Services.AddScoped<IReviewValidation, ReviewValidation>();
 builder.Services.AddScoped<IGameStatsValidation, GameStatsValidation>();
+builder.Services.AddScoped<IUserGameValidation, UserGameValidation>();
 builder.Services.AddScoped<IUserAuthenticationService, UserAuthenticationService>();
 
 builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);

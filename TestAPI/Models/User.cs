@@ -30,9 +30,9 @@ namespace WebAPI.Models
         public string? Email { get; set; }
 
         [JsonIgnore]
-        public Developer? Developer {get;set;}
+        public ICollection<GameStats>? GamesStats { get; set; } = new List<GameStats>();
 
         [JsonIgnore]
-        public ICollection<GameStats>? GamesStats { get; set; } = new List<GameStats>();
+        public ICollection<UserGame>? UserGames { get; set; } = new List<UserGame>();
     }
 }

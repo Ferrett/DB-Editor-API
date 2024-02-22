@@ -16,16 +16,16 @@ namespace WebAPI.Controllers
     [Route("/Game")]
     public class GameController : Controller
     {
-        private readonly ApplicationDbContext dbcontext;
-        private readonly IGameValidation gameValidation;
-        private readonly IS3Bucket bucket;
-        private readonly IConfiguration configuration;
-        public GameController(ApplicationDbContext context, IS3Bucket _bucket, IGameValidation _gameValidation, IConfiguration _configuration)
+        private readonly ApplicationDbContext _dbcontext;
+        private readonly IGameValidation _gameValidation;
+        private readonly IS3Bucket _bucket;
+        private readonly IConfiguration _configuration;
+        public GameController(ApplicationDbContext dbcontext, IS3Bucket bucket, IGameValidation gameValidation, IConfiguration configuration)
         {
-            dbcontext = context;
-            gameValidation = _gameValidation;
-            bucket = _bucket;
-            configuration = _configuration;
+            _dbcontext = dbcontext;
+            _gameValidation = gameValidation;
+            _bucket = bucket;
+            _configuration = configuration;
         }
 
         [HttpGet("GetAllGames")]
@@ -33,7 +33,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                return Ok(await dbcontext.Game.ToListAsync());
+                return Ok(await _dbcontext.Game.ToListAsync());
             }
             catch (Exception ex)
             {
@@ -46,7 +46,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var game = await dbcontext.Game.FindAsync(id);
+                var game = await _dbcontext.Game.FindAsync(id);
 
                 if (game == null)
                     return NoContent();
@@ -59,21 +59,39 @@ namespace WebAPI.Controllers
             }
         }
 
+        [HttpGet("GetGamesByTitle/{title}")]
+        public async Task<ActionResult<Game>> GetGamesByTitle(string title)
+        {
+            try
+            {
+                var games = await _dbcontext.Game.Where(x=>x.Title.ToLower().Contains(title.ToLower())).ToListAsync();
+
+                if (games == null)
+                    return NoContent();
+
+                return Ok(games);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost("PostGame")]
         public async Task<ActionResult<Game>> PostGame([FromBody] Game newGame)
         {
             try
             {
-                gameValidation.Validate(newGame, ModelState);
+                _gameValidation.Validate(newGame, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                GameLogoUpload gameLogoUpload = new GameLogoUpload(configuration);
+                GameLogoUpload gameLogoUpload = new GameLogoUpload(_configuration);
                 newGame.LogoURL = $"{gameLogoUpload.BucketUrl}{gameLogoUpload.Placeholder}";
 
-                await dbcontext.Game.AddAsync(newGame);
-                await dbcontext.SaveChangesAsync();
+                await _dbcontext.Game.AddAsync(newGame);
+                await _dbcontext.SaveChangesAsync();
 
                 return CreatedAtAction(nameof(PostGame), new { id = newGame.ID }, newGame);
             }
@@ -89,12 +107,12 @@ namespace WebAPI.Controllers
             try
             {
                 updatedGame.ID = id;
-                gameValidation.Validate(updatedGame, ModelState);
+                _gameValidation.Validate(updatedGame, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var gameFromDb = await dbcontext.Game.FindAsync(id);
+                var gameFromDb = await _dbcontext.Game.FindAsync(id);
 
                 if (gameFromDb == null)
                     return NoContent();
@@ -106,7 +124,7 @@ namespace WebAPI.Controllers
                 gameFromDb.DeveloperID = updatedGame.DeveloperID;
                 gameFromDb.Developer = updatedGame.Developer;
 
-                await dbcontext.SaveChangesAsync();
+                await _dbcontext.SaveChangesAsync();
 
                 return Ok(gameFromDb);
             }
@@ -121,9 +139,9 @@ namespace WebAPI.Controllers
         {
             try
             {
-                GameLogoUpload gameLogoUpload = new GameLogoUpload(configuration);
+                GameLogoUpload gameLogoUpload = new GameLogoUpload(_configuration);
 
-                var game = await dbcontext.Game.FindAsync(id);
+                var game = await _dbcontext.Game.FindAsync(id);
 
                 if (game == null)
                     return NoContent();
@@ -144,7 +162,7 @@ namespace WebAPI.Controllers
                     game.LogoURL = $"{gameLogoUpload.BucketUrl}{newLogoGuid}";
                 }
 
-                await dbcontext.SaveChangesAsync();
+                await _dbcontext.SaveChangesAsync();
 
                 return Ok();
             }
@@ -159,13 +177,13 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var game = await dbcontext.Game.FindAsync(id);
+                var game = await _dbcontext.Game.FindAsync(id);
 
                 if (game == null)
                     return NoContent();
 
-                dbcontext.Game.Remove(game);
-                await dbcontext.SaveChangesAsync();
+                _dbcontext.Game.Remove(game);
+                await _dbcontext.SaveChangesAsync();
 
                 return Ok();
             }

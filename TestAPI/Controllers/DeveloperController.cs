@@ -19,17 +19,17 @@ namespace WebAPI.Controllers
     [Route("/Developer")]
     public class DeveloperController : Controller
     {
-        private readonly ApplicationDbContext dbcontext;
-        private readonly IDeveloperValidation developerValidation;
-        private readonly IS3Bucket bucket;
-        private readonly IConfiguration configuration;
+        private readonly ApplicationDbContext _dbcontext;
+        private readonly IDeveloperValidation _developerValidation;
+        private readonly IS3Bucket _bucket;
+        private readonly IConfiguration _configuration;
 
-        public DeveloperController(ApplicationDbContext context, IS3Bucket _bucket, IDeveloperValidation _developerValidation, IConfiguration _configuration)
+        public DeveloperController(ApplicationDbContext dbcontext, IS3Bucket bucket, IDeveloperValidation developerValidation, IConfiguration configuration)
         {
-            dbcontext = context;
-            developerValidation = _developerValidation;
-            bucket = _bucket;
-            configuration = _configuration;
+            _dbcontext = dbcontext;
+            _developerValidation = developerValidation;
+            _bucket = bucket;
+            _configuration = configuration;
         }
 
         [HttpGet("GetAllDevelopers")]
@@ -37,7 +37,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                return Ok(await dbcontext.Developer.ToListAsync());
+                return Ok(await _dbcontext.Developer.ToListAsync());
             }
             catch (Exception ex)
             {
@@ -50,7 +50,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var developer = await dbcontext.Developer.FindAsync(id);
+                var developer = await _dbcontext.Developer.FindAsync(id);
 
                 if (developer == null)
                     return NoContent();
@@ -68,16 +68,16 @@ namespace WebAPI.Controllers
         {
             try
             {
-                developerValidation.Validate(newDeveloper, ModelState);
+                _developerValidation.Validate(newDeveloper, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                DeveloperProfilePictureUpload developerLogoUpload = new DeveloperProfilePictureUpload(configuration);
+                DeveloperProfilePictureUpload developerLogoUpload = new DeveloperProfilePictureUpload(_configuration);
                 newDeveloper.LogoURL = $"{developerLogoUpload.BucketUrl}{developerLogoUpload.Placeholder}";
 
-                await dbcontext.Developer.AddAsync(newDeveloper);
-                await dbcontext.SaveChangesAsync();
+                await _dbcontext.Developer.AddAsync(newDeveloper);
+                await _dbcontext.SaveChangesAsync();
 
                 return CreatedAtAction(nameof(PostDeveloper), new { id = newDeveloper.ID }, newDeveloper);
             }
@@ -93,12 +93,12 @@ namespace WebAPI.Controllers
             try
             {
                 updatedDeveloper.ID = id;
-                developerValidation.Validate(updatedDeveloper, ModelState);
+                _developerValidation.Validate(updatedDeveloper, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var developerFromDb = await dbcontext.Developer.FindAsync(id);
+                var developerFromDb = await _dbcontext.Developer.FindAsync(id);
 
                 if (developerFromDb == null)
                     return NoContent();
@@ -106,7 +106,7 @@ namespace WebAPI.Controllers
                 developerFromDb.Name = updatedDeveloper.Name;
                 developerFromDb.CreationDate = updatedDeveloper.CreationDate;
 
-                await dbcontext.SaveChangesAsync();
+                await _dbcontext.SaveChangesAsync();
 
                 return Ok(developerFromDb);
             }
@@ -121,9 +121,9 @@ namespace WebAPI.Controllers
         {
             try
             {
-                DeveloperProfilePictureUpload developerLogoUpload = new DeveloperProfilePictureUpload(configuration);
+                DeveloperProfilePictureUpload developerLogoUpload = new DeveloperProfilePictureUpload(_configuration);
 
-                var developer = await dbcontext.Developer.FindAsync(id);
+                var developer = await _dbcontext.Developer.FindAsync(id);
 
                 if (developer == null)
                     return NoContent();
@@ -144,7 +144,7 @@ namespace WebAPI.Controllers
                     developer.LogoURL = $"{developerLogoUpload.BucketUrl}{newLogoGuid}";
                 }
 
-                await dbcontext.SaveChangesAsync();
+                await _dbcontext.SaveChangesAsync();
 
                 return Ok();
             }
@@ -160,13 +160,13 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var developer = await dbcontext.Developer.FindAsync(id);
+                var developer = await _dbcontext.Developer.FindAsync(id);
 
                 if (developer == null)
                     return NoContent();
 
-                dbcontext.Developer.Remove(developer);
-                await dbcontext.SaveChangesAsync();
+                _dbcontext.Developer.Remove(developer);
+                await _dbcontext.SaveChangesAsync();
 
                 return Ok();
             }
