@@ -62,12 +62,12 @@ namespace WebAPI.Controllers
         }
 
 
-        [HttpGet("GetUserByLogin/{login}")]
-        public async Task<ActionResult<User>> GetUserByLogin(string login)
+        [HttpGet("GetUserByLogin/{userLogin}")]
+        public async Task<ActionResult<User>> GetUserByLogin(string userLogin)
         {
             try
             {
-                var user = await _dbcontext.User.FirstOrDefaultAsync(x=>x.Login == login);
+                var user = await _dbcontext.User.FirstOrDefaultAsync(x=>x.Login == userLogin);
 
                 if (user == null)
                     return NoContent();

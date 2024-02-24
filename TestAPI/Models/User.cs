@@ -29,6 +29,10 @@ namespace WebAPI.Models
         [MaxLength(256)]
         public string? Email { get; set; }
 
+        [Required]
+        [Range(0.0, float.MaxValue, ErrorMessage = "{0} must be greater than or equal to 0")]
+        public float BalanceUSD { get; set; }
+
         [JsonIgnore]
         public ICollection<GameStats>? GamesStats { get; set; } = new List<GameStats>();
 

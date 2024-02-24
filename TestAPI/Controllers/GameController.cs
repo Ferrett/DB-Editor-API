@@ -59,12 +59,12 @@ namespace WebAPI.Controllers
             }
         }
 
-        [HttpGet("GetGamesByTitle/{title}")]
-        public async Task<ActionResult<Game>> GetGamesByTitle(string title)
+        [HttpGet("GetGamesByTitle/{gameTitle}")]
+        public async Task<ActionResult<Game>> GetGamesByTitle(string gameTitle)
         {
             try
             {
-                var games = await _dbcontext.Game.Where(x=>x.Title.ToLower().Contains(title.ToLower())).ToListAsync();
+                var games = await _dbcontext.Game.Where(x=>x.Title.ToLower().Contains(gameTitle.ToLower())).ToListAsync();
 
                 if (games == null)
                     return NoContent();

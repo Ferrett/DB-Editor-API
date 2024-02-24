@@ -28,6 +28,7 @@ namespace WebAPI.Services.Authentication
                 Password = userRegister.Password,
                 Nickname = userRegister.Nickname,
                 Login = userRegister.Login,
+                BalanceUSD = 0.0f,
                 ProfilePictureURL = $"{userPfpUpload.BucketUrl}{userPfpUpload.Placeholder}",
             };
         }

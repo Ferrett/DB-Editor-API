@@ -74,13 +74,6 @@ namespace WebAPI.Controllers
             }
         }
 
-        [Authorize]
-        [HttpGet("VerifyToken")]
-        public async Task<IActionResult> VerifyToken()
-        {
-            return Ok();
-        }
-
         private string GenerateJwtToken(string login)
         {
             List<Claim> claims = new List<Claim>
