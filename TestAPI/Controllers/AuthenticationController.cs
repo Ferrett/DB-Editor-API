@@ -48,7 +48,7 @@ namespace WebAPI.Controllers
                 await _dbcontext.User.AddAsync(newUser);
                 await _dbcontext.SaveChangesAsync();
 
-                return CreatedAtAction(nameof(RegisterNewUser), new { id = newUser.ID }, newUser);
+                return Ok(new { Token = GenerateJwtToken(newUser.Login) });
             }
             catch (Exception ex)
             {
@@ -66,7 +66,7 @@ namespace WebAPI.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                return  Ok(new { Token = GenerateJwtToken(userLogin.Login) });
+                return Ok(new { Token = GenerateJwtToken(userLogin.Login) });
             }
             catch (Exception ex)
             {

@@ -12,6 +12,7 @@ namespace WebAPI.Services.Validation.GameStatsValidation
         {
             dbcontext = context;
         }
+
         public void Validate(GameStats gameStats, ModelStateDictionary modelState)
         {
             if (!dbcontext.GameStats.Any(x => x.ID == gameStats.ID) && dbcontext.GameStats.Any(x => x.UserID == gameStats.UserID && x.GameID == gameStats.GameID))
@@ -22,6 +23,9 @@ namespace WebAPI.Services.Validation.GameStatsValidation
 
             if (!dbcontext.Game.Any(x => x.ID == gameStats.GameID))
                 modelState.AddModelError("GameNotExists", $"Game with ID \"{gameStats.GameID}\" not exists");
+
+            if (dbcontext.Game.Where(x => x.ID == gameStats.GameID).First().AchievementsAmount < gameStats.AchievementsGotten)
+                modelState.AddModelError("AchievementsOverflow", $"New achievements amount can't be bigger than Game achievements amount");
         }
     }
 }

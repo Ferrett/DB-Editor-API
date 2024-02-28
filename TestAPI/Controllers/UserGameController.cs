@@ -18,7 +18,7 @@ using static System.Net.Mime.MediaTypeNames;
 namespace WebAPI.Controllers
 {
     [ApiController]
-    [Authorize]
+    //[Authorize]
     [Route("/UserGame")]
     public class UserGameController : Controller
     {
