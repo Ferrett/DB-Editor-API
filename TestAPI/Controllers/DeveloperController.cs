@@ -1,16 +1,11 @@
-﻿using Amazon.S3.Model;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
-using System.Text.RegularExpressions;
 using WebAPI.Logic;
 using WebAPI.Models;
 using WebAPI.Services.S3Bucket;
 using WebAPI.Services.S3Bucket.Developer;
-using WebAPI.Services.S3Bucket.User;
 using WebAPI.Services.Validation.DeveloperValidation;
-using WebAPI.Services.Validation.UserValidation;
 
 namespace WebAPI.Controllers
 {

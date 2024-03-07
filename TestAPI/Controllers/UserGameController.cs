@@ -1,19 +1,8 @@
-﻿using Amazon.S3.Model;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using System.Configuration;
-using System.Net.Sockets;
 using WebAPI.Logic;
-using WebAPI.Migrations;
 using WebAPI.Models;
-using WebAPI.Services.S3Bucket;
-using WebAPI.Services.S3Bucket.User;
 using WebAPI.Services.Validation.UserGameValidation;
-using WebAPI.Services.Validation.UserValidation;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace WebAPI.Controllers
 {

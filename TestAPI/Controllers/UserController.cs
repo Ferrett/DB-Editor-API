@@ -1,5 +1,4 @@
-﻿using Amazon.S3.Model;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
@@ -7,7 +6,6 @@ using WebAPI.Models;
 using WebAPI.Services.S3Bucket;
 using WebAPI.Services.S3Bucket.User;
 using WebAPI.Services.Validation.UserValidation;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace WebAPI.Controllers
 {

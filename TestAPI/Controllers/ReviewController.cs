@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
 using WebAPI.Models;
 using WebAPI.Services.Validation.ReviewValidation;
-using WebAPI.Services.Validation.UserValidation;
 
 namespace WebAPI.Controllers
 {
@@ -57,7 +56,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var reviews = await _dbcontext.Review.Where(x => x.GameID == gameID).Select(x => x.Game).ToListAsync();
+                var reviews = await _dbcontext.Review.Where(x => x.GameID == gameID).ToListAsync();
                 
                 if (reviews == null)
                     return NoContent();

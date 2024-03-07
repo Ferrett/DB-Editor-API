@@ -1,8 +1,4 @@
-﻿using Amazon;
-using Amazon.S3;
-using Amazon.S3.Model;
-
-namespace WebAPI.Services.S3Bucket
+﻿namespace WebAPI.Services.S3Bucket
 {
     public interface IS3Bucket
     {

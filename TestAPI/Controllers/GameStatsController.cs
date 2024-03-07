@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
 using WebAPI.Models;
 using WebAPI.Services.Validation.GameStatsValidation;
-using WebAPI.Services.Validation.UserValidation;
 
 namespace WebAPI.Controllers
 {

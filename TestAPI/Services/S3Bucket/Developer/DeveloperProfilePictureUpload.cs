@@ -1,6 +1,4 @@
-﻿using System.Configuration;
-
-namespace WebAPI.Services.S3Bucket.Developer
+﻿namespace WebAPI.Services.S3Bucket.Developer
 {
     public class DeveloperProfilePictureUpload : ImageUpload
     {

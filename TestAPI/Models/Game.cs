@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace WebAPI.Models
@@ -17,7 +16,7 @@ namespace WebAPI.Models
 
         [Required]
         [Range(0.0, 9999.0)]
-        public float PriceUsd { get; set; }
+        public float PriceUSD { get; set; }
 
         [Required]
         public DateTime PublishDate { get; set; }

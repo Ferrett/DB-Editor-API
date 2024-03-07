@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 using WebAPI.Logic;
 using WebAPI.Models;
-
 
 namespace WebAPI.Services.Validation.UserGameValidation
 {

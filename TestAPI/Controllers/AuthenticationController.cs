@@ -1,19 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Configuration;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using WebAPI.Logic;
 using WebAPI.Models;
 using WebAPI.Models.ServiceModels;
-using WebAPI.Services.S3Bucket.User;
 using WebAPI.Services.Validation.UserValidation;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authentication;
 using WebAPI.Services.Authentication;
-using Microsoft.AspNetCore.Authorization;
+
 
 namespace WebAPI.Controllers
 {

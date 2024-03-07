@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
 using WebAPI.Models;
 
@@ -15,7 +14,7 @@ namespace WebAPI.Services.Validation.GameStatsValidation
 
         public void Validate(GameStats gameStats, ModelStateDictionary modelState)
         {
-            if (!dbcontext.GameStats.Any(x => x.ID == gameStats.ID) && dbcontext.GameStats.Any(x => x.UserID == gameStats.UserID && x.GameID == gameStats.GameID))
+            if (dbcontext.GameStats.Any(x => (x.UserID == gameStats.UserID && x.GameID == gameStats.GameID) && (x.ID != gameStats.ID)))
                 modelState.AddModelError("AlreadyExists", "This game statistics already exists");
 
             if (!dbcontext.User.Any(x => x.ID == gameStats.UserID))

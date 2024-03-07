@@ -1,5 +1,4 @@
-﻿using Amazon.S3.Model;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
@@ -7,7 +6,6 @@ using WebAPI.Models;
 using WebAPI.Services.S3Bucket;
 using WebAPI.Services.S3Bucket.Game;
 using WebAPI.Services.Validation.GameValidation;
-using WebAPI.Services.Validation.UserValidation;
 
 namespace WebAPI.Controllers
 {
@@ -118,7 +116,7 @@ namespace WebAPI.Controllers
                     return NoContent();
 
                 gameFromDb.Title = updatedGame.Title;
-                gameFromDb.PriceUsd = updatedGame.PriceUsd;
+                gameFromDb.PriceUSD = updatedGame.PriceUSD;
                 gameFromDb.PublishDate = updatedGame.PublishDate;
                 gameFromDb.AchievementsAmount = updatedGame.AchievementsAmount;
                 gameFromDb.DeveloperID = updatedGame.DeveloperID;
