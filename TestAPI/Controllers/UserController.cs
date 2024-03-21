@@ -120,7 +120,6 @@ namespace WebAPI.Controllers
                     return NoContent();
 
                 userFromDb.Login = upadtedUser.Login;
-                userFromDb.Password = upadtedUser.Password;
                 userFromDb.Nickname = upadtedUser.Nickname;
                 userFromDb.Email = upadtedUser.Email;
                 userFromDb.CreationDate = upadtedUser.CreationDate;
