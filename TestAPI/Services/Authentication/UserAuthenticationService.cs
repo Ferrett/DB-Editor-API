@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Configuration;
-using WebAPI.Logic;
+﻿using WebAPI.Logic;
 using WebAPI.Models;
 using WebAPI.Models.ServiceModels;
 using WebAPI.Services.S3Bucket.User;
@@ -28,6 +26,7 @@ namespace WebAPI.Services.Authentication
                 Password = userRegister.Password,
                 Nickname = userRegister.Nickname,
                 Login = userRegister.Login,
+                BalanceUSD = 0.0f,
                 ProfilePictureURL = $"{userPfpUpload.BucketUrl}{userPfpUpload.Placeholder}",
             };
         }

@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
 using WebAPI.Models;
 using WebAPI.Services.Validation.ReviewValidation;
-using WebAPI.Services.Validation.UserValidation;
 
 namespace WebAPI.Controllers
 {
@@ -13,12 +12,12 @@ namespace WebAPI.Controllers
     [Route("/Review")]
     public class ReviewController : Controller
     {
-        private readonly ApplicationDbContext dbcontext;
-        private readonly IReviewValidation reviewValidation;
-        public ReviewController(ApplicationDbContext context, IReviewValidation _reviewValidation)
+        private readonly ApplicationDbContext _dbcontext;
+        private readonly IReviewValidation _reviewValidation;
+        public ReviewController(ApplicationDbContext dbcontext, IReviewValidation reviewValidation)
         {
-            dbcontext = context;
-            reviewValidation = _reviewValidation;
+            _dbcontext = dbcontext;
+            _reviewValidation = reviewValidation;
         }
 
         [HttpGet("GetAllReviews")]
@@ -26,7 +25,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                return Ok(await dbcontext.Review.ToListAsync());
+                return Ok(await _dbcontext.Review.ToListAsync());
             }
             catch (Exception ex)
             {
@@ -39,7 +38,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var review = await dbcontext.Review.FindAsync(id);
+                var review = await _dbcontext.Review.FindAsync(id);
 
                 if (review == null)
                     return NoContent();
@@ -52,18 +51,36 @@ namespace WebAPI.Controllers
             }
         }
 
+        [HttpGet("GetReviewsByGameID/{gameID:int}")]
+        public async Task<ActionResult<Review>> GetReviewsByGameID(int gameID)
+        {
+            try
+            {
+                var reviews = await _dbcontext.Review.Where(x => x.GameID == gameID).ToListAsync();
+                
+                if (reviews == null)
+                    return NoContent();
+
+                return Ok(reviews);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost("PostReview")]
         public async Task<ActionResult<Review>> PostReview([FromBody] Review newReview)
         {
             try
             {
-                reviewValidation.Validate(newReview, ModelState);
+                _reviewValidation.Validate(newReview, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                await dbcontext.Review.AddAsync(newReview);
-                await dbcontext.SaveChangesAsync();
+                await _dbcontext.Review.AddAsync(newReview);
+                await _dbcontext.SaveChangesAsync();
 
                 return CreatedAtAction(nameof(PostReview), new { id = newReview.ID }, newReview);
             }
@@ -79,12 +96,12 @@ namespace WebAPI.Controllers
             try
             {
                 updatedReview.ID = id;
-                reviewValidation.Validate(updatedReview, ModelState);
+                _reviewValidation.Validate(updatedReview, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var reviewFromDB = await dbcontext.Review.FindAsync(id);
+                var reviewFromDB = await _dbcontext.Review.FindAsync(id);
 
                 if (reviewFromDB == null)
                     return NoContent();
@@ -98,7 +115,7 @@ namespace WebAPI.Controllers
                 reviewFromDB.UserID = updatedReview.UserID;
                 reviewFromDB.User = updatedReview.User;
 
-                await dbcontext.SaveChangesAsync();
+                await _dbcontext.SaveChangesAsync();
 
                 return Ok(reviewFromDB);
             }
@@ -113,13 +130,13 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var review = await dbcontext.Review.FindAsync(id);
+                var review = await _dbcontext.Review.FindAsync(id);
 
                 if (review == null)
                     return NoContent();
 
-                dbcontext.Review.Remove(review);
-                await dbcontext.SaveChangesAsync();
+                _dbcontext.Review.Remove(review);
+                await _dbcontext.SaveChangesAsync();
 
                 return Ok();
             }

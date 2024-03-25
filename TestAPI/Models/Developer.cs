@@ -1,7 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using WebAPI.Logic;
 
 namespace WebAPI.Models
 {
@@ -18,12 +16,6 @@ namespace WebAPI.Models
 
         [Required]
         public DateTime CreationDate { get; set; }
-
-        [Required]
-        public int UserID { get; set; }
-
-        [JsonIgnore]
-        public User? User { get; set; }
 
         [JsonIgnore]
         public ICollection<Game>? PublishedGames { get; set; } = new List<Game>();

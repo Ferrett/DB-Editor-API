@@ -1,7 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using Newtonsoft.Json.Converters;
 
 namespace WebAPI.Models
 {
@@ -29,10 +27,14 @@ namespace WebAPI.Models
         [MaxLength(256)]
         public string? Email { get; set; }
 
-        [JsonIgnore]
-        public Developer? Developer {get;set;}
+        [Required]
+        [Range(0.0, float.MaxValue, ErrorMessage = "{0} must be greater than or equal to 0")]
+        public float BalanceUSD { get; set; }
 
         [JsonIgnore]
         public ICollection<GameStats>? GamesStats { get; set; } = new List<GameStats>();
+
+        [JsonIgnore]
+        public ICollection<UserGame>? UserGames { get; set; } = new List<UserGame>();
     }
 }

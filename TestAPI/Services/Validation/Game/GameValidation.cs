@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
 using WebAPI.Models;
 
@@ -15,7 +14,7 @@ namespace WebAPI.Services.Validation.GameValidation
 
         public void Validate(Game game, ModelStateDictionary modelState)
         {
-            if (!dbcontext.Game.Any(x => x.ID == game.ID) && dbcontext.Game.Any(x => x.Title.ToLower() == game.Title.ToLower()))
+            if (dbcontext.Game.Any(x => (x.Title.ToLower() == game.Title.ToLower()) && (x.ID != game.ID)))
                 modelState.AddModelError("AlreadyExists", $"Game with name \"{game.Title}\" already exists");
 
             if (!dbcontext.Developer.Any(x => x.ID == game.DeveloperID))

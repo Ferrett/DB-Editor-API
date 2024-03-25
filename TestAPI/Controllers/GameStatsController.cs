@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
 using WebAPI.Models;
 using WebAPI.Services.Validation.GameStatsValidation;
-using WebAPI.Services.Validation.UserValidation;
 
 namespace WebAPI.Controllers
 {
@@ -13,12 +12,12 @@ namespace WebAPI.Controllers
     [Route("/GameStats")]
     public class GameStatsController : Controller
     {
-        private readonly ApplicationDbContext dbcontext;
-        private readonly IGameStatsValidation gameStatsValidation;
-        public GameStatsController(ApplicationDbContext context, IGameStatsValidation _gameStatsValidation)
+        private readonly ApplicationDbContext _dbcontext;
+        private readonly IGameStatsValidation _gameStatsValidation;
+        public GameStatsController(ApplicationDbContext dbcontext, IGameStatsValidation gameStatsValidation)
         {
-            dbcontext = context;
-            gameStatsValidation = _gameStatsValidation;
+            _dbcontext = dbcontext;
+            _gameStatsValidation = gameStatsValidation;
         }
 
         [HttpGet("GetAllGamesStats")]
@@ -26,7 +25,7 @@ namespace WebAPI.Controllers
         {
             try
             {
-                return Ok(await dbcontext.GameStats.ToListAsync());
+                return Ok(await _dbcontext.GameStats.ToListAsync());
             }
             catch (Exception ex)
             {
@@ -39,7 +38,25 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var gameStats = await dbcontext.GameStats.FindAsync(id);
+                var gameStats = await _dbcontext.GameStats.FindAsync(id);
+
+                if (gameStats == null)
+                    return NoContent();
+
+                return Ok(gameStats);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("GetGameStatsByUserID/{userID:int}")]
+        public async Task<ActionResult<GameStats>> GetGameStatsByUserID(int userID)
+        {
+            try
+            {
+                var gameStats = await _dbcontext.GameStats.Where(x=>x.UserID==userID).ToListAsync();
 
                 if (gameStats == null)
                     return NoContent();
@@ -57,13 +74,13 @@ namespace WebAPI.Controllers
         {
             try
             {
-                gameStatsValidation.Validate(newGameStats, ModelState);
+                _gameStatsValidation.Validate(newGameStats, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                await dbcontext.GameStats.AddAsync(newGameStats);
-                await dbcontext.SaveChangesAsync();
+                await _dbcontext.GameStats.AddAsync(newGameStats);
+                await _dbcontext.SaveChangesAsync();
 
                 return CreatedAtAction(nameof(PostGameStats), new { id = newGameStats.ID }, newGameStats);
             }
@@ -79,12 +96,12 @@ namespace WebAPI.Controllers
             try
             {
                 updatedGameStats.ID = id;
-                gameStatsValidation.Validate(updatedGameStats, ModelState);
+                _gameStatsValidation.Validate(updatedGameStats, ModelState);
 
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
 
-                var gameStatsFromDb = await dbcontext.GameStats.FindAsync(id);
+                var gameStatsFromDb = await _dbcontext.GameStats.FindAsync(id);
 
                 if (gameStatsFromDb == null)
                     return NoContent();
@@ -97,7 +114,7 @@ namespace WebAPI.Controllers
                 gameStatsFromDb.AchievementsGotten = updatedGameStats.AchievementsGotten;
                 gameStatsFromDb.PurchaseDate = updatedGameStats.PurchaseDate;
 
-                await dbcontext.SaveChangesAsync();
+                await _dbcontext.SaveChangesAsync();
 
                 return Ok(gameStatsFromDb);
             }
@@ -112,13 +129,13 @@ namespace WebAPI.Controllers
         {
             try
             {
-                var gameStats = await dbcontext.GameStats.FindAsync(id);
+                var gameStats = await _dbcontext.GameStats.FindAsync(id);
 
                 if (gameStats == null)
                     return NoContent();
 
-                dbcontext.GameStats.Remove(gameStats);
-                await dbcontext.SaveChangesAsync();
+                _dbcontext.GameStats.Remove(gameStats);
+                await _dbcontext.SaveChangesAsync();
 
                 return Ok();
             }

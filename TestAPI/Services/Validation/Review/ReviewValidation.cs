@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.EntityFrameworkCore;
 using WebAPI.Logic;
 using WebAPI.Models;
-using WebAPI.Services.Validation.ReviewValidation;
 
 namespace WebAPI.Services.Validation.ReviewValidation
 {
@@ -15,7 +13,7 @@ namespace WebAPI.Services.Validation.ReviewValidation
         }
         public void Validate(Review review, ModelStateDictionary modelState)
         {
-            if (!dbcontext.Review.Any(x => x.ID == review.ID) && dbcontext.Review.Any(x => x.UserID == review.UserID && x.GameID == review.GameID))
+            if (dbcontext.Review.Any(x => (x.UserID == review.UserID && x.GameID == review.GameID) && (x.ID != review.ID)))
                 modelState.AddModelError("AlreadyExists", "This review already exists");
 
             if (!dbcontext.User.Any(x => x.ID == review.UserID))

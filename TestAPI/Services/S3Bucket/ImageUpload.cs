@@ -1,8 +1,6 @@
 ﻿using Amazon;
-using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
 using Amazon.S3;
 using Amazon.S3.Model;
-using Amazon.S3.Transfer;
 
 namespace WebAPI.Services.S3Bucket
 {
